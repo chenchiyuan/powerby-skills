@@ -26,6 +26,7 @@
 | [mermaid-architecture](./mermaid-architecture/SKILL.md) | Mermaid可视化、架构图生成、多图表类型 | 架构可视化、系统设计展示、技术方案演示 | architect |
 | [test-spec-design](./test-spec-design/SKILL.md) | 测试规格设计、TDD支持、验收标准定义 | 测试设计、TDD开发、质量保证 | engineer |
 | [mvp-prioritization](./mvp-prioritization/SKILL.md) | MVP优先级评估、功能原子化、无情削减 | 功能评审、MVP定义、优先级排序 | product |
+| [function-point-checker](./function-point-checker/SKILL.md) | 功能点检查、格式验证、质量分析 | PRD文档检查、功能点审查、质量保证 | product |
 
 ## 🔄 完整工作流程
 
@@ -109,6 +110,9 @@ graph LR
 
 # 只需要MVP优先级评估
 用户: "使用 mvp-prioritization skill，我有20个功能想法，帮我评估哪些是MVP必须的"
+
+# 只需要功能点检查
+用户: "使用 function-point-checker skill，帮我检查刚完成的PRD文档中的所有功能点"
 ```
 
 ### 场景4：原子能力的内部复用
@@ -275,6 +279,7 @@ graph LR
 - ✅ mermaid-architecture - 架构可视化
 - ✅ test-spec-design - 测试规格设计
 - ✅ mvp-prioritization - MVP优先级评估
+- ✅ function-point-checker - 功能点检查
 
 ### 🔮 未来演进方向（P2）
 
