@@ -1,0 +1,73 @@
+{
+  "name": "powerby-project",
+  "description": "PowerBy项目描述",
+  "version": "1.0.0",
+  "current_phase": "P0",
+  "completed_gates": [],
+  "status": "initialized",
+  "created_at": "2025-12-18T00:00:00Z",
+  "updated_at": "2025-12-18T00:00:00Z",
+  "team": {
+    "product_manager": "",
+    "architect": "",
+    "engineer": "",
+    "reviewer": ""
+  },
+  "tech_stack": [],
+  "phases": {
+    "P0": {
+      "name": "项目初始化",
+      "description": "创建项目基础结构和文档",
+      "completed": false,
+      "gate": null
+    },
+    "P1": {
+      "name": "需求定义",
+      "description": "定义产品需求和功能点",
+      "completed": false,
+      "gate": "Gate 1: MVP范围合理性检查"
+    },
+    "P2": {
+      "name": "需求澄清",
+      "description": "澄清需求中的模糊点",
+      "completed": false,
+      "gate": "Gate 2: 澄清完整性检查"
+    },
+    "P3": {
+      "name": "技术调研",
+      "description": "技术可行性和选型调研",
+      "completed": false,
+      "gate": "Gate 3: 技术调研完整性"
+    },
+    "P4": {
+      "name": "架构设计",
+      "description": "系统架构和数据模型设计",
+      "completed": false,
+      "gate": "Gate 4: 架构设计清晰性"
+    },
+    "P5": {
+      "name": "任务规划",
+      "description": "任务分解和开发计划",
+      "completed": false,
+      "gate": "Gate 5: 开发规划详细性"
+    },
+    "P6": {
+      "name": "开发实现",
+      "description": "代码实现和测试",
+      "completed": false,
+      "gate": "Gate 6: 开发实现质量"
+    },
+    "P7": {
+      "name": "代码审查",
+      "description": "代码质量审查",
+      "completed": false,
+      "gate": "Gate 7: 代码审查严格性"
+    },
+    "P8": {
+      "name": "项目交付",
+      "description": "项目交付和知识转移",
+      "completed": false,
+      "gate": "Gate 8: 项目交付完整性"
+    }
+  }
+}
