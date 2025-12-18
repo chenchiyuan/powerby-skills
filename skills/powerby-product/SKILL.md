@@ -203,23 +203,57 @@ project-root/
 - 使用现有的PRD模板
 - 包含完整的三个部分：需求原始输入、功能规格框架、AI分析与建议
 
+#### Step 5: 生成功能点清单 (P1→P2过渡)
+**重要原则：一个功能迭代同一份文档只有一份，永远维护最新状态**
+
+当PRD完成后，**必须**使用 `function-point-checker` 技能生成功能点清单：
+- 输出路径：`docs/iterations/{id}-{name}/function-points.md`
+- 此文档是功能审核的专注焦点，团队讨论和审核时请以此为准
+- Gate 1的补充审核材料
+- 为P2阶段的需求澄清提供清晰的功能点视图
+
+**操作指引**：
+```
+当用户确认PRD已完成后，您应该说：
+"现在我将为您生成功能点清单文档，这将帮助我们更清晰地查看和管理所有功能点。
+此文档将作为P2阶段需求澄清的基础，请确认是否继续？"
+```
+
+然后调用 `function-point-checker` 技能生成功能点清单。
+
 ### 📤 输出文档
 - `docs/iterations/{id}-{name}/prd.md` - 产品需求文档
+- `docs/iterations/{id}-{name}/function-points.md` - 功能点清单文档 ⭐新增
 
 ---
 
 ## 阶段 P2：需求澄清 (Requirement Clarification)
 
 ### 🎯 阶段目标
-通过结构化提问，消除需求中的模糊性和缺失决策点。
+基于功能点清单，通过结构化提问，消除需求中的模糊性和缺失决策点。
 
 ### 📥 输入条件
 - ✅ P1已完成
 - ✅ prd.md已通过Gate 1
+- ✅ function-points.md已生成
 
 ### 🛠️ 执行步骤
 
-#### Step 1: 分类扫描
+#### Step 1: 基于功能点清单澄清
+**重要原则：一个功能迭代同一份文档只有一份，永远维护最新状态**
+
+使用 `function-points.md` 作为澄清的基础文档：
+- 以功能点清单为核心进行澄清讨论
+- 在功能点清单上标注澄清结果和修改意见
+- **绝不在其他地方创建功能点列表** - 始终更新 `function-points.md`
+
+澄清流程：
+1. 逐个审查功能点的8要素（需求来源、功能描述、用户输入、系统输出、关键约束、验收标准、依赖关系、预估工时）
+2. 标注模糊不清或需要补充的内容
+3. 记录澄清结果并更新到功能点清单中
+4. 确保所有功能点都清晰明确
+
+#### Step 2: 分类扫描
 使用 `requirement-alignment` 原子技能，对PRD进行覆盖度分析，按以下11大类检查：
 1. 功能范围与边界
 2. 数据模型与实体
@@ -451,9 +485,11 @@ project-root/
 - [ ] Gate 1检查是否全部通过？
 
 ### P2阶段检查
+- [ ] 功能点清单是否已更新并包含所有澄清结果？
+- [ ] 所有功能点的8要素是否都已清晰明确？
 - [ ] 11大类覆盖度分析是否已完成？
 - [ ] 高优先级模糊点是否已全部澄清？
-- [ ] 所有澄清是否已同步回prd.md？
+- [ ] 所有澄清是否已同步回function-points.md？
 - [ ] 覆盖度状态：核心类别≥80%是否为"Clear"？
 - [ ] Gate 2检查是否全部通过？
 
@@ -482,6 +518,7 @@ project-root/
 在P1-P2阶段，你会自动调用以下原子技能：
 - **`requirement-alignment`**：用于需求对齐、结构化复述、主动澄清
 - **`mvp-prioritization`**：用于MVP优先级评估、功能原子化、无情削减
+- **`function-point-checker`**：用于P1完成后生成功能点清单、P2阶段基于清单澄清 ⭐新增
 
 ## 重要提醒
 
@@ -546,12 +583,14 @@ project-root/
 
 2. **P1阶段交付**：
    - ✅ 完整的产品需求文档 (prd.md)
+   - ✅ 功能点清单文档 (function-points.md)
    - ✅ MVP功能点清单（带P0/P1/P2优先级）
    - ✅ 待决策清单（每项至少2个方案）
    - ✅ 通过Gate 1检查
 
 3. **P2阶段交付**：
    - ✅ 需求澄清记录 (clarifications.md)
+   - ✅ 更新后的功能点清单 (function-points.md)
    - ✅ 11大类覆盖度分析完成
    - ✅ 所有高优先级模糊点已澄清
    - ✅ 通过Gate 2检查
@@ -563,7 +602,12 @@ project-root/
 
 ---
 
-**版本**: v2.0.0
+**版本**: v2.1.0
 **适用范围**: PowerBy Lifecycle P0-P2阶段
-**依赖技能**: requirement-alignment, mvp-prioritization
+**依赖技能**: requirement-alignment, mvp-prioritization, function-point-checker
 **协作技能**: powerby-architect, powerby-engineer, powerby-code-review
+
+**v2.1.0更新**：
+- 新增P1→P2过渡阶段：自动生成功能点清单文档
+- P2阶段基于功能点清单进行澄清
+- 遵循"一个功能迭代同一份文档只有一份，永远维护最新状态"原则

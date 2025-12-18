@@ -1,9 +1,9 @@
 # PowerBy 项目软件生命周期概览
 ## Project Software Development Lifecycle Overview
 
-**版本**: v2.0.0
+**版本**: v2.1.0
 **创建日期**: 2025-12-17
-**最后更新**: 2025-12-17
+**最后更新**: 2025-12-18
 **维护者**: PowerBy Skills Team
 **目标**: 流程化、数据化、可追溯的项目管理体系
 
@@ -719,7 +719,23 @@ graph LR
 
 | 文档名称 | 文档路径 | 模板 | 内容要点 |
 |---------|---------|------|---------|
-| 产品需求文档 | `docs/{project}/prd.md` | ✅ 已存在 | 第一部分:需求原始输入<br/>第二部分:功能规格框架<br/>第三部分:MVP功能点清单<br/>待决策清单 |
+| 产品需求文档 | `docs/iterations/{id}-{name}/prd.md` | ✅ 已存在 | 第一部分:需求原始输入<br/>第二部分:功能规格框架<br/>第三部分:MVP功能点清单<br/>待决策清单 |
+| **功能点清单** ⭐新增 | `docs/iterations/{id}-{name}/function-points.md` | ✅ 已存在 | 按模块分组的功能点列表<br/>8要素完整信息<br/>优先级统计和依赖关系图<br/>质量检查和问题标注 |
+
+#### 🔄 P1→P2 过渡：功能点清单生成
+
+**重要原则：一个功能迭代同一份文档只有一份，永远维护最新状态**
+
+当PRD完成后，通过Gate 1检查，**必须**生成功能点清单文档：
+- 使用 `function-point-checker` 技能自动提取PRD中的所有功能点
+- 生成结构化的功能点清单文档
+- 此文档成为P2阶段需求澄清的基础
+- 团队审核、讨论和开发时以此文档为准
+
+**流程说明**：
+```
+P1完成 → Gate 1检查 → 生成function-points.md → P2开始(基于功能点清单澄清)
+```
 
 #### 🎭 使用Skills
 
@@ -728,6 +744,7 @@ graph LR
 | **核心技能** | `powerby-product` | 主动触发 | prd.md |
 | **原子技能** | `requirement-alignment` | 产品技能内部调用 | 结构化需求理解 |
 | **原子技能** | `mvp-prioritization` | 产品技能内部调用 | MVP优先级标记 |
+| **原子技能** | `function-point-checker` | P1完成后自动调用 | function-points.md ⭐新增 |
 
 #### 👥 角色与职责 (RACI)
 
@@ -761,9 +778,14 @@ graph LR
 #### 📥 输入条件
 - ✅ P1已完成
 - ✅ prd.md已通过Gate 1
+- ✅ function-points.md已生成
 
 #### 🛠️ 主要活动
-1. **分类扫描**: 按11大类对PRD进行覆盖度分析
+1. **基于功能点清单澄清** ⭐新增: 使用function-points.md作为澄清基础
+   - 逐个审查功能点的8要素
+   - 在功能点清单上标注澄清结果和修改意见
+   - **绝不在其他地方创建功能点列表** - 始终更新function-points.md
+2. **分类扫描**: 使用requirement-alignment进行覆盖度分析，检查11大类
    - 功能范围与边界
    - 数据模型与实体
    - 交互与UX流程
