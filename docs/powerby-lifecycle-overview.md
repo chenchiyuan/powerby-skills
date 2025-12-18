@@ -15,10 +15,11 @@
 2. [迭代与分支管理](#2-迭代与分支管理)
 3. [阶段全景矩阵](#3-阶段全景矩阵)
 4. [阶段详细说明](#4-阶段详细说明)
-5. [Skills与阶段映射](#5-skills与阶段映射)
-6. [原子技能复用模式](#6-原子技能复用模式)
-7. [操作流程指引](#7-操作流程指引)
-8. [质量门禁机制](#8-质量门禁机制)
+5. [指令流程设计](#5-指令流程设计)
+6. [Skills与阶段映射](#6-skills与阶段映射)
+7. [原子技能复用模式](#7-原子技能复用模式)
+8. [操作流程指引](#8-操作流程指引)
+9. [质量门禁机制](#9-质量门禁机制)
 
 ---
 
@@ -1254,9 +1255,598 @@ P1完成 → Gate 1检查 → 生成function-points.md → P2开始(基于功能
 
 ---
 
-## 5. Skills与阶段映射
+## 5. 指令流程设计
 
-### 5.1 核心技能使用矩阵
+### 5.1 指令流程概述
+
+#### 5.1.1 设计理念
+
+借鉴Spec-Kit的约束机制，PowerBy指令流程通过**强制性命令序列**、**结构化模板**和**质量门禁**三层约束，将松散的对话式开发流程转化为结构化的开发流水线。
+
+#### 5.1.2 核心指令总览
+
+```text
+/powerby.initialize → /powerby.define → /powerby.clarify → /powerby.research → /powerby.design → /powerby.plan → /powerby.implement → /powerby.review
+```
+
+| 指令名称 | 对应阶段 | 负责角色 | 主要职责 | 质量门禁 | 是否需确认 |
+|---------|---------|---------|---------|---------|---------|
+| `/powerby.initialize` | P0 | Product | 项目初始化和宪章建立 | Gate 0 | ✅ |
+| `/powerby.define` | P1 | Product | 需求定义和功能点清单 | Gate 1 | ✅ |
+| `/powerby.clarify` | P2 | Product | 需求澄清和边界明确 | Gate 2 | ✅ |
+| `/powerby.research` | P3 | Architect | 技术调研和方案确认 | Gate 3 | ✅ |
+| `/powerby.design` | P4 | Architect | 架构设计和方案确认 | Gate 4 | ✅ |
+| `/powerby.plan` | P5 | Engineer | 任务规划和方案确认 | Gate 5 | ✅ |
+| `/powerby.implement` | P6 | Engineer | 开发实现和交付 | Gate 6 | ❌ |
+| `/powerby.review` | P7-P8 | Code Review | 代码审查和项目交付 | Gate 7-8 | ✅ |
+
+#### 5.1.3 指令执行流程图
+
+```mermaid
+graph TD
+    A[用户输入指令] --> B[指令解析器]
+    B --> C[前置条件检查]
+    C --> D{检查通过?}
+    D -->|否| E[返回错误信息]
+    D -->|是| F[执行指令逻辑]
+    F --> G[质量门禁检查]
+    G --> H{门禁通过?}
+    H -->|否| I[记录失败原因]
+    I --> J[等待用户修正]
+    J --> F
+    H -->|是| K[生成输出文档]
+    K --> L[更新项目元数据]
+    L --> M[进入下一阶段]
+
+    style A fill:#e1f5fe
+    style M fill:#c8e6c9
+    style E fill:#ffebee
+    style I fill:#fff3e0
+```
+
+### 5.2 指令与阶段映射
+
+#### 5.2.1 指令-阶段对应表
+
+```mermaid
+graph LR
+    subgraph "生命周期阶段"
+        P0[P0: 项目初始化]
+        P1[P1: 需求定义]
+        P2[P2: 需求澄清]
+        P3[P3: 技术调研]
+        P4[P4: 架构设计]
+        P5[P5: 开发规划]
+        P6[P6: 开发实现]
+        P7[P7: 代码审查]
+        P8[P8: 交付]
+    end
+
+    subgraph "PowerBy指令"
+        CMD1[/powerby.initialize]
+        CMD2[/powerby.define]
+        CMD3[/powerby.clarify]
+        CMD4[/powerby.research]
+        CMD5[/powerby.design]
+        CMD6[/powerby.plan]
+        CMD7[/powerby.implement]
+        CMD8[/powerby.review]
+    end
+
+    CMD1 --> P0
+    CMD2 --> P1
+    CMD3 --> P2
+    CMD4 --> P3
+    CMD5 --> P4
+    CMD6 --> P5
+    CMD7 --> P6
+    CMD8 --> P7
+    CMD8 --> P8
+
+    classDef phase fill:#fff3e0,stroke:#f57c00
+    classDef cmd fill:#e3f2fd,stroke:#1976d2
+    class P0,P1,P2,P3,P4,P5,P6,P7,P8 phase
+    class CMD1,CMD2,CMD3,CMD4,CMD5,CMD6,CMD7,CMD8 cmd
+```
+
+#### 5.2.2 指令依赖关系
+
+每个指令都有严格的前置条件：
+
+**`/powerby.define`** 前置条件：
+- ✅ `/powerby.initialize` 已完成
+- ✅ 项目宪章已创建
+- ✅ 当前阶段状态为 P0
+
+**`/powerby.clarify`** 前置条件：
+- ✅ `/powerby.define` 已完成
+- ✅ PRD文档已创建
+- ✅ 功能点清单已生成
+- ✅ 当前阶段状态为 P1
+
+**`/powerby.research`** 前置条件：
+- ✅ `/powerby.clarify` 已完成
+- ✅ 需求澄清记录已创建
+- ✅ 所有Gate检查已通过
+- ✅ 当前阶段状态为 P2
+
+**`/powerby.design`** 前置条件：
+- ✅ `/powerby.research` 已完成
+- ✅ 技术调研报告已确认
+- ✅ 技术选型方案已批准
+- ✅ 当前阶段状态为 P3
+
+**`/powerby.plan`** 前置条件：
+- ✅ `/powerby.design` 已完成
+- ✅ 架构设计文档已确认
+- ✅ 架构方案已批准
+- ✅ 当前阶段状态为 P4
+
+**`/powerby.implement`** 前置条件：
+- ✅ `/powerby.plan` 已完成
+- ✅ 任务计划已确认
+- ✅ 开发方案已批准
+- ✅ 当前阶段状态为 P5
+
+**`/powerby.review`** 前置条件：
+- ✅ `/powerby.implement` 已完成
+- ✅ 实现报告已创建
+- ✅ 所有开发任务已完成
+- ✅ 当前阶段状态为 P6
+
+### 5.3 各指令详细设计
+
+#### 5.3.1 `/powerby.initialize` 指令
+
+**对应阶段**: P0 - 项目初始化
+**职责**: 建立项目宪章和基础设施
+
+**指令格式**:
+```bash
+/powerby.initialize [项目名称] [项目描述] [选项]
+```
+
+**选项参数**:
+- `--team`: 团队成员（可选）
+- `--tech-stack`: 技术偏好（可选）
+- `--template`: 宪章模板（可选，默认使用标准模板）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[输入验证] --> B[创建项目结构]
+    B --> C[生成项目宪章]
+    C --> D[初始化Git仓库]
+    D --> E[创建项目元数据]
+    E --> F[Gate 0检查]
+    F --> G{通过?}
+    G -->|否| H[记录失败原因]
+    G -->|是| I[更新项目状态]
+    H --> A
+    I --> J[输出完成信息]
+```
+
+**质量门禁（Gate 0）**:
+- [ ] 项目宪章文件存在且包含所有必需章节
+- [ ] 目录结构符合PowerBy规范
+- [ ] Git仓库已初始化
+- [ ] 元数据文件已创建且格式正确
+
+**输出文档**:
+- `docs/constitution.md` - 项目宪章
+- `.powerby/project.json` - 项目元数据
+
+#### 5.3.2 `/powerby.define` 指令
+
+**对应阶段**: P1 - 需求定义
+**职责**: 将产品想法转化为清晰的功能点清单
+
+**指令格式**:
+```bash
+/powerby.define [产品想法] [选项]
+```
+
+**选项参数**:
+- `--user-group`: 目标用户群体
+- `--problem`: 核心业务问题
+- `--timeline`: 预期上线时间
+- `--constraints`: 特殊约束条件
+- `--iterations`: 迭代编号（可选，默认自动分配）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[输入验证] --> B[MVP功能分解]
+    B --> C[生成功能点优先级]
+    C --> D[生成PRD文档]
+    D --> E[生成功能点清单]
+    E --> F[Gate 1检查]
+    F --> G{通过?}
+    G -->|否| H[记录失败原因]
+    G -->|是| I[更新项目状态]
+    H --> B
+    I --> J[输出完成信息]
+```
+
+**质量门禁（Gate 1）**:
+- [ ] MVP核心价值已用一句话定义
+- [ ] 所有功能点已标记优先级([P0]/[P1]/[P2])
+- [ ] 范围边界已明确(In-Scope / Out-of-Scope)
+- [ ] 待决策清单中每项都有2+可行方案
+- [ ] P0功能点数量 ≤ 10个
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/prd.md` - 产品需求文档
+- `docs/iterations/{id}-{name}/function-points.md` - 功能点清单文档
+
+#### 5.3.3 `/powerby.clarify` 指令
+
+**对应阶段**: P2 - 需求澄清
+**职责**: 通过结构化提问消除需求模糊性
+
+**指令格式**:
+```bash
+/powerby.clarify [选项]
+```
+
+**选项参数**:
+- `--prd-path`: PRD文档路径（可选，默认使用最新PRD）
+- `--function-points-path`: 功能点清单路径（可选，默认使用最新功能点清单）
+- `--questions`: 澄清问题数量（可选，默认最大5个）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[读取上下文文档] --> B[11大类覆盖度分析]
+    B --> C[生成澄清问题清单]
+    C --> D[结构化澄清]
+    D --> E[更新功能点清单]
+    E --> F[生成澄清记录]
+    F --> G[Gate 2检查]
+    G --> H{通过?}
+    H -->|否| I[记录失败原因]
+    H -->|是| J[更新项目状态]
+    I --> C
+    J --> K[输出完成信息]
+```
+
+**质量门禁（Gate 2）**:
+- [ ] 11大类覆盖度分析已完成
+- [ ] 高优先级模糊点已全部澄清(≤5个问题)
+- [ ] 所有澄清已同步回prd.md对应章节
+- [ ] 覆盖度状态: 核心类别≥80%为"Clear"
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/clarifications.md` - 需求澄清记录
+
+#### 5.3.4 `/powerby.research` 指令
+
+**对应阶段**: P3 - 技术调研
+**职责**: 针对关键技术决策进行调研，解决技术选型和可行性问题
+
+**指令格式**:
+```bash
+/powerby.research [选项]
+```
+
+**选项参数**:
+- `--prd-path`: PRD文档路径（可选，默认使用最新PRD）
+- `--function-points-path`: 功能点清单路径（可选，默认使用最新功能点清单）
+- `--clarifications-path`: 澄清记录路径（可选，默认使用最新澄清记录）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[读取上下文文档] --> B[识别技术调研项]
+    B --> C[方案调研与对比]
+    C --> D[记录技术决策]
+    D --> E[生成调研报告]
+    E --> F[Gate 3检查]
+    F --> G{通过?}
+    G -->|否| H[记录失败原因]
+    G -->|是| I[更新项目状态]
+    H --> B
+    I --> J[输出完成信息]
+```
+
+**质量门禁（Gate 3）**:
+- [ ] 所有P0功能的技术可行性已评估
+- [ ] 核心技术选型已完成决策（至少1个备选方案）
+- [ ] 关键技术风险已识别并有缓解措施
+- [ ] 技术调研报告结构完整
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/research.md` - 技术调研报告
+
+#### 5.3.5 `/powerby.design` 指令
+
+**对应阶段**: P4 - 架构设计
+**职责**: 将需求和技术方案转化为清晰的、可视化的架构设计
+
+**指令格式**:
+```bash
+/powerby.design [选项]
+```
+
+**选项参数**:
+- `--prd-path`: PRD文档路径（可选，默认使用最新PRD）
+- `--function-points-path`: 功能点清单路径（可选，默认使用最新功能点清单）
+- `--clarifications-path`: 澄清记录路径（可选，默认使用最新澄清记录）
+- `--research-path`: 技术调研报告路径（可选，默认使用最新调研报告）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[需求解读与目标对齐] --> B[架构设计与可视化]
+    B --> C[数据模型设计]
+    C --> D[API契约定义]
+    D --> E[Constitution Gates验收]
+    E --> F[Gate 4检查]
+    F --> G{通过?}
+    G -->|否| H[记录失败原因]
+    G -->|是| I[更新项目状态]
+    H --> B
+    I --> J[输出完成信息]
+```
+
+**质量门禁（Gate 4）**:
+- [ ] 架构图清晰表达了系统结构
+- [ ] 每个组件的职责明确且有需求映射
+- [ ] 所有关键技术决策已完成并记录
+- [ ] 架构设计符合PRD要求
+- [ ] 非功能需求（性能、安全等）已考虑
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/architecture.md` - 技术架构设计文档
+- `docs/iterations/{id}-{name}/data-model.md` - 数据模型定义
+- `docs/iterations/{id}-{name}/contracts/*.yaml` - API契约文件
+
+#### 5.3.6 `/powerby.plan` 指令
+
+**对应阶段**: P5 - 任务规划
+**职责**: 将架构设计分解为可执行的、按User Story组织的任务清单
+
+**指令格式**:
+```bash
+/powerby.plan [选项]
+```
+
+**选项参数**:
+- `--prd-path`: PRD文档路径（可选，默认使用最新PRD）
+- `--architecture-path`: 架构文档路径（可选，默认使用最新架构文档）
+- `--tasks-per-day`: 每日任务数（可选，默认2-3个）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[需求与架构对齐分析] --> B[任务分解]
+    B --> C[依赖关系分析]
+    C --> D[并行任务标记]
+    D --> E[生成验收清单]
+    E --> F[Gate 5检查]
+    F --> G{通过?}
+    G -->|否| H[记录失败原因]
+    G -->|是| I[更新项目状态]
+    H --> B
+    I --> J[输出完成信息]
+```
+
+**质量门禁（Gate 5）**:
+- [ ] 所有P0功能都有对应的开发任务
+- [ ] 任务分解粒度合适（1-2天可完成）
+- [ ] 依赖关系清晰合理
+- [ ] 验收标准可验证
+- [ ] 工作量估算合理
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/tasks.md` - 开发任务计划
+- `docs/iterations/{id}-{name}/checklists/*.md` - 验收清单
+
+#### 5.3.7 `/powerby.implement` 指令
+
+**对应阶段**: P6 - 开发实现
+**职责**: 按照tasks.md和架构设计，高质量地实现所有功能
+
+**指令格式**:
+```bash
+/powerby.implement [选项]
+```
+
+**选项参数**:
+- `--tasks-path`: 任务计划路径（可选，默认使用最新任务计划）
+- `--architecture-path`: 架构文档路径（可选，默认使用最新架构文档）
+- `--tdd`: 启用TDD模式（可选，默认启用）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[任务分析] --> B[TDD实现流程]
+    B --> C[实现进度追踪]
+    C --> D[代码质量检查]
+    D --> E[Gate 6检查]
+    E --> F{通过?}
+    F -->|否| G[记录失败原因]
+    F -->|是| H[更新项目状态]
+    G --> B
+    H --> I[输出完成信息]
+```
+
+**质量门禁（Gate 6）**:
+- [ ] 所有P0任务已完成
+- [ ] 测试用例全部通过
+- [ ] 测试覆盖率达标（≥80%）
+- [ ] 代码通过Linter检查
+- [ ] 无严重安全漏洞
+- [ ] 可追溯性矩阵完整
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/implementation-report.md` - 开发实现报告
+- `docs/iterations/{id}-{name}/implementation/work-log.md` - 工作日志
+
+#### 5.3.8 `/powerby.review` 指令
+
+**对应阶段**: P7-P8 - 代码审查和交付
+**职责**: 确保代码质量和流程闭环
+
+**指令格式**:
+```bash
+/powerby.review [选项]
+```
+
+**选项参数**:
+- `--prd-path`: PRD文档路径（可选，默认使用最新PRD）
+- `--function-points-path`: 功能点清单路径（可选，默认使用最新功能点清单）
+- `--architecture-path`: 架构文档路径（可选，默认使用最新架构文档）
+- `--tasks-path`: 任务计划路径（可选，默认使用最新任务计划）
+- `--implementation-report-path`: 实现报告路径（可选，默认使用最新实现报告）
+- `--pr-link`: Pull Request链接（可选）
+
+**执行流程**:
+```mermaid
+graph TD
+    A[接收上下文信息] --> B[执行5大类审查清单]
+    B --> C[Gate 7检查]
+    C --> D{通过?}
+    D -->|否| E[记录失败原因]
+    D -->|是| F[生成交付报告 P8]
+    F --> G[Gate 8检查]
+    G --> H{通过?}
+    H -->|否| I[记录失败原因]
+    H -->|是| J[更新项目状态]
+    E --> B
+    I --> F
+    J --> K[输出完成信息]
+```
+
+**5大类审查清单**:
+1. 一致性与范围审计
+2. 实现完整性与真实性审计
+3. 设计哲学与代码质量审计
+4. 测试与健壮性审计
+5. 提交质量审计
+
+**质量门禁（Gate 7）**:
+- [ ] 所有5大类审计项已完成检查
+- [ ] **功能点一致性验证已完成**
+- [ ] 所有P0功能点的验收标准都已满足
+- [ ] 最终结论明确（APPROVED或CHANGES REQUESTED）
+- [ ] 可追溯性矩阵验证完成
+- [ ] 功能验收方案已提供
+
+**质量门禁（Gate 8）**:
+- [ ] 所有交付物清单已完成
+- [ ] 所有P0功能已实现并通过测试
+- [ ] 代码已合并到主干分支
+- [ ] 文档完整且最新
+- [ ] 部署流程已验证
+
+**输出文档**:
+- `docs/iterations/{id}-{name}/code-review-report.md` - 代码审计报告
+- `docs/iterations/{id}-{name}/delivery-report.md` - 项目交付报告
+
+### 5.4 指令执行规则
+
+#### 5.4.1 通用执行流程
+
+所有指令都遵循以下通用执行流程：
+
+```mermaid
+graph TD
+    A[用户输入指令] --> B[指令解析器]
+    B --> C[前置条件检查]
+    C --> D{前置条件满足?}
+    D -->|否| E[返回错误信息]
+    D -->|是| F[读取上下文文档]
+    F --> G[执行指令逻辑]
+    G --> H[质量门禁检查]
+    H --> I{门禁通过?}
+    I -->|否| J[记录失败原因并等待用户修正]
+    I -->|是| K[生成输出文档]
+    K --> L[更新项目元数据]
+    L --> M[输出完成信息]
+    J --> N[用户修正]
+    N --> G
+    E --> O[结束]
+    M --> O
+```
+
+#### 5.4.2 错误处理原则
+
+1. **快速失败**：遇到错误立即停止并报告
+2. **明确错误信息**：提供清晰的错误描述和解决方案
+3. **重试机制**：允许用户修正错误后重试
+4. **升级机制**：连续失败时提供升级选项
+
+#### 5.4.3 日志记录
+
+所有指令执行过程都需要记录日志：
+
+```markdown
+[时间] [指令] 开始执行
+[时间] [指令] 步骤1完成
+[时间] [指令] 步骤2完成
+...
+[时间] [指令] 执行完成
+```
+
+### 5.5 指令使用示例
+
+#### 5.5.1 完整项目流程示例
+
+```bash
+# 1. 项目初始化
+/powerby.initialize my-project "这是一个示例项目"
+
+# 2. 需求定义
+/powerby.define "我想要构建一个电商网站" --user-group "消费者" --timeline "2025-12-31"
+
+# 3. 需求澄清
+/powerby.clarify
+
+# 4. 技术调研
+/powerby.research
+
+# 5. 架构设计
+/powerby.design
+
+# 6. 任务规划
+/powerby.plan
+
+# 7. 开发实现
+/powerby.implement --tdd
+
+# 8. 代码审查和交付
+/powerby.review --pr-link https://github.com/example/repo/pull/1
+```
+
+#### 5.5.2 指令执行示例输出
+
+```markdown
+✅ 项目初始化完成
+
+📁 项目结构:
+  .powerby/
+    └── project.json
+  docs/
+    └── constitution.md
+  templates/
+  README.md
+
+📋 项目信息:
+  名称: my-project
+  描述: 这是一个示例项目
+  阶段: P0
+  状态: initialized
+
+🔍 下一步:
+  请使用 /powerby.define 指令开始需求定义阶段
+```
+
+---
+
+## 6. Skills与阶段映射
+
+### 6.1 核心技能使用矩阵
 
 ```mermaid
 graph TB
@@ -1302,7 +1892,7 @@ graph TB
     class P0,P1,P2,P3,P4,P5,P6,P7,P8 phase
 ```
 
-### 5.2 技能使用详细映射
+### 6.2 技能使用详细映射
 
 | 阶段 | 主用技能 | 辅助技能 | 原子技能调用 |
 |-----|---------|---------|-------------|
@@ -1316,7 +1906,7 @@ graph TB
 | **P7** | `powerby-code-review` | - | - |
 | **P8** | - | - | - |
 
-### 5.3 技能调用流程图
+### 6.3 技能调用流程图
 
 ```mermaid
 sequenceDiagram
@@ -1362,9 +1952,9 @@ sequenceDiagram
 
 ---
 
-## 6. 原子技能复用模式
+## 7. 原子技能复用模式
 
-### 6.1 原子技能特性
+### 7.1 原子技能特性
 
 | 原子技能 | 核心能力 | 复用场景 | 调用者 |
 |---------|---------|---------|--------|
@@ -1374,7 +1964,7 @@ sequenceDiagram
 | **test-spec-design** | 测试规格设计<br/>TDD支持<br/>验收标准定义 | 功能测试设计<br/>TDD开发<br/>质量保证 | powerby-engineer |
 | **mvp-prioritization** | MVP优先级评估<br/>功能原子化<br/>无情削减 | 功能拆解<br/>MVP范围定义<br/>优先级排序 | powerby-product |
 
-### 6.2 复用模式说明
+### 7.2 复用模式说明
 
 #### 模式1: 阶段内复用 (Within-Stage Reuse)
 
@@ -1444,7 +2034,7 @@ sequenceDiagram
     ARCH-->>PM: architecture.md
 ```
 
-### 6.3 复用最佳实践
+### 7.3 复用最佳实践
 
 #### ✅ 推荐做法
 1. **原子技能优先**: 能用原子技能解决的，不要创建新逻辑
@@ -1460,9 +2050,9 @@ sequenceDiagram
 
 ---
 
-## 7. 操作流程指引
+## 8. 操作流程指引
 
-### 7.1 项目启动完整流程
+### 8.1 项目启动完整流程
 
 #### Step 1: 初始化项目
 
@@ -1510,7 +2100,7 @@ echo "# 项目宪章" > docs/constitution.md
 # 输出: review-report.md
 ```
 
-### 7.2 状态管理
+### 8.2 状态管理
 
 #### 项目元数据示例
 
@@ -1550,7 +2140,7 @@ flowchart TD
     G --> H[通知团队]
 ```
 
-### 7.3 文档管理
+### 8.3 文档管理
 
 #### 文档版本控制
 
@@ -1607,7 +2197,7 @@ graph LR
     ARCH -.-> CODE
 ```
 
-### 7.4 决策记录
+### 8.4 决策记录
 
 #### 决策日志模板
 
@@ -1650,9 +2240,9 @@ graph LR
 
 ---
 
-## 8. 质量门禁机制
+## 9. 质量门禁机制
 
-### 8.1 门禁总览
+### 9.1 门禁总览
 
 | Gate | 阶段 | 触发条件 | 检查要点 | 通过标准 | 失败处理 |
 |-----|------|---------|---------|---------|---------|
@@ -1662,7 +2252,7 @@ graph LR
 | **Gate 4** | P5→P6 | 任务计划完成 | 任务完整性、Checklist | 6项验收标准 | 返工P5 |
 | **Gate 5** | P7→P8 | 代码审查完成 | 5大类审计 | 5项验收标准 | 返工P6 |
 
-### 8.2 Gate 3 详细说明
+### 9.2 Gate 3 详细说明
 
 #### Constitution Gates 三大门禁
 
@@ -1718,7 +2308,7 @@ graph LR
   - 新组件2: [名称] - 理由: [为什么必须新建]
 ```
 
-### 8.3 代码审查审计清单
+### 9.3 代码审查审计清单
 
 #### 审计维度1: 一致性与范围
 
@@ -1766,7 +2356,7 @@ graph LR
 - [ ] 数据一致性已保证
 ```
 
-### 8.4 返工流程
+### 9.4 返工流程
 
 #### 返工触发条件
 
