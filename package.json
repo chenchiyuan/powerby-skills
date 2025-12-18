@@ -1,0 +1,41 @@
+{
+  "name": "powerby-skills",
+  "version": "1.0.0",
+  "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期",
+  "type": "module",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skills",
+    "ai",
+    "product-development",
+    "mvp",
+    "architecture",
+    "engineering",
+    "code-review",
+    "pm",
+    "product-manager"
+  ],
+  "author": "PowerBy Team",
+  "license": "MIT",
+  "homepage": "https://github.com/your-org/powerby-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/powerby-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/powerby-skills/issues"
+  },
+  "claudeSkills": {
+    "marketplace": "./.claude-plugin/marketplace.json",
+    "version": "1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "skills/",
+    ".claude-plugin/",
+    "docs/"
+  ]
+}

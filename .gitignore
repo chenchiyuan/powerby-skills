@@ -205,3 +205,36 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# PowerBy Skills specific
+# PowerBy iteration directories (user-specific content)
+.powerby/iterations/
+!.powerby/project.json
+!.powerby/iterations.json
+
+# Claude specific local settings
+.claude/settings.local.json
+
+# Package manager lock files (optional - uncomment if using npm/pnpm)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+
+# Generated demo and temporary files
+*功能点清单-*.md
+*最终产品功能定义-*.md
+demo-*.md
+
+# Build artifacts (if any)
+dist/
+build/
+
+# Reference materials (not part of the distributed package)
+references/
+
+# Internal proposals (not part of the distributed package)
+proposals/
+
+# Reference materials (not part of the distributed package)
+references/
+spec-kit/
