@@ -26,14 +26,14 @@ powerby init my-project
 
 ```
 /powerby.init           # 初始化/更新PowerBy命令
-/powerby.initialize     # P0: 项目初始化
-/powerby.define         # P1: 需求定义
-/powerby.clarify        # P2: 需求澄清
+/powerby.initialize     # P0: 项目初始化（定义迭代主任务）
+/powerby.define         # P1: 需求定义+澄清（融合，输入需求）
 /powerby.research       # P3: 技术调研
 /powerby.design         # P4: 架构设计
 /powerby.plan           # P5: 任务规划
 /powerby.implement      # P6: 开发实现
-/powerby.review         # P7-P8: 代码审查和交付
+/powerby.review         # P7: 代码审查
+/powerby.quick          # 快速流程（≤3天需求）
 ```
 
 ## 📋 功能特性
@@ -49,9 +49,11 @@ powerby init my-project
 - 保持命令与 PowerBy 技能同步
 
 ### 3. 项目生命周期管理
-- 完整覆盖 P0-P8 阶段
+- 完整覆盖 MVP 核心阶段：P0-P1, P3-P7
+- P8运维交付为可选流程
 - 每个阶段都有明确的质量门禁
 - 支持迭代和版本管理
+- 快速流程支持≤3天的小需求
 
 ### 4. CLI 工具功能
 
