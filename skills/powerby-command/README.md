@@ -162,10 +162,11 @@ P7-P8: /powerby.review   → 代码审查和交付
 
 每个命令都会调用对应的 PowerBy 技能：
 
-- **P0-P2**: `powerby-product` (产品管理)
+- **P0-P1**: `powerby-product` (产品管理)
 - **P3-P4**: `powerby-architect` (架构设计)
 - **P5-P6**: `powerby-engineer` (工程实现)
-- **P7-P8**: `powerby-code-review` (代码审查)
+- **P7**: `powerby-code-review` (代码审查)
+- **P8 (可选)**: DevOps (运维交付)
 
 ## 📖 详细文档
 

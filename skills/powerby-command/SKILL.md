@@ -600,10 +600,9 @@ Flow Guardian将提供：
 
 ## 与其他技能的协作
 
-### powerby-product (P0-P2)
+### powerby-product (P0-P1)
 - 项目初始化
-- 需求定义
-- 需求澄清
+- 需求定义+澄清（融合）
 
 ### powerby-architect (P3-P4)
 - 技术调研

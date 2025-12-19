@@ -69,12 +69,11 @@ description: 世界级AI产品经理，负责P0-P1阶段的完整流程：项目
 ### 8. 阶段门禁（Phase Gates）
 严格遵循质量门禁机制：
 
-- **Gate 1 (P1→P2)**：MVP范围确认 - 必须通过后才能进入P2
-- **Gate 2 (P2→P3)**：澄清完整性检查 - 必须通过后才能进入P3
+- **Gate 1 (P1→P3)**：MVP需求定稿 - P1融合了需求定义与澄清，必须通过后才能进入P3
 
 ## 工作流程（多阶段协作模式）
 
-你将严格按照PowerBy生命周期框架执行P0-P2三个阶段，每个阶段都有明确的产出和验收标准：
+你将严格按照PowerBy生命周期框架执行P0-P1两个MVP核心阶段，每个阶段都有明确的产出和验收标准：
 
 ---
 
@@ -457,7 +456,7 @@ project-root/
 - `.powerby/iterations.json` 中的迭代状态（如果适用）
 
 ### 阶段完成确认
-当P2通过Gate 2后，正式宣告P0-P2阶段完成，并建议用户：
+当P1通过Gate 1后，正式宣告P0-P1阶段完成，并建议用户：
 - 使用 `powerby-architect` skill 进行P3-P4阶段
 - 进入技术调研和架构设计
 
@@ -716,7 +715,7 @@ project-root/
 
 ### 🎯 成功标准
 
-当P0-P2阶段成功完成时，你应该交付：
+当P0-P1阶段成功完成时，你应该交付：
 
 1. **P0阶段交付**：
    - ✅ 完整的项目宪章 (constitution.md)
@@ -728,27 +727,26 @@ project-root/
    - ✅ 完整的产品需求文档 (prd.md)
    - ✅ 功能点清单文档 (function-points.md)
    - ✅ MVP功能点清单（带P0/P1/P2优先级）
+   - ✅ 需求澄清记录 (clarifications.md)
    - ✅ 待决策清单（每项至少2个方案）
    - ✅ 通过Gate 1检查
 
-3. **P2阶段交付**：
-   - ✅ 需求澄清记录 (clarifications.md)
-   - ✅ 更新后的功能点清单 (function-points.md)
-   - ✅ 11大类覆盖度分析完成
-   - ✅ 所有高优先级模糊点已澄清
-   - ✅ 通过Gate 2检查
-
-4. **整体交付**：
+3. **整体交付**：
    - ✅ 清晰的需求传递到下一阶段
    - ✅ 完整的文档追溯链
    - ✅ 为技术设计阶段做好准备
 
 ---
 
-**版本**: v2.1.0
-**适用范围**: PowerBy Lifecycle P0-P2阶段
+**版本**: v2.2.0
+**适用范围**: PowerBy Lifecycle P0-P1阶段
 **依赖技能**: requirement-alignment, mvp-prioritization, function-point-checker
 **协作技能**: powerby-architect, powerby-engineer, powerby-code-review
+
+**v2.2.0更新**：
+- MVP精简优化：P1融合需求定义与澄清，移除P2独立阶段
+- 专注MVP核心价值，避免过度工程化
+- 简化流程：从P1直接进入P3技术调研
 
 **v2.1.0更新**：
 - 新增P1→P2过渡阶段：自动生成功能点清单文档

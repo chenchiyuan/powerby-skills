@@ -1,9 +1,9 @@
 ---
-description: 需求定义 - 基于产品想法生成PRD和功能点清单
+description: 需求定义+澄清 - 基于产品想法生成PRD和功能点清单，融合澄清过程
 handoffs:
-  - label: Define Requirements
+  - label: Define+Clarify Requirements
     agent: powerby-product
-    prompt: 基于产品想法、用户群体、核心问题等，生成完整的PRD文档和功能点清单
+    prompt: 基于产品想法、用户群体、核心问题等，生成完整的PRD文档和功能点清单，并融合澄清过程消除模糊点
 ---
 
 ## User Input
@@ -14,7 +14,7 @@ $ARGUMENTS
 
 ## Outline
 
-使用 `/powerby.define` 命令进行需求定义（P1阶段）。此阶段将产品想法转化为结构化的需求文档。
+使用 `/powerby.define` 命令进行需求定义+澄清（P1阶段）。此阶段将产品想法转化为结构化的需求文档，并融合澄清过程消除模糊点。
 
 ### 执行步骤：
 
@@ -32,6 +32,7 @@ $ARGUMENTS
 3. **验证输出文档**
    - 检查是否生成：`docs/iterations/001-{项目名}/prd.md`
    - 检查是否生成：`docs/iterations/001-{项目名}/function-points.md`
+   - 检查是否生成：`docs/iterations/001-{项目名}/clarifications.md`
 
 4. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P1
@@ -43,18 +44,20 @@ $ARGUMENTS
 ### 输出格式：
 
 ```
-✅ P1 需求定义完成
+✅ P1 需求定义+澄清完成
 
 📄 输出文档:
   ├── docs/iterations/001-{项目名}/prd.md (产品需求文档)
-  └── docs/iterations/001-{项目名}/function-points.md (功能点清单)
+  ├── docs/iterations/001-{项目名}/function-points.md (功能点清单)
+  └── docs/iterations/001-{项目名}/clarifications.md (需求澄清记录)
 
-🔒 质量门禁 Gate 1: MVP范围合理性检查
+🔒 质量门禁 Gate 1: MVP需求定稿检查
   ✓ 核心价值定义清晰
   ✓ 功能点完整性验证
   ✓ 最小可行产品范围确认
+  ✓ 模糊点已澄清
 
-🎯 下一步: 使用 /powerby.clarify 进入需求澄清阶段
+🎯 下一步: 使用 /powerby.research 进入技术调研阶段
 ```
 
 ### 使用示例：
