@@ -1,9 +1,17 @@
 ---
-description: 快速处理临时小需求 - 遵循P0-P5快速流程，增加人工确认环节，严格遵循现有标准
+description: 快速处理临时小需求 - 遵循P0-P5快速流程，增加人工确认环节，严格遵循现有标准，自动初始化项目结构
 handoffs:
   - label: Quick Init
     agent: powerby-fullstack
-    prompt: P0: 快速初始化 - 基于现有架构评估可行性，生成init.md（在现有标准基础上增量扩展）
+    prompt: 首先执行自动初始化检查：
+      1. 检查 .powerby/project.json 是否存在
+      2. 检查 docs/constitution.md 是否存在
+      3. 如果不存在，从 templates/ 目录复制并创建必要文件：
+         - .powerby/project.json (使用默认项目名称"PowerBy项目")
+         - .powerby/iterations.json (初始化为空列表)
+         - docs/constitution.md (使用模板替换 {{TIMESTAMP}} 和 {{PROJECT_NAME}} 变量)
+
+      然后执行 P0: 快速初始化 - 基于现有架构评估可行性，生成init.md（在现有标准基础上增量扩展）
   - label: Quick Define+Clarify
     agent: powerby-fullstack
     prompt: P1: 需求定稿制 - 融合需求定义与澄清，生成prd.md、function-points.md和clarifications.md，严格遵循现有标准，在P1阶段内部完成澄清工作
@@ -27,6 +35,28 @@ $ARGUMENTS
 ## Outline
 
 使用 `/powerby.quick` 命令进行快速需求处理。**必须严格遵循P0-P5快速流程，并在关键节点增加人工确认环节。**
+
+**自动初始化**：如果项目未初始化，将自动创建必要文件（.powerby/project.json、.powerby/iterations.json、docs/constitution.md）。
+
+---
+
+## 自动初始化说明
+
+### 检查逻辑
+在执行快速流程前，系统会自动检查以下文件是否存在：
+1. `.powerby/project.json` - 项目元数据
+2. `docs/constitution.md` - 项目宪章
+
+### 自动创建
+如果文件不存在，系统会自动：
+1. 从 `templates/` 目录复制模板
+2. 创建 `.powerby/project.json`（默认项目名称："PowerBy项目"）
+3. 创建 `.powerby/iterations.json`（初始化为空列表）
+4. 创建 `docs/constitution.md`（替换 {{TIMESTAMP}} 和 {{PROJECT_NAME}} 变量）
+
+### 错误处理
+- ✅ **成功**：静默创建，用户无感知
+- ❌ **失败**：提示用户检查权限或手动运行 `/powerby.initialize`
 
 ---
 
@@ -257,7 +287,10 @@ docs/iterations/{id}-{name}/
 
 ## 前置条件
 
-- ✅ 项目已初始化 (`/powerby.initialize` 已完成)
+- ✅ **自动初始化**：项目未初始化时自动创建必要文件
+  - `.powerby/project.json` (项目元数据)
+  - `.powerby/iterations.json` (迭代追踪)
+  - `docs/constitution.md` (项目宪章)
 - ✅ 现有架构文档存在
 - ✅ 用户明确表示这是临时小需求
 - ✅ 预估工作量 ≤ 3天
@@ -281,6 +314,15 @@ docs/iterations/{id}-{name}/
 ---
 
 ## 错误处理
+
+### 错误类型0: 自动初始化失败 ❌
+```
+错误: 自动初始化失败
+解决:
+  - 检查目录权限
+  - 或手动运行 /powerby.initialize
+  - 然后重新执行命令
+```
 
 ### 错误类型1: 需求过于复杂
 ```
@@ -332,6 +374,7 @@ docs/iterations/{id}-{name}/
 ✅ 快速需求处理完成
 
 📄 遵循快速流程:
+  ✓ ✅ 自动初始化: 项目结构自动创建
   ✓ P0: 快速初始化
   ✓ P1: 需求快速定义+澄清
   ✓ ✓ 人工确认：产品功能列表
@@ -341,7 +384,7 @@ docs/iterations/{id}-{name}/
   ✓ P5: 任务快速规划
 
 📄 输出文档:
-  └── docs/iterations/{id}-{name}/ (7个核心文档)
+  └── docs/iterations/{id-{name}/ (7个核心文档)
 
 🔒 质量门禁 Q-Gate 0-5:
   ✓ 所有Q-Gate通过

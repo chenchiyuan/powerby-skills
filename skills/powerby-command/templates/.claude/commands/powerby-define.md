@@ -1,9 +1,17 @@
 ---
-description: 需求定义+澄清 - 输入需求，生成PRD和功能点清单，融合澄清过程
+description: 需求定义+澄清 - 输入需求，生成PRD和功能点清单，融合澄清过程，自动初始化项目结构
 handoffs:
   - label: Define+Clarify Requirements
     agent: powerby-product
-    prompt: 基于用户输入的需求，生成完整的PRD文档和功能点清单，并融合澄清过程消除模糊点
+    prompt: 首先执行自动初始化检查：
+      1. 检查 .powerby/project.json 是否存在
+      2. 检查 docs/constitution.md 是否存在
+      3. 如果不存在，从 templates/ 目录复制并创建必要文件：
+         - .powerby/project.json (使用默认项目名称"PowerBy项目")
+         - .powerby/iterations.json (初始化为空列表)
+         - docs/constitution.md (使用模板替换 {{TIMESTAMP}} 和 {{PROJECT_NAME}} 变量)
+
+      然后基于用户输入的需求，生成完整的PRD文档和功能点清单，并融合澄清过程消除模糊点。
 ---
 
 ## User Input
@@ -15,6 +23,28 @@ $ARGUMENTS
 ## Outline
 
 使用 `/powerby.define` 命令进行需求定义+澄清（P1阶段）。此阶段将产品想法转化为结构化的需求文档，并融合澄清过程消除模糊点。
+
+**自动初始化**：如果项目未初始化，将自动创建必要文件（.powerby/project.json、.powerby/iterations.json、docs/constitution.md）。
+
+---
+
+## 自动初始化说明
+
+### 检查逻辑
+在执行需求定义前，系统会自动检查以下文件是否存在：
+1. `.powerby/project.json` - 项目元数据
+2. `docs/constitution.md` - 项目宪章
+
+### 自动创建
+如果文件不存在，系统会自动：
+1. 从 `templates/` 目录复制模板
+2. 创建 `.powerby/project.json`（默认项目名称："PowerBy项目"）
+3. 创建 `.powerby/iterations.json`（初始化为空列表）
+4. 创建 `docs/constitution.md`（替换 {{TIMESTAMP}} 和 {{PROJECT_NAME}} 变量）
+
+### 错误处理
+- ✅ **成功**：静默创建，用户无感知
+- ❌ **失败**：提示用户检查权限或手动运行 `/powerby.initialize`
 
 ### 执行步骤：
 
@@ -67,10 +97,13 @@ $ARGUMENTS
 ```
 
 ### 前置条件：
-- ✅ 项目宪章文件存在：`docs/constitution.md`
-- ✅ 项目元数据文件存在：`.powerby/project.json`
+- ✅ **自动初始化**：项目未初始化时自动创建必要文件
+  - `.powerby/project.json` (项目元数据)
+  - `.powerby/iterations.json` (迭代追踪)
+  - `docs/constitution.md` (项目宪章)
 
 ### 错误处理：
-- 如果缺少前置条件，提示用户先运行 `/powerby.initialize`
-- 如果PRD生成失败，提示检查输入参数是否完整
-- 如果功能点清单不完整，建议重新定义需求
+- ✅ **自动创建成功**：静默创建项目文件，继续执行命令流程
+- ❌ **自动创建失败**：提示用户检查目录权限或手动运行 `/powerby.initialize`
+- ❌ **PRD生成失败**：提示检查输入参数是否完整
+- ❌ **功能点清单不完整**：建议重新定义需求
