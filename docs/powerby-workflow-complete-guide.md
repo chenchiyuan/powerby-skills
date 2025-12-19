@@ -785,6 +785,7 @@ graph TD
 | powerby-architect | 系统架构师 | 技术调研、架构设计 | P3-P4 |
 | powerby-engineer | 软件工程师 | 任务规划、开发实现 | P5-P6 |
 | powerby-code-review | 首席工程师 | 代码审查、项目交付 | P7-P8 |
+| powerby-fullstack ⭐ | 全栈工程师 | 快速处理临时小需求 | P0-P5 |
 
 ### 5.2 协作流程
 
