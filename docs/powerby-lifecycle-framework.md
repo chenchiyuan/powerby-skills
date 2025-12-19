@@ -1,10 +1,10 @@
 # PowerBy 项目软件生命周期框架
 ## Project Software Development Lifecycle Framework
 
-**版本**: v2.0.0
+**版本**: v2.1.0
 **创建日期**: 2025-12-17
 **最后更新**: 2025-12-19
-**状态**: MVP精简版
+**状态**: MVP精简版 - 包含P0+P1合并优化
 **目标**: 专注于MVP的核心流程管理，遵循奥卡姆剃刀原则
 
 ---
@@ -835,9 +835,11 @@ stateDiagram-v2
 
 ### B. 参考资料
 
-- PowerBy Constitution: `docs/powerby-consitution.md`
+- PowerBy Constitution: 使用模板生成 `templates/constitution.md`
 - Spec-Kit文档: `references/spec-kit/`
 - 对比分析: `docs/spec-kit-vs-powerby-comparison.md`
+- P0+P1合并优化方案: `docs/P0_P1_MERGE_OPTIMIZATION_PLAN.md`
+- 快速流程定义: `skills/powerby-command/templates/.claude/commands/powerby-quick.md`
 
 ---
 
