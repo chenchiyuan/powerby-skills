@@ -2,10 +2,10 @@
 name: powerby-fullstack
 description: 全栈工程师 - 快速处理临时小需求，遵循P0-P5快速流程，产品+架构+工程三视角融合，严格遵循现有标准，增加人工确认环节
 version: v1.0.0
-phases: [P0, P1, P2, P3, P4, P5]
+phases: [P0, P1, P3, P4, P5]
 skills_required: [powerby-product, powerby-architect, powerby-engineer]
 human_confirmation_points: [P1_product_functions, P4_architecture_design]
-quality_gates: [Q-Gate0, Q-Gate1, Q-Gate2, Q-Gate3, Q-Gate4, Q-Gate5]
+quality_gates: [Q-Gate0, Q-Gate1, Q-Gate3, Q-Gate4, Q-Gate5]
 output_docs: [
   "init.md",
   "prd.md",
@@ -131,10 +131,10 @@ output_docs: [
 
 ---
 
-## P1: 需求快速定义 (Quick Requirement Definition)
+## P1: 需求定稿制 (Requirement Finalization)
 
 ### 🎯 阶段目标
-将临时需求转化为清晰的功能点清单。
+将临时需求转化为无歧义的最终定稿文档，融合需求定义与澄清的完整流程。
 
 ### 📥 输入条件
 - ✅ P0已完成
@@ -143,29 +143,35 @@ output_docs: [
 
 ### 🛠️ 执行步骤
 
-#### Step 1: 核心价值提取
-- 用一句话定义需求要解决的核心问题
-- 明确目标用户和使用场景
+#### Step 1: 需求草拟与自检 (Draft & Self-Check)
+- 提取核心价值并定义MVP功能集
+- **同步识别模糊点**：在生成PRD过程中同步列出 [AI待澄清事项清单]
+- **禁止生成不完整PRD**：发现关键约束不明时，立即标记 [TBD] 或中断提问
+- 确保P0功能点数量 ≤ 5个
 
-#### Step 2: 最小功能集定义
-- 只关注MVP核心功能（≤ 5个功能点）
-- 明确P0优先级（必须实现）
-- 推迟非核心功能
+#### Step 2: 交互式澄清 (Interactive Clarification)
+- 向用户展示 [AI待澄清事项清单]
+- **等待用户回复**：针对每个澄清点获取明确答案
+- **实时更新文档**：根据用户回复，同步更新prd.md和function-points.md
+- **生成澄清记录**：将澄清过程和结果记录到clarifications.md
 
-#### Step 3: 范围边界明确
-- In-Scope：明确包含的功能
-- Out-of-Scope：明确不包含的功能
+#### Step 3: 最终确认 (Final Confirmation)
+- 确保PRD和功能点清单无矛盾
+- 确保澄清记录完整清晰
+- 确保文档无[TBD]或模糊描述
 
 ### 📄 输出文档
 - `docs/iterations/{id}-{name}/prd.md` - 产品需求文档（在现有prd.md标准基础上增量扩展）
 - `docs/iterations/{id}-{name}/function-points.md` - 功能点清单（在现有function-points.md标准基础上增量扩展）
+- `docs/iterations/{id}-{name}/clarifications.md` - 需求澄清记录（在现有clarifications.md标准基础上增量扩展）
 
-### ✅ 验收标准 (Q-Gate 1)
-- [ ] MVP核心价值已用一句话定义
-- [ ] 所有功能点已标记优先级([P0]/[P1]/[P2])
-- [ ] 范围边界已明确(In-Scope / Out-of-Scope)
-- [ ] P0功能点数量 ≤ 5个
-- [ ] 每个功能点包含完整的8要素
+### ✅ 验收标准 (Q-Gate 1 - Requirement Ready)
+- [ ] **完整性**：P0功能点已全部覆盖，无遗漏
+- [ ] **无歧义性**：文档中不再包含 [TBD] 或模糊描述
+- [ ] **自洽性**：功能点清单与业务逻辑无矛盾
+- [ ] **核心价值**：已用一句话定义需求要解决的核心问题
+- [ ] **范围边界**：In-Scope / Out-of-Scope已明确
+- [ ] **澄清记录**：clarifications.md完整记录所有澄清历史
 
 ### 🚨 人工确认环节
 **P1完成后必须停止，等待人工确认产品功能列表**
@@ -181,9 +187,10 @@ output_docs: [
 - [ ] P0功能列表是否完整？
 - [ ] 范围边界是否明确？
 - [ ] 验收标准是否可测试？
+- [ ] 修订与决策记录是否清晰完整？
 
 ### 确认结果
-[ ] ✅ 确认通过，可进入P2
+[ ] ✅ 确认通过，可进入P3
 [ ] ❌ 需要修改，修改意见如下：
    - [具体修改意见1]
    - [具体修改意见2]
@@ -195,50 +202,16 @@ output_docs: [
 
 ---
 
-## P2: 需求快速澄清 (Quick Clarification)
-
-### 🎯 阶段目标
-消除需求中的关键模糊点。
-
-### 📥 输入条件
-- ✅ P1已完成
-- ✅ 人工确认产品功能列表通过
-- 快速PRD
-- 快速功能点清单
-
-### 🛠️ 执行步骤
-
-#### Step 1: 模糊点快速识别
-- 识别3个最关键的模糊问题
-- 优先级排序
-
-#### Step 2: 结构化澄清
-- 向用户提出澄清问题
-- 获取明确答案
-
-#### Step 3: 决策记录
-- 记录澄清结果
-- 更新功能点清单
-
-### 📄 输出文档
-- `docs/iterations/{id}-{name}/clarifications.md` - 需求澄清记录（在现有clarifications.md标准基础上增量扩展）
-
-### ✅ 验收标准 (Q-Gate 2)
-- [ ] 关键模糊点已识别（≤3个）
-- [ ] 所有模糊点已澄清
-- [ ] 澄清结果已记录
-- [ ] 功能点清单已更新
-
----
-
 ## P3: 技术快速调研 (Quick Technical Research)
 
 ### 🎯 阶段目标
 基于现有架构快速评估技术可行性。
 
 ### 📥 输入条件
-- ✅ P2已完成
-- 快速功能点清单
+- ✅ P1已完成
+- ✅ 人工确认产品功能列表通过
+- PRD文档
+- 功能点清单
 - 现有架构文档
 
 ### 🛠️ 执行步骤
@@ -381,7 +354,7 @@ output_docs: [
 
 - **prd.md** - 产品需求文档：遵循现有prd.md标准，在现有文档中新增功能模块
 - **function-points.md** - 功能点清单：遵循现有function-points.md标准，新增功能点条目
-- **clarifications.md** - 需求澄清：遵循现有clarifications.md标准，新增澄清记录
+- **clarifications.md** - 需求澄清记录：遵循现有clarifications.md标准，在P1阶段内部完成澄清工作并生成记录
 - **technical-research.md** - 技术调研：遵循现有technical-research.md标准，新增技术选型分析
 - **architecture.md** - 架构设计：遵循现有architecture.md标准，新增组件和决策
 - **tasks.md** - 任务清单：遵循现有tasks.md标准，新增开发任务
@@ -400,7 +373,7 @@ docs/iterations/{id}-{name}/
 ├── init.md                    # 快速初始化记录
 ├── prd.md                     # 产品需求文档（增量扩展）
 ├── function-points.md         # 功能点清单（增量扩展）
-├── clarifications.md          # 需求澄清（增量扩展）
+├── clarifications.md          # 需求澄清记录（在P1阶段内部生成）
 ├── technical-research.md      # 技术调研（增量扩展）
 ├── architecture.md            # 架构设计（增量扩展）
 ├── data-model.md              # 数据模型（可选）
@@ -416,6 +389,11 @@ docs/iterations/{id}-{name}/
 2. **无现有文档**：按照现有标准格式新建文档
 3. **文档标记**：在文档头部标注"快速流程 - 增量扩展"
 4. **追溯性**：确保新功能与现有功能的清晰关联
+5. **澄清流程优化**：
+   - **P1阶段融合澄清**：在P1阶段内部完成原来P2的澄清工作
+   - **减少对话轮次**：避免"P1完成→等待确认→进入P2"的冗余循环
+   - **同步推理**：AI在生成PRD的同时发现模糊点并立即澄清
+   - **文档完整性**：澄清记录仍保存在clarifications.md中，保持文档结构不变
 
 ---
 

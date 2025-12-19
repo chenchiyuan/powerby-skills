@@ -4,12 +4,9 @@ handoffs:
   - label: Quick Init
     agent: powerby-fullstack
     prompt: P0: 快速初始化 - 基于现有架构评估可行性，生成init.md（在现有标准基础上增量扩展）
-  - label: Quick Define
+  - label: Quick Define+Clarify
     agent: powerby-fullstack
-    prompt: P1: 需求快速定义 - 生成prd.md和function-points.md，严格遵循现有标准，在现有文档基础上增量扩展
-  - label: Quick Clarify
-    agent: powerby-fullstack
-    prompt: P2: 需求快速澄清 - 消除关键模糊点，生成clarifications.md（在现有标准基础上增量扩展）
+    prompt: P1: 需求定稿制 - 融合需求定义与澄清，生成prd.md、function-points.md和clarifications.md，严格遵循现有标准，在P1阶段内部完成澄清工作
   - label: Quick Research
     agent: powerby-fullstack
     prompt: P3: 技术快速调研 - 评估架构兼容性，生成technical-research.md（在现有标准基础上增量扩展）
@@ -40,6 +37,12 @@ $ARGUMENTS
 - **工作量**: 适用于 ≤ 3天的开发需求
 - **架构兼容**: 基于现有架构的增量开发
 - **文档精简**: 严格遵循现有标准，但内容精简
+- **流程优化**: P1阶段融合需求定义与澄清，减少对话轮次
+
+### 💡 P1+P2融合优化
+**问题**：原流程中P1（需求定义）与P2（需求澄清）串行执行，导致AI必须先完成可能存在漏洞的P1文档，才能在P2阶段提出问题，增加冗余对话轮次。
+
+**解决方案**：将P1与P2合并为"需求定稿制"，AI在生成PRD的同时发现模糊点并立即澄清，实现同步推理，减少上下文切换成本，强化单一事实源（SSOT）。
 
 ### 适用场景
 ✅ **适用**：
@@ -70,18 +73,28 @@ $ARGUMENTS
 
 ---
 
-### P1: 需求快速定义 ⭐
-**目标**: 将临时需求转化为清晰的功能点清单
+### P1: 需求定稿制 ⭐
+**目标**: 融合需求定义与澄清，在同一阶段内完成PRD生成和模糊点消除
 
 **输出**:
 - `docs/iterations/{id}-{name}/prd.md`（严格遵循prd.md标准，在现有文档基础上增量扩展）
 - `docs/iterations/{id}-{name}/function-points.md`（严格遵循function-points.md标准，在现有文档基础上增量扩展）
+- `docs/iterations/{id}-{name}/clarifications.md`（严格遵循clarifications.md标准，在P1阶段内部生成）
+
+**执行流程**:
+1. **需求草拟与自检**：生成PRD草案，同步识别模糊点并列出[AI待澄清事项清单]
+2. **交互式澄清**：向用户展示澄清事项，获取回复并实时更新文档
+3. **最终确认**：确保所有文档无矛盾，澄清记录完整
 
 **检查要点**:
 - [ ] MVP核心价值已用一句话定义
 - [ ] P0功能点数量 ≤ 5个
 - [ ] 范围边界已明确(In-Scope / Out-of-Scope)
-- [ ] 每个功能点包含完整的8要素
+- [ ] 关键模糊点已识别并澄清（≤3个）
+- [ ] clarifications.md完整记录澄清历史
+- [ ] 文档无[TBD]或模糊描述
+
+**💡 流程优化**: 避免"P1完成→等待确认→进入P2"的冗余循环，AI在生成PRD的同时发现并解决模糊点
 
 **🚨 人工确认环节**: P1完成后**必须停止**，等待人工确认产品功能列表
 
@@ -89,16 +102,17 @@ $ARGUMENTS
 ```markdown
 ## 人工确认：产品功能列表
 
-基于PRD文档 (docs/iterations/{id}-{name}/prd.md)，请确认：
+基于PRD文档 (docs/iterations/{id}-{name}/prd.md) 和澄清记录 (docs/iterations/{id}-{name}/clarifications.md)，请确认：
 
 ### 确认清单
 - [ ] 核心价值定义是否准确？
 - [ ] P0功能列表是否完整？
 - [ ] 范围边界是否明确？
 - [ ] 验收标准是否可测试？
+- [ ] 澄清记录是否清晰完整？
 
 ### 确认结果
-[ ] ✅ 确认通过，可进入P2
+[ ] ✅ 确认通过，可进入P3
 [ ] ❌ 需要修改，修改意见如下：
    - [具体修改意见1]
    - [具体修改意见2]
@@ -107,18 +121,6 @@ $ARGUMENTS
 姓名：___________
 日期：___________
 ```
-
----
-
-### P2: 需求快速澄清
-**目标**: 消除需求中的关键模糊点
-
-**输出**: `docs/iterations/{id}-{name}/clarifications.md`（严格遵循clarifications.md标准，在现有文档基础上增量扩展）
-
-**检查要点**:
-- 关键模糊点已识别（≤3个）
-- 所有模糊点已澄清
-- 澄清结果已记录
 
 ---
 
@@ -212,7 +214,7 @@ docs/iterations/{id}-{name}/
 ├── init.md                    # P0: 快速初始化（在现有标准基础上增量扩展）
 ├── prd.md                     # P1: 产品需求文档（遵循prd.md标准，在现有文档基础上增量扩展）
 ├── function-points.md         # P1: 功能点清单（遵循function-points.md标准，在现有文档基础上增量扩展）
-├── clarifications.md          # P2: 需求澄清（遵循clarifications.md标准，在现有文档基础上增量扩展）
+├── clarifications.md          # P1: 需求澄清（在P1阶段内部生成）
 ├── technical-research.md      # P3: 技术调研（遵循technical-research.md标准，在现有文档基础上增量扩展）
 ├── architecture.md            # P4: 架构设计（遵循architecture.md标准，在现有文档基础上增量扩展）
 ├── data-model.md              # P4: 数据模型（可选）
@@ -237,14 +239,15 @@ docs/iterations/{id}-{name}/
 
 **执行流程**:
 1. P0: 快速初始化 → 评估可行性
-2. P1: 需求快速定义 → 生成PRD和功能点清单
+2. P1: 需求定稿制 → 生成PRD、功能点清单和澄清记录（融合定义与澄清）
 3. **停止** → 人工确认产品功能列表
-4. P2: 需求快速澄清 → 消除模糊点
-5. P3: 技术快速调研 → 评估架构兼容性
-6. P4: 架构快速设计 → 设计实现方案
-7. **停止** → 人工确认架构实现
-8. P5: 任务快速规划 → 生成任务清单
-9. 交付给 `/powerby.implement` 或 `powerby-engineer`
+4. P3: 技术快速调研 → 评估架构兼容性
+5. P4: 架构快速设计 → 设计实现方案
+6. **停止** → 人工确认架构实现
+7. P5: 任务快速规划 → 生成任务清单
+8. 交付给 `/powerby.implement` 或 `powerby-engineer`
+
+**💡 流程优化**: P1阶段融合了原来P1+P2的工作，避免了冗余的对话轮次
 
 ### 示例2：优化现有功能
 ```bash
