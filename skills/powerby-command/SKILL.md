@@ -1,23 +1,36 @@
 ---
 name: powerby-command
-description: PowerBy生态的指令管理核心技能，负责解析和执行PowerBy指令、管理项目流程状态、提供流程维护和指导。集成Flow Guardian确保严格遵循P0-P8生命周期，协调powerby-product、powerby-architect、powerby-engineer、powerby-code-review等核心技能执行相应工作。
+description: PowerBy生态的指令管理核心技能，负责解析和执行PowerBy指令、管理项目流程状态、提供流程维护和指导。集成Flow Guardian确保严格遵循MVP精简流程（P0-P1, P3-P7），协调powerby-product、powerby-architect、powerby-engineer、powerby-code-review等核心技能执行相应工作。支持快速流程处理≤3天的小需求。
 license: MIT. LICENSE.txt has complete terms
 ---
 
 # PowerBy Command Skill - 指令管理核心技能
 
+你是一位指令管理专家，是PowerBy生态的指挥官。你的核心使命是解析和执行PowerBy指令，管理项目流程状态，确保严格遵循MVP精简流程，协调各个核心技能高效协作。
+
+## 核心使命
+
+1. **指令解析与执行**：准确解析用户输入的PowerBy指令，执行相应操作
+2. **流程状态管理**：跟踪和管理项目在MVP精简流程中的状态
+3. **技能协调**：调用和协调各个核心技能执行任务
+4. **质量门禁**：确保每个阶段通过质量门禁才能进入下一阶段
+5. **快速流程支持**：支持≤3天小需求的快速处理
+
 ## 何时使用此技能
 
 当用户输入以下任何PowerBy指令时，请使用此技能：
 
+### 标准流程指令
 - `/powerby.initialize` - 项目初始化 (P0)
-- `/powerby.define` - 需求定义 (P1)
-- `/powerby.clarify` - 需求澄清 (P2)
+- `/powerby.define` - 需求定义+澄清 (P1)
 - `/powerby.research` - 技术调研 (P3)
 - `/powerby.design` - 架构设计 (P4)
 - `/powerby.plan` - 任务规划 (P5)
 - `/powerby.implement` - 开发实现 (P6)
-- `/powerby.review` - 代码审查 (P7-P8)
+- `/powerby.review` - 代码审查 (P7)
+
+### 快速流程指令
+- `/powerby.quick` - 快速流程（≤3天需求）
 
 此技能将解析指令、检查前置条件、调用相应技能执行任务，并提供流程指导和错误处理。
 
@@ -42,19 +55,16 @@ license: MIT. LICENSE.txt has complete terms
 - ✅ 项目宪章文件存在：`docs/constitution.md`
 - ✅ 项目元数据文件存在：`.powerby/project.json`
 
-**P2阶段（clarify）前置条件**：
+**P3阶段（research）前置条件**：
 - ✅ PRD文档存在：`docs/iterations/*/prd.md`
 - ✅ 功能点清单存在：`docs/iterations/*/function-points.md`
-
-**P3阶段（research）前置条件**：
 - ✅ 澄清记录存在：`docs/iterations/*/clarifications.md`
 
 **P4阶段（design）前置条件**：
-- ✅ 技术调研报告存在：`docs/iterations/*/research.md`
+- ✅ 技术调研报告存在：`docs/iterations/*/technical-research.md`
 
 **P5阶段（plan）前置条件**：
 - ✅ 架构设计文档存在：`docs/iterations/*/architecture.md`
-- ✅ 数据模型存在：`docs/iterations/*/data-model.md`
 
 **P6阶段（implement）前置条件**：
 - ✅ 任务计划存在：`docs/iterations/*/tasks.md`
@@ -62,9 +72,35 @@ license: MIT. LICENSE.txt has complete terms
 **P7阶段（review）前置条件**：
 - ✅ 实现报告存在：`docs/iterations/*/implementation-report.md`
 
+**快速流程（quick）前置条件**：
+- ✅ 项目已初始化（如果需要新项目）
+- ✅ 现有架构文档存在（如果基于现有系统）
+
 ### 第三步：执行对应指令
 
 根据指令类型，调用相应技能执行任务：
+
+## 技能协调（Handoffs）
+
+### 标准流程技能协调
+- **P0 initialize** → 调用 `powerby-command` 内部处理
+- **P1 define** → 调用 `powerby-product` 技能
+- **P3 research** → 调用 `powerby-architect` 技能
+- **P4 design** → 调用 `powerby-architect` 技能
+- **P5 plan** → 调用 `powerby-engineer` 技能
+- **P6 implement** → 调用 `powerby-engineer` 技能
+- **P7 review** → 调用 `powerby-code-review` 技能
+
+### 快速流程技能协调
+- **quick** → 调用 `powerby-fullstack` 技能
+
+### 技能调用模式
+```markdown
+handoffs:
+  - label: [指令名称]
+    agent: [对应技能]
+    prompt: [具体任务描述]
+```
 
 ## 指令详细工作流程
 
@@ -78,11 +114,11 @@ license: MIT. LICENSE.txt has complete terms
 
 2. **生成项目宪章文档**
    - 路径：`docs/constitution.md`
-   - 内容包含：项目概述、团队信息、技术栈、创建时间
+   - 内容包含：项目概述、主任务、创建时间
 
 3. **创建项目元数据文件**
    - 路径：`.powerby/project.json`
-   - 包含：项目名称、描述、团队、技术栈、当前阶段(P0)、完成门禁[]、状态
+   - 包含：项目名称、主任务、当前阶段(P0)、完成门禁[]、状态
 
 4. **创建迭代追踪文件**
    - 路径：`.powerby/iterations.json`
@@ -104,13 +140,13 @@ license: MIT. LICENSE.txt has complete terms
 
 ---
 
-### /powerby.define (P1 - 需求定义)
+### /powerby.define (P1 - 需求定义+澄清)
 
 **执行步骤**：
 
 1. **调用powerby-product技能**
-   - 传递参数：产品想法、用户群体、核心问题、时间线、约束条件
-   - 要求生成PRD文档和功能点清单
+   - 传递参数：需求描述（必填）、用户群体（可选）、核心问题（可选）
+   - 要求生成PRD文档和功能点清单，融合澄清过程
 
 2. **验证输出文档**
    - 检查是否生成：`docs/iterations/001-{项目名}/prd.md`
@@ -612,9 +648,12 @@ Flow Guardian将提供：
 - 任务规划
 - 开发实现
 
-### powerby-code-review (P7-P8)
+### powerby-code-review (P7)
 - 代码审查
-- 项目交付
+- MVP交付
+
+### powerby-fullstack
+- 快速流程（≤3天需求）
 
 ### powerby-flow-guardian
 - 状态检查
@@ -629,13 +668,14 @@ Flow Guardian将提供：
 
 | Gate | 阶段 | 检查要点 |
 |------|------|----------|
-| Gate 1 | P1→P2 | MVP范围合理性 |
-| Gate 2 | P2→P3 | 需求澄清充分性 |
+| Gate 1 | P1→P3 | MVP需求定稿 |
 | Gate 3 | P3→P4 | 技术调研完整性 |
 | Gate 4 | P4→P5 | 架构设计清晰性 |
 | Gate 5 | P5→P6 | 开发规划详细性 |
 | Gate 6 | P6→P7 | 开发实现质量 |
-| Gate 7 | P7→P8 | 代码审查严格性 |
-| Gate 8 | P8→完成 | 项目交付完整性 |
+| Gate 7 | P7→完成 | 代码审查严格性 |
+| Gate 8 (可选) | P8→完成 | 运维交付完整性 |
+
+> **说明**：Gate 8属于运维流程，独立于MVP开发流程，在MVP验证成功后进行。
 
 只有通过门禁检查，才能进入下一阶段。
