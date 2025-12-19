@@ -1,10 +1,11 @@
 # PowerBy 项目软件生命周期框架
 ## Project Software Development Lifecycle Framework
 
-**版本**: v1.0.0-draft
+**版本**: v2.0.0
 **创建日期**: 2025-12-17
-**状态**: 待确认
-**目标**: 流程化、数据化、可追溯的项目管理体系
+**最后更新**: 2025-12-19
+**状态**: MVP精简版
+**目标**: 专注于MVP的核心流程管理，遵循奥卡姆剃刀原则
 
 ---
 
@@ -20,20 +21,16 @@
 
 ## 1. 生命周期概览
 
-### 1.1 整体流程图
+### 1.1 MVP流程图
 
 ```mermaid
 graph TB
     Start([项目启动]) --> P0[P0: 项目初始化<br/>Constitution Setup]
 
-    P0 --> P1[P1: 需求定义<br/>Requirement Definition]
+    P0 --> P1[P1: 需求定义+澄清<br/>Requirement Definition]
     P1 --> Gate1{Gate 1<br/>MVP范围确认}
     Gate1 -->|未通过| P1
-    Gate1 -->|通过| P2[P2: 需求澄清<br/>Requirement Clarification]
-
-    P2 --> Gate2{Gate 2<br/>澄清完整性检查}
-    Gate2 -->|未通过| P2
-    Gate2 -->|通过| P3[P3: 技术调研<br/>Technical Research]
+    Gate1 -->|通过| P3[P3: 技术调研<br/>Technical Research]
 
     P3 --> P4[P4: 架构设计<br/>Architecture Design]
     P4 --> Gate3{Gate 3<br/>Constitution Gates}
@@ -47,40 +44,37 @@ graph TB
     P6 --> P7[P7: 质量审查<br/>Code Review]
     P7 --> Gate5{Gate 5<br/>代码审查通过}
     Gate5 -->|未通过| P6
-    Gate5 -->|通过| P8[P8: 发布交付<br/>Release & Delivery]
+    Gate5 -->|通过| MVP([MVP完成])
 
-    P8 --> End([项目完成])
+    Note over MVP,End: 运维交付(P8)为可选流程<br/>独立于MVP开发流程
 
     style P0 fill:#e3f2fd
     style P1 fill:#fff3e0
-    style P2 fill:#fff3e0
     style P3 fill:#f3e5f5
     style P4 fill:#f3e5f5
     style P5 fill:#e8f5e9
     style P6 fill:#e8f5e9
     style P7 fill:#fce4ec
-    style P8 fill:#e0f2f1
 
     style Gate1 fill:#ffecb3
-    style Gate2 fill:#ffecb3
     style Gate3 fill:#ffecb3
     style Gate4 fill:#ffecb3
     style Gate5 fill:#ffecb3
 ```
 
-### 1.2 阶段总览表
+### 1.2 MVP阶段总览表
 
-| 阶段编号 | 阶段名称 | 核心目标 | 负责角色 | 关键产出 | 预估周期 |
-|---------|---------|---------|---------|---------|---------|
-| **P0** | 项目初始化 | 建立项目宪章和基础设施 | PM/Tech Lead | constitution.md | 0.5天 |
-| **P1** | 需求定义 | 定义MVP功能点清单 | Product Manager | prd.md | 1-3天 |
-| **P2** | 需求澄清 | 消除需求模糊性 | Product Manager | clarifications.md | 0.5-1天 |
-| **P3** | 技术调研 | 解决技术选型问题 | Architect | research.md | 1-2天 |
-| **P4** | 架构设计 | 设计技术实现方案 | Architect | architecture.md<br/>data-model.md<br/>contracts/ | 2-5天 |
-| **P5** | 任务规划 | 分解可执行任务 | Engineer Lead | tasks.md<br/>checklists/ | 1-2天 |
-| **P6** | 开发实现 | 编码和测试 | Engineers | 代码+测试 | N天 |
-| **P7** | 质量审查 | 代码审查和验收 | Code Reviewer | review-report.md | 0.5-1天 |
-| **P8** | 发布交付 | 部署和文档归档 | DevOps/PM | release-notes.md | 0.5-1天 |
+| 阶段编号 | 阶段名称 | 核心目标 | 负责角色 | 关键产出 |
+|---------|---------|---------|---------|---------|
+| **P0** | 项目初始化 | 建立项目宪章和基础设施 | PM/Tech Lead | constitution.md |
+| **P1** | 需求定义+澄清 | 定义MVP功能点清单，专注核心价值 | Product Manager | prd.md, function-points.md, clarifications.md |
+| **P3** | 技术调研 | 解决技术选型问题 | Architect | technical-research.md |
+| **P4** | 架构设计 | 设计最小可行架构 | Architect | architecture.md |
+| **P5** | 任务规划 | 分解可执行任务 | Engineer Lead | tasks.md |
+| **P6** | 开发实现 | 编码和测试 | Engineers | 代码+测试 |
+| **P7** | 质量审查 | 代码审查和验收 | Code Reviewer | code-review-report.md |
+
+> **说明**: P8运维交付为可选流程，独立于MVP开发流程
 
 ### 1.3 文档目录结构
 
@@ -94,10 +88,10 @@ project-root/
 │   │
 │   └── {project-name}/                # 项目文档目录
 │       ├── prd.md                     # [P1] 产品需求文档
-│       ├── clarifications.md          # [P2] 需求澄清记录
-│       ├── research.md                # [P3] 技术调研报告
+│       ├── function-points.md         # [P1] 功能点清单
+│       ├── clarifications.md          # [P1] 需求澄清记录
+│       ├── technical-research.md      # [P3] 技术调研报告
 │       ├── architecture.md            # [P4] 架构设计文档
-│       ├── data-model.md              # [P4] 数据模型定义
 │       ├── tasks.md                   # [P5] 任务计划
 │       │
 │       ├── contracts/                 # [P4] API契约定义
@@ -111,16 +105,16 @@ project-root/
 │       │   └── security.md            # 安全验收清单
 │       │
 │       ├── implementation/            # [P6] 实现记录
-│       │   ├── work-log.md            # 工作日志
+│       │   ├── implementation-report.md  # 实现报告
 │       │   └── decisions.md           # 实现决策记录
 │       │
-│       ├── reviews/                   # [P7] 审查记录
-│       │   ├── code-review-001.md     # 代码审查报告
-│       │   └── acceptance-test.md     # 验收测试报告
-│       │
-│       └── releases/                  # [P8] 发布记录
-│           ├── v1.0.0-release-notes.md
-│           └── deployment-guide.md
+│       └── reviews/                   # [P7] 审查记录
+│           ├── code-review-report.md  # 代码审查报告
+│           └── acceptance-test.md     # 验收测试报告
+│
+│       └── operations/                # [P8] 运维交付(可选)
+│           ├── deployment-guide.md    # 部署指南
+│           └── monitoring.md          # 监控配置
 │
 └── src/                               # 源代码目录
     └── ...

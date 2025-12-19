@@ -2,9 +2,11 @@
 
 **技能名称**: `powerby-flow-guardian`
 **技能类型**: 核心技能 (Core Skill)
-**版本**: v1.0.0
+**版本**: v2.0.0
 **创建日期**: 2025-12-18
+**最后更新**: 2025-12-19
 **维护者**: PowerBy Skills Team
+**更新说明**: v2.0.0 - MVP精简优化：移除周期预估和瓶颈分析，专注流程合规
 
 ---
 
@@ -198,13 +200,6 @@ class ComplianceAuditor:
         "current": "/powerby.design",
         "expected_prerequisite": "/powerby.research",
         "severity": "critical"
-      }
-    ],
-    "bottlenecks": [
-      {
-        "phase": "P4",
-        "average_duration": "5天",
-        "typical_issues": ["架构设计反复修改", "技术选型犹豫不决"]
       }
     ]
   },
