@@ -753,7 +753,7 @@ graph TD
 
 | 技能名称 | 核心角色 | 主要职责 | 协作阶段 |
 |----------|----------|----------|----------|
-| powerby-product | 产品经理 | 需求定义、澄清、产品规划 | P0-P2 |
+| powerby-product | 产品经理 | 需求定义+澄清、产品规划 | P0-P1 |
 | powerby-architect | 系统架构师 | 技术调研、架构设计 | P3-P4 |
 | powerby-engineer | 软件工程师 | 任务规划、开发实现 | P5-P6 |
 | powerby-code-review | 首席工程师 | 代码审查、项目交付 | P7-P8 |
@@ -819,7 +819,7 @@ sequenceDiagram
 - **路径**: `docs/iterations/{id}-{name}/prd.md`
 - **内容**: 产品概述、用户画像、核心功能、非功能需求
 - **维护者**: powerby-product
-- **更新频率**: P1阶段创建，P2阶段更新
+- **更新频率**: P1阶段创建和更新（融合澄清过程）
 
 #### Function Points (功能点清单)
 - **路径**: `docs/iterations/{id}-{name}/function-points.md`
