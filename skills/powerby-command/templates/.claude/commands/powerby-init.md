@@ -48,8 +48,8 @@ $ARGUMENTS
 
 📋 已安装命令:
   /powerby.initialize - 项目初始化
-  /powerby.define - 需求定义
-  /powerby.clarify - 需求澄清
+  /powerby.define - 需求定义+澄清（P1融合）
+  /powerby.quick - 快速流程（≤3天需求）
   /powerby.research - 技术调研
   /powerby.design - 架构设计
   /powerby.plan - 任务规划

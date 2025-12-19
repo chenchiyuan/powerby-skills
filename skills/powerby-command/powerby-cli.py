@@ -22,12 +22,12 @@ POWERBY_COMMANDS = [
     "powerby-init",
     "powerby-initialize",
     "powerby-define",
-    "powerby-clarify",
     "powerby-research",
     "powerby-design",
     "powerby-plan",
     "powerby-implement",
     "powerby-review",
+    "powerby-quick",
 ]
 
 class PowerByCLI:
