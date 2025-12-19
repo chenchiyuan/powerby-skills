@@ -83,8 +83,7 @@ graph TB
 | 指令 | 对应技能 | 执行阶段 | 主要职责 |
 |------|---------|---------|---------|
 | `/powerby.initialize` | powerby-command (内部) | P0 | 项目初始化和宪章建立 |
-| `/powerby.define` | powerby-product | P1 | 需求定义和功能点清单 |
-| `/powerby.clarify` | powerby-product | P2 | 需求澄清和边界明确 |
+| `/powerby.define` | powerby-product | P1 | 需求定义+澄清和功能点清单 |
 | `/powerby.research` | powerby-architect | P3 | 技术调研和方案确认 |
 | `/powerby.design` | powerby-architect | P4 | 架构设计和方案确认 |
 | `/powerby.plan` | powerby-engineer | P5 | 任务规划和方案确认 |

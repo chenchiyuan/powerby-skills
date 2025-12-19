@@ -27,8 +27,7 @@ graph TB
 
     subgraph "生命周期阶段"
         P0[P0: 初始化]
-        P1[P1: 需求定义]
-        P2[P2: 需求澄清]
+        P1[P1: 需求定义+澄清]
         P3[P3: 技术调研]
         P4[P4: 架构设计]
         P5[P5: 任务规划]
@@ -47,7 +46,6 @@ graph TB
 
     %% 角色与阶段的关系
     PM --> P1
-    PM --> P2
     ARCH --> P3
     ARCH --> P4
     ENG --> P5
@@ -57,7 +55,6 @@ graph TB
     %% 流程守护者与所有阶段的关系
     FG -.-> P0
     FG -.-> P1
-    FG -.-> P2
     FG -.-> P3
     FG -.-> P4
     FG -.-> P5
@@ -91,7 +88,7 @@ graph TB
 
 ### 2.1 与 powerby-product 的协作
 
-**协作场景**: P1-P2 需求阶段
+**协作场景**: P1 需求定义+澄清阶段
 
 ```mermaid
 sequenceDiagram
@@ -114,13 +111,13 @@ sequenceDiagram
 
     User->>FG: 最终检查
     FG->>FG: 验证澄清完整性
-    FG-->>User: P2完成，准备进入P3
+    FG-->>User: P1完成，准备进入P3
 ```
 
 **协作要点**:
 - Flow Guardian在P1开始前检查项目宪章是否存在
-- 在P1完成后验证PRD是否符合标准
-- 在P2完成后确认所有模糊点已澄清
+- 在P1完成后验证PRD、澄清记录是否符合标准
+- 确认所有模糊点已澄清
 - 提供需求阶段的操作指导和下一步建议
 
 **集成示例**:
@@ -177,8 +174,8 @@ class PowerByArchitect:
     def validate_prerequisites(self):
         guardian = PowerByFlowGuardian()
         state = guardian.analyze_current_state()
-        if state["current_phase"] not in ["P2", "P3"]:
-            raise Exception("架构设计必须在P2或P3阶段执行")
+        if state["current_phase"] not in ["P1", "P3"]:
+            raise Exception("架构设计必须在P1或P3阶段执行")
 
         # 检查前置条件
         if not guardian._document_exists("docs/iterations/*/clarifications.md"):

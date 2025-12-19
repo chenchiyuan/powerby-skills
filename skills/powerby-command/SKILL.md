@@ -11,7 +11,7 @@ license: MIT. LICENSE.txt has complete terms
 ## 核心使命
 
 1. **指令解析与执行**：准确解析用户输入的PowerBy指令，执行相应操作
-2. **流程状态管理**：跟踪和管理项目在MVP精简流程中的状态
+2. **流程状态管理**：跟踪和管理项目在MVP精简流程中的状态（P0→P1→P3→P4→P5→P6→P7）
 3. **技能协调**：调用和协调各个核心技能执行任务
 4. **质量门禁**：确保每个阶段通过质量门禁才能进入下一阶段
 5. **快速流程支持**：支持≤3天小需求的快速处理
@@ -43,7 +43,7 @@ license: MIT. LICENSE.txt has complete terms
 - `powerby command_name [参数]`
 - `use powerby-command skill with command_name [参数]`
 
-提取指令名称：`initialize`, `define`, `clarify`, `research`, `design`, `plan`, `implement`, `review`
+提取指令名称：`initialize`, `define`, `research`, `design`, `plan`, `implement`, `review`
 
 ### 第二步：检查前置条件
 
@@ -75,6 +75,7 @@ license: MIT. LICENSE.txt has complete terms
 **快速流程（quick）前置条件**：
 - ✅ 项目已初始化（如果需要新项目）
 - ✅ 现有架构文档存在（如果基于现有系统）
+- ✅ PRD和澄清记录已存在（如果基于现有需求）
 
 ### 第三步：执行对应指令
 
@@ -146,7 +147,7 @@ handoffs:
 
 1. **调用powerby-product技能**
    - 传递参数：需求描述（必填）、用户群体（可选）、核心问题（可选）
-   - 要求生成PRD文档和功能点清单，融合澄清过程
+   - 要求生成PRD文档、功能点清单和澄清记录，融合澄清过程
 
 2. **验证输出文档**
    - 检查是否生成：`docs/iterations/001-{项目名}/prd.md`
@@ -163,7 +164,7 @@ handoffs:
 
 **传递的任务描述模板**：
 ```
-基于以下信息执行需求定义：
+基于以下信息执行需求定义+澄清：
 - 产品想法: {用户输入的产品想法}
 - 目标用户: {用户群体}
 - 核心问题: {核心业务问题}
@@ -173,8 +174,12 @@ handoffs:
 请生成：
 1. 完整的PRD文档 (prd.md)
 2. 结构化功能点清单 (function-points.md)
+3. 澄清记录文档 (clarifications.md)
 
-遵循MVP优先原则，确保核心功能聚焦。
+遵循MVP优先原则，确保核心功能聚焦。P1阶段需融合澄清功能，包括：
+- 11大类覆盖度分析
+- 高优先级模糊点澄清
+- 澄清记录同步
 ```
 
 **预期输出**：
@@ -183,57 +188,13 @@ handoffs:
 
 📄 输出文档:
   ├── docs/iterations/001-{项目名}/prd.md (产品需求文档)
-  └── docs/iterations/001-{项目名}/function-points.md (功能点清单)
+  ├── docs/iterations/001-{项目名}/function-points.md (功能点清单)
+  └── docs/iterations/001-{项目名}/clarifications.md (澄清记录)
 
-🔒 质量门禁 Gate 1: MVP范围合理性检查
+🔒 质量门禁 Gate 1: MVP需求定稿（含澄清）
   ✓ 核心价值定义清晰
   ✓ 功能点完整性验证
   ✓ 最小可行产品范围确认
-
-🎯 下一步: 使用 /powerby.clarify 进入需求澄清阶段
-```
-
----
-
-### /powerby.clarify (P2 - 需求澄清)
-
-**执行步骤**：
-
-1. **调用powerby-product技能**
-   - 传递参数：PRD路径、功能点路径、澄清问题数量
-   - 要求进行结构化澄清，生成澄清记录
-
-2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/clarifications.md`
-
-3. **更新项目元数据**
-   - 在`.powerby/project.json`中更新当前阶段为P2
-   - 标记Gate 2为已通过
-
-**调用技能**：`powerby-product` - 需求澄清
-
-**传递的任务描述模板**：
-```
-基于现有需求文档进行结构化澄清：
-- PRD文档路径: {prd_path}
-- 功能点清单路径: {function_points_path}
-- 澄清问题数量: {questions}
-
-请生成澄清记录文档 (clarifications.md)，包含：
-1. 识别的模糊点
-2. 澄清后的明确描述
-3. 边界条件
-4. 业务规则
-```
-
-**预期输出**：
-```
-✅ P2 需求澄清完成
-
-📄 输出文档:
-  └── docs/iterations/001-{项目名}/clarifications.md (澄清记录)
-
-🔒 质量门禁 Gate 2: 澄清完整性检查
   ✓ 模糊点识别完整
   ✓ 边界条件明确
   ✓ 业务规则确认
@@ -533,7 +494,7 @@ _link}
 
 错误: 无法从P0直接跳转到P3
 
-💡 建议: 正确流程: P0 → P1 → P2 → P3
+💡 建议: 正确流程: P0 → P1 → P3
    当前应执行: /powerby.define
 ```
 
@@ -579,25 +540,22 @@ Flow Guardian将提供：
 步骤1: 项目初始化
 /powerby.initialize 任务管理系统 "一个帮助团队协作的任务管理应用"
 
-步骤2: 需求定义
+步骤2: 需求定义+澄清
 /powerby.define "我想构建一个任务管理系统，帮助团队更好地协作" --user-group "团队成员和项目经理" --problem "任务分配不清晰，协作效率低"
 
-步骤3: 需求澄清
-/powerby.clarify
-
-步骤4: 技术调研
+步骤3: 技术调研
 /powerby.research
 
-步骤5: 架构设计
+步骤4: 架构设计
 /powerby.design
 
-步骤6: 任务规划
+步骤5: 任务规划
 /powerby.plan --tasks-per-day 3
 
-步骤7: 开发实现
+步骤6: 开发实现
 /powerby.implement --tdd
 
-步骤8: 代码审查
+步骤7: 代码审查
 /powerby.review
 ```
 
@@ -611,9 +569,9 @@ Flow Guardian将提供：
 
 输出：
 当前阶段: P3 (技术调研)
-已完成: P0, P1, P2
-已完成门禁: Gate 1, Gate 2
-当前门禁: Gate 3
+已完成: P0, P1
+已完成门禁: Gate 1
+当前门禁: Gate 2
 下一步: /powerby.research
 ```
 
@@ -638,7 +596,7 @@ Flow Guardian将提供：
 
 ### powerby-product (P0-P1)
 - 项目初始化
-- 需求定义+澄清（融合）
+- 需求定义+澄清（融合，包含澄清记录）
 
 ### powerby-architect (P3-P4)
 - 技术调研
@@ -648,9 +606,9 @@ Flow Guardian将提供：
 - 任务规划
 - 开发实现
 
-### powerby-code-review (P7)
+### powerby-code-review (P7-P8)
 - 代码审查
-- MVP交付
+- 项目交付
 
 ### powerby-fullstack
 - 快速流程（≤3天需求）
@@ -668,14 +626,14 @@ Flow Guardian将提供：
 
 | Gate | 阶段 | 检查要点 |
 |------|------|----------|
-| Gate 1 | P1→P3 | MVP需求定稿 |
-| Gate 3 | P3→P4 | 技术调研完整性 |
-| Gate 4 | P4→P5 | 架构设计清晰性 |
-| Gate 5 | P5→P6 | 开发规划详细性 |
-| Gate 6 | P6→P7 | 开发实现质量 |
-| Gate 7 | P7→完成 | 代码审查严格性 |
-| Gate 8 (可选) | P8→完成 | 运维交付完整性 |
+| Gate 1 | P1→P3 | MVP需求定稿（含澄清） |
+| Gate 2 | P3→P4 | 技术调研完整性 |
+| Gate 3 | P4→P5 | 架构设计清晰性 |
+| Gate 4 | P5→P6 | 开发规划详细性 |
+| Gate 5 | P6→P7 | 开发实现质量 |
+| Gate 6 | P7→完成 | 代码审查严格性 |
+| Gate 7 (可选) | P8→完成 | 运维交付完整性 |
 
-> **说明**：Gate 8属于运维流程，独立于MVP开发流程，在MVP验证成功后进行。
+> **说明**：Gate 7属于运维流程，独立于MVP开发流程，在MVP验证成功后进行。
 
 只有通过门禁检查，才能进入下一阶段。

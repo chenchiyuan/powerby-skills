@@ -79,8 +79,7 @@ cp templates/.claude/commands/*.md .claude/commands/
 | 命令 | 阶段 | 描述 |
 |------|------|------|
 | `/powerby.initialize` | P0 | 项目初始化 |
-| `/powerby.define` | P1 | 需求定义 |
-| `/powerby.clarify` | P2 | 需求澄清 |
+| `/powerby.define` | P1 | 需求定义+澄清 |
 | `/powerby.research` | P3 | 技术调研 |
 | `/powerby.design` | P4 | 架构设计 |
 | `/powerby.plan` | P5 | 任务规划 |

@@ -169,7 +169,7 @@ $ /powerby-flow-guardian diagnose --stuck
 - 在没有项目的情况下使用
 
 ### 🤝 与其他技能协作
-- **powerby-product**: 在P1-P2阶段提供状态检查和需求指导
+- **powerby-product**: 在P1阶段提供状态检查和需求指导（融合澄清）
 - **powerby-architect**: 在P3-P4阶段提供架构流程指导
 - **powerby-engineer**: 在P5-P6阶段提供任务执行指导
 - **powerby-code-review**: 在P7-P8阶段提供最终合规检查

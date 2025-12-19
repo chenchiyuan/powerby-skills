@@ -610,8 +610,7 @@ class PowerByFlowGuardian:
         """获取阶段描述"""
         descriptions = {
             Phase.P0: "项目初始化",
-            Phase.P1: "需求定义",
-            Phase.P2: "需求澄清",
+            Phase.P1: "需求定义+澄清",
             Phase.P3: "技术调研",
             Phase.P4: "架构设计",
             Phase.P5: "任务规划",

@@ -115,9 +115,7 @@ templates/
 ```
 P0: /powerby.initialize  → 项目初始化
    ↓
-P1: /powerby.define      → 需求定义
-   ↓
-P2: /powerby.clarify     → 需求澄清
+P1: /powerby.define      → 需求定义+澄清
    ↓
 P3: /powerby.research    → 技术调研
    ↓
