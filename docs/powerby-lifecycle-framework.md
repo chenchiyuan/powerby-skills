@@ -315,7 +315,26 @@ project-root/
 - ✅ research.md已产出
 - ✅ Architect已就位
 
-#### 2.3 主要活动
+#### 2.3 主要活动 (遵循Px执行协议)
+
+**任务拆解**：
+- 解读PRD和功能需求
+- 设计目标架构
+- 标注架构变更点
+- 绘制变更前后对比图
+- 分析技术影响
+- 评估风险等级
+
+**分步迭代**：
+- 按子任务清单逐项执行，完成一个标记[x]
+- 确保每个子任务都有明确输出
+- 遇到阻塞记录并继续下一个
+
+**合规检查**：
+- 对照Gate 3验收标准进行自测
+- 确保架构文档符合阶段标准
+
+**详细活动**：
 1. **需求解读与对齐**: 复述PRD核心目标和用户流程
 2. **架构设计与可视化**:
    - 绘制核心架构图(Mermaid)
@@ -324,14 +343,21 @@ project-root/
    - 设计数据模型(entities/relationships)
    - 定义API契约(OpenAPI/GraphQL)
 
-3. **关键决策点评估**: 识别2-3个架构决策点,提供多方案对比
-4. **Constitution Gates验收**: 通过Simplicity/Anti-Abstraction/Integration-First三大门禁
+3. **标注架构变更点** ⭐:
+   - 识别NEW/MODIFIED/REMOVED/REFACTORED组件
+   - 绘制架构变更前后对比图(Mermaid)
+   - 创建变更点清单表格
+   - 分析技术影响(技术栈、性能、依赖)
+   - 评估风险等级(高/中/低)
+
+4. **关键决策点评估**: 识别2-3个架构决策点,提供多方案对比
+5. **Constitution Gates验收**: 通过Simplicity/Anti-Abstraction/Integration-First三大门禁
 
 #### 2.4 输出文档
 
 | 文档名称 | 文档路径 | 模板状态 | 内容要点 |
 |---------|---------|---------|---------|
-| 架构设计文档 | `docs/{project}/architecture.md` | 📋 待创建 | - 需求对齐章节<br/>- 架构图(Mermaid)<br/>- 组件职责说明<br/>- 组件与需求映射<br/>- 关键决策点分析<br/>- Constitution Gates验收 |
+| 架构设计文档 | `docs/{project}/architecture.md` | 📋 待创建 | - 需求对齐章节<br/>- 架构图(Mermaid)<br/>- 组件职责说明<br/>- 组件与需求映射<br/>- **变更点说明章节** ⭐<br/>- 关键决策点分析<br/>- Constitution Gates验收 |
 | 数据模型定义 | `docs/{project}/data-model.md` | 📋 待创建 | - 实体定义<br/>- 字段类型<br/>- 关系映射<br/>- 唯一性约束<br/>- 状态机(如适用) |
 | API契约 | `docs/{project}/contracts/*.yaml` | 📋 待创建 | - OpenAPI 3.0规范<br/>- 端点定义<br/>- 请求/响应Schema<br/>- 错误码定义 |
 
@@ -355,9 +381,17 @@ project-root/
 **整体验收**
 - [ ] 架构图清晰完整
 - [ ] 所有组件都映射到PRD需求
+- [ ] **变更点说明完整** ⭐
 - [ ] 数据模型已定义
 - [ ] API契约已定义
 - [ ] 关键决策点已评估并选定方案
+
+**变更点说明检查**
+- [ ] 是否有关键概述说明为什么需要变更
+- [ ] 是否有Mermaid架构变更前后对比图
+- [ ] 是否有NEW/MODIFIED/REMOVED变更点清单表格
+- [ ] 是否有技术影响分析(技术栈、性能、依赖)
+- [ ] 是否有风险等级评估(高/中/低)
 
 #### 2.6 状态流转
 - **起始状态**: `P3_COMPLETED`
