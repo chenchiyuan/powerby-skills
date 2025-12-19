@@ -1,12 +1,14 @@
 # PowerBy 工作流完整指南
 **Complete Guide to PowerBy Workflow**
 
-**文档版本**: v3.1.0
+**文档版本**: v3.2.0
 **创建日期**: 2025-12-18
 **最后更新**: 2025-12-19
 **维护者**: PowerBy Team
 **适用范围**: 完整的产品开发生命周期管理框架
-**更新说明**: v3.1.0 - 优化P1+P2流程，融合为"需求定稿制"
+**更新说明**:
+- v3.1.0 - 优化P1+P2流程，融合为"需求定稿制"
+- v3.2.0 - 新增MCS协议（最小上下文集），物理隔离噪声信息，降低AI Token成本
 
 ---
 
@@ -871,6 +873,107 @@ sequenceDiagram
 - 目录名使用数字编号
 - 保持命名的一致性
 
+### 6.4 AI 上下文读取规范 (MCS Protocol)
+
+为保证AI逻辑的确定性并降低成本，执行者（AI）必须遵循以下读取优先级：
+
+#### 6.4.1 最小上下文集 (MCS) 定义
+
+**核心原则**：AI仅允许读取当前阶段「最小上下文集」定义的文档。物理隔离噪声信息，确保核心指令始终处于AI注意力的"高亮区"。
+
+| 执行阶段 | 必须读取的MCS文档 | 明确屏蔽的文档 |
+|----------|-------------------|----------------|
+| **P0 项目初始化** | project-charter.md | 无（初始阶段） |
+| **P1 需求定义+澄清** | prd.md, function-points.md, clarifications.md | constitution.md（避免愿景干扰） |
+| **P3 技术调研** | prd.md, function-points.md, clarifications.md | constitution.md（保持技术专注） |
+| **P4 架构设计** | prd.md, function-points.md, clarifications.md, technical-research.md | constitution.md（技术决策导向） |
+| **P5 任务规划** | architecture.md, technical-research.md | prd.md（避免需求重读） |
+| **P6 开发实现** | tasks.md, architecture.md, 相关代码文件 | prd.md, clarifications.md, technical-research.md, constitution.md |
+| **P7 代码审查** | implementation-report.md, tasks.md, prd.md, architecture.md | technical-research.md, constitution.md |
+| **P8 项目交付** | code-review-report.md, delivery-report.md | 所有中间文档 |
+
+#### 6.4.2 唯一事实源 (SSOT) 优先级原则
+
+**核心规则**：下游文档的优先级高于上游文档。以最新、最权威的文档为准。
+
+**优先级顺序**：
+```
+Gate 8交付 > Gate 7审查 > Gate 6实现 > Gate 5规划 > Gate 4架构 > Gate 3调研 > Gate 1需求 > Gate 0初始化
+```
+
+**冲突处理**：
+- 若architecture.md与prd.md存在冲突，**必须以architecture.md为准**
+- 若tasks.md与architecture.md存在冲突，**必须以tasks.md为准**
+- AI若发现跨阶段文档存在**重大冲突**，应立即停止工作并触发「受阻处理协议」寻求澄清
+
+#### 6.4.3 文档活动状态标记
+
+在 `.powerby/iterations.json` 中记录当前迭代的文档状态：
+
+```json
+{
+  "documents": {
+    "prd.md": {
+      "status": "Active",
+      "gate": "P1",
+      "lastUpdated": "2025-12-19",
+      "mustRead": ["P3", "P4"]
+    },
+    "architecture.md": {
+      "status": "Active",
+      "gate": "P4",
+      "lastUpdated": "2025-12-19",
+      "mustRead": ["P5", "P6", "P7"]
+    },
+    "tasks.md": {
+      "status": "Active",
+      "gate": "P5",
+      "lastUpdated": "2025-12-19",
+      "mustRead": ["P6", "P7"]
+    },
+    "clarifications.md": {
+      "status": "Frozen",
+      "gate": "P1",
+      "lastUpdated": "2025-12-19",
+      "mustRead": ["P3", "P4"]
+    },
+    "technical-research.md": {
+      "status": "Archived",
+      "gate": "P3",
+      "lastUpdated": "2025-12-19",
+      "mustRead": ["P4"]
+    }
+  }
+}
+```
+
+**状态定义**：
+- **Active (活动)**：当前阶段正在编写或必须参考的文档
+- **Frozen (冻结)**：已通过质量门禁（Gate）的基准文档
+- **Archived (归档)**：仅供回溯参考，AI执行任务时不应主动读取
+
+#### 6.4.4 执行约束与验证
+
+**强制约束**：
+1. **P6开发实现阶段**：严禁读取constitution.md、prd.md等非工程性文档
+2. **Token预算管理**：MCS机制应将单次API请求的Token规模压缩40%-70%
+3. **质量回溯**：Gate 7审查失败时，可快速定位是执行问题还是设计问题
+
+**验证机制**：
+- 每次AI执行任务前，必须声明将读取的文档清单
+- 阶段切换时，明确标注新进入MCS的文档和移出MCS的文档
+- 跨阶段冲突时，自动触发SSOT优先级检查
+
+#### 6.4.5 技术价值
+
+✅ **提升指令遵循度**：核心AI指令始终处于注意力高亮区，减少漏掉验收标准的情况
+
+✅ **物理隔绝需求杂音**：powerby-engineer专注于工程实现，仅在权威技术架构指导下工作
+
+✅ **确定性质量回溯**：快速定位问题根因，避免文档堆叠导致的溯源困难
+
+✅ **极大幅度研发降本**：Token规模压缩40%-70%，直接转化为更快响应和更低成本
+
 ---
 
 ## 7. 质量门禁机制
@@ -1184,10 +1287,10 @@ sequenceDiagram
 
 ---
 
-**文档版本**: v3.1.0
+**文档版本**: v3.2.0
 **最后更新**: 2025-12-19
 **维护者**: PowerBy Team
-**审核状态**: 已更新P1+P2流程优化
+**审核状态**: 已新增MCS协议和P1+P2流程优化
 
 ---
 

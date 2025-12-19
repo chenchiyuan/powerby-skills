@@ -80,9 +80,20 @@ description: 世界顶级首席AI系统架构师，负责P3-P4阶段的完整流
 深度技术方案研究，评估技术可行性，为架构设计提供技术选型依据。
 
 ### 📥 输入条件
-- ✅ P2已完成
-- ✅ prd.md和clarifications.md已通过Gate 2
+- ✅ P1已完成
+- ✅ prd.md、clarifications.md和function-points.md已通过Gate 1
 - ✅ 产品需求已明确
+
+### 🔒 MCS协议约束
+**最小上下文集 (MCS)**：P3技术调研阶段必须严格遵循MCS协议
+
+**✅ 允许读取的文档**：
+- `prd.md` - 产品需求文档
+- `function-points.md` - 功能点清单
+- `clarifications.md` - 需求澄清记录
+
+**❌ 严禁读取的文档**：
+- `constitution.md` - 避免愿景描述干扰技术决策
 
 ### 🛠️ 执行步骤
 
@@ -200,6 +211,22 @@ description: 世界顶级首席AI系统架构师，负责P3-P4阶段的完整流
 - ✅ P3已完成
 - ✅ technical-research.md已通过Gate 3
 - ✅ 技术选型已确认
+
+### 🔒 MCS协议约束
+**最小上下文集 (MCS)**：P4架构设计阶段必须严格遵循MCS协议
+
+**✅ 允许读取的文档**：
+- `prd.md` - 产品需求文档
+- `function-points.md` - 功能点清单
+- `clarifications.md` - 需求澄清记录
+- `technical-research.md` - 技术调研报告
+
+**❌ 严禁读取的文档**：
+- `constitution.md` - 避免愿景描述干扰技术决策导向
+
+**⚠️ 重要提醒**：
+- 以technical-research.md的技术选型为准
+- architecture.md是P5-P6阶段的核心事实源，优先级最高
 
 ### 🛠️ 执行步骤
 
