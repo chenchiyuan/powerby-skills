@@ -1,7 +1,7 @@
 # PowerBy 工作流完整指南
 **Complete Guide to PowerBy Workflow**
 
-**文档版本**: v3.2.1
+**文档版本**: v3.2.2
 **创建日期**: 2025-12-18
 **最后更新**: 2025-12-19
 **维护者**: PowerBy Team
@@ -10,6 +10,7 @@
 - v3.1.0 - 优化P1+P2流程，融合为"需求定稿制"
 - v3.2.0 - 新增MCS协议（最小上下文集），物理隔离噪声信息，降低AI Token成本
 - v3.2.1 - 修正MCS协议，强调constitution.md为最高宪法，所有阶段必须严格遵循
+- v3.2.2 - 优化MCS协议，从"严禁读取"改为"优先级参考"，建立核心参考文档和次要参考文档体系
 
 ---
 
@@ -882,23 +883,30 @@ sequenceDiagram
 
 **⚠️ 最高原则**：constitution.md是整个PowerBy工作流的**最高宪法**，包含核心理念、零假设原则、3次尝试原则等。所有阶段都必须严格遵循constitution.md中的原则，任何阶段都不能违背宪法中的规定。
 
-**核心原则**：AI仅允许读取当前阶段「最小上下文集」定义的文档。物理隔离噪声信息，确保核心指令始终处于AI注意力的"高亮区"。
+**核心原则**：建立优先级参考体系，确保核心指令始终处于AI注意力的"高亮区"。所有文档都有其意义，但参考优先级不同。
 
-| 执行阶段 | 必须读取的MCS文档 | 明确屏蔽的文档 |
+| 执行阶段 | 核心参考文档（优先） | 次要参考文档（需要时） |
 |----------|-------------------|----------------|
 | **P0 项目初始化** | project-charter.md, **constitution.md** | 无（初始阶段） |
 | **P1 需求定义+澄清** | prd.md, function-points.md, clarifications.md, **constitution.md** | 无（严格遵循零假设原则） |
-| **P3 技术调研** | prd.md, function-points.md, clarifications.md, **constitution.md** | 无（保持技术专注但遵循宪法） |
+| **P3 技术调研** | prd.md, function-points.md, clarifications.md, **constitution.md** | technical-research.md（技术细节参考） |
 | **P4 架构设计** | prd.md, function-points.md, clarifications.md, technical-research.md, **constitution.md** | 无（技术决策导向但遵循宪法） |
-| **P5 任务规划** | architecture.md, technical-research.md, **constitution.md** | prd.md（避免需求重读） |
-| **P6 开发实现** | tasks.md, architecture.md, 相关代码文件, **constitution.md** | prd.md, clarifications.md, technical-research.md |
-| **P7 代码审查** | implementation-report.md, tasks.md, prd.md, architecture.md, **constitution.md** | technical-research.md |
-| **P8 项目交付** | code-review-report.md, delivery-report.md, **constitution.md** | 所有中间文档 |
+| **P5 任务规划** | architecture.md, technical-research.md, **constitution.md** | prd.md（需求背景参考） |
+| **P6 开发实现** | tasks.md, architecture.md, 相关代码文件, **constitution.md** | prd.md, clarifications.md, technical-research.md（遇到模糊时参考） |
+| **P7 代码审查** | implementation-report.md, tasks.md, architecture.md, **constitution.md** | prd.md, technical-research.md（需要时参考） |
+| **P8 项目交付** | code-review-report.md, delivery-report.md, **constitution.md** | 所有中间文档（项目总结参考） |
 
 **重要说明**：
-- ✅ **constitution.md是所有阶段的最高优先级文档**，包含零假设原则、MVP优先、3次尝试原则等核心理念
-- ❌ **严禁违背constitution.md中的任何原则**，包括但不限于：零假设原则、小步提交、借鉴现有代码、拥抱务实、意图清晰等
-- 🔄 **SSOT优先级**：constitution.md > Gate 8 > Gate 7 > ... > Gate 0
+- ✅ **核心参考文档**：AI的主要注意力应集中在这些文档上，这是决策的主要依据
+- 📖 **次要参考文档**：当遇到模糊、矛盾或需要澄清时，可以查阅这些文档获取更多信息
+- ⚠️ **constitution.md是所有阶段的最高优先级文档**，包含零假设原则、MVP优先、3次尝试原则等核心理念
+- 🔄 **SSOT优先级**：constitution.md > 核心参考文档 > 次要参考文档
+
+**设计理念**：
+- **注意力集中而非禁止**：所有文档都有其意义，通过优先级引导AI注意力，而不是简单禁止
+- **灵活参考机制**：当遇到模糊或需要澄清时，AI可以查阅次要参考文档获取更完整的信息
+- **决策依据明确**：核心参考文档是决策的主要依据，次要参考文档提供补充信息
+- **符合实际工作场景**：模拟真实工作中工程师的工作方式 - 重点关注核心文档，需要时查阅其他文档
 
 #### 6.4.2 唯一事实源 (SSOT) 优先级原则
 
@@ -1298,10 +1306,10 @@ constitution.md（最高宪法）> Gate 8交付 > Gate 7审查 > Gate 6实现 > 
 
 ---
 
-**文档版本**: v3.2.1
+**文档版本**: v3.2.2
 **最后更新**: 2025-12-19
 **维护者**: PowerBy Team
-**审核状态**: 已修正MCS协议，强调constitution.md为最高宪法
+**审核状态**: 已优化MCS协议，建立优先级参考体系
 
 ---
 
