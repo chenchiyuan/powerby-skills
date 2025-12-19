@@ -196,6 +196,8 @@ project-root/
 | 文档名称 | 文档路径 | 模板状态 | 内容要点 |
 |---------|---------|---------|---------|
 | 产品需求文档 | `docs/{project}/prd.md` | 📋 待创建 | - 第一部分:需求原始输入<br/>- 第二部分:功能规格框架<br/>- 第三部分:MVP功能点清单<br/>- 待决策清单 |
+| 功能点清单 | `docs/{project}/function-points.md` | 📋 待创建 | - P0/P1/P2优先级标记<br/>- MVP聚焦度评估<br/>- 范围边界定义 |
+| 需求澄清记录 | `docs/{project}/clarifications.md` | 📋 待创建 | - 11大类覆盖度分析<br/>- 高优先级模糊点澄清<br/>- Q&A记录同步 |
 
 #### 2.5 验收标准 (Gate 1)
 - [ ] MVP核心价值已用一句话定义
@@ -203,23 +205,27 @@ project-root/
 - [ ] 范围边界已明确(In-Scope / Out-of-Scope)
 - [ ] 待决策清单中每项都有2+可行方案
 - [ ] P0功能点数量 ≤ 10个(可配置)
+- [ ] 11大类覆盖度分析已完成
+- [ ] 高优先级模糊点已全部澄清(≤5个问题)
+- [ ] 所有澄清已同步回prd.md对应章节
+- [ ] 覆盖度状态: 核心类别≥80%为"Clear"
 
 #### 2.6 状态流转
 - **起始状态**: `P0_COMPLETED`
 - **执行状态**: `P1_IN_PROGRESS`
 - **Gate 1检查**: `P1_PENDING_APPROVAL`
-- **完成状态**: `P1_COMPLETED` → 进入P2
+- **完成状态**: `P1_COMPLETED` → 进入P3
 
 ---
 
-### P2: 需求澄清 (Requirement Clarification)
+### P3: 技术调研 (Technical Research)
 
 #### 2.1 阶段目标
-通过结构化提问,消除需求中的模糊性和缺失决策点。
+针对关键技术决策进行调研,解决技术选型和可行性问题。
 
 #### 2.2 输入条件
-- ✅ P1已完成
-- ✅ prd.md已通过Gate 1
+- ✅ P1已完成（包括澄清）
+- ✅ prd.md、clarifications.md已通过Gate 1
 
 #### 2.3 主要活动 (遵循Px执行协议)
 
@@ -737,9 +743,6 @@ project-root/
     "P1_IN_PROGRESS",
     "P1_PENDING_APPROVAL",
     "P1_COMPLETED",
-    "P2_IN_PROGRESS",
-    "P2_PENDING_APPROVAL",
-    "P2_COMPLETED",
     "P3_IN_PROGRESS",
     "P3_COMPLETED",
     "P4_IN_PROGRESS",
@@ -773,14 +776,9 @@ stateDiagram-v2
 
     P1_IN_PROGRESS --> P1_PENDING_APPROVAL: 提交审批
     P1_PENDING_APPROVAL --> P1_IN_PROGRESS: 需修改
-    P1_PENDING_APPROVAL --> P1_COMPLETED: Gate 1通过
+    P1_PENDING_APPROVAL --> P1_COMPLETED: Gate 1通过（包括澄清）
 
-    P1_COMPLETED --> P2_IN_PROGRESS: 开始需求澄清
-    P2_IN_PROGRESS --> P2_PENDING_APPROVAL: 提交审批
-    P2_PENDING_APPROVAL --> P2_IN_PROGRESS: 需补充澄清
-    P2_PENDING_APPROVAL --> P2_COMPLETED: Gate 2通过
-
-    P2_COMPLETED --> P3_IN_PROGRESS: 开始技术调研
+    P1_COMPLETED --> P3_IN_PROGRESS: 开始技术调研
     P3_IN_PROGRESS --> P3_COMPLETED: 调研完成
 
     P3_COMPLETED --> P4_IN_PROGRESS: 开始架构设计
