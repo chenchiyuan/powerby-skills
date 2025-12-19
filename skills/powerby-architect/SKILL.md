@@ -87,13 +87,21 @@ description: 世界顶级首席AI系统架构师，负责P3-P4阶段的完整流
 ### 🔒 MCS协议约束
 **最小上下文集 (MCS)**：P3技术调研阶段必须严格遵循MCS协议
 
+**⚠️ 最高原则**：constitution.md是整个PowerBy工作流的**最高宪法**，包含零假设原则、3次尝试原则等核心理念。**所有阶段都必须严格遵循constitution.md中的原则，任何阶段都不能违背宪法中的规定**。
+
 **✅ 允许读取的文档**：
 - `prd.md` - 产品需求文档
 - `function-points.md` - 功能点清单
 - `clarifications.md` - 需求澄清记录
+- `constitution.md` - **最高宪法**，必须遵循其中的核心理念
 
 **❌ 严禁读取的文档**：
-- `constitution.md` - 避免愿景描述干扰技术决策
+- 无（严格遵循零假设原则，但必须遵守宪法）
+
+**⚠️ 重要提醒**：
+- **必须严格遵循constitution.md中的核心理念**：零假设原则、MVP优先、务实权衡等
+- 技术决策必须基于清晰的架构原则
+- 若发现需求模糊，立即启动零假设原则进行澄清
 
 ### 🛠️ 执行步骤
 
@@ -215,18 +223,23 @@ description: 世界顶级首席AI系统架构师，负责P3-P4阶段的完整流
 ### 🔒 MCS协议约束
 **最小上下文集 (MCS)**：P4架构设计阶段必须严格遵循MCS协议
 
+**⚠️ 最高原则**：constitution.md是整个PowerBy工作流的**最高宪法**，包含零假设原则、3次尝试原则等核心理念。**所有阶段都必须严格遵循constitution.md中的原则，任何阶段都不能违背宪法中的规定**。
+
 **✅ 允许读取的文档**：
 - `prd.md` - 产品需求文档
 - `function-points.md` - 功能点清单
 - `clarifications.md` - 需求澄清记录
 - `technical-research.md` - 技术调研报告
+- `constitution.md` - **最高宪法**，必须遵循其中的核心理念
 
 **❌ 严禁读取的文档**：
-- `constitution.md` - 避免愿景描述干扰技术决策导向
+- 无（技术决策导向但必须遵守宪法）
 
 **⚠️ 重要提醒**：
+- **必须严格遵循constitution.md中的架构原则**：SOLID、DRY、奥卡姆剃刀、演进式架构等
 - 以technical-research.md的技术选型为准
 - architecture.md是P5-P6阶段的核心事实源，优先级最高
+- **任何架构决策都不能违背宪法中的原则**
 
 ### 🛠️ 执行步骤
 
