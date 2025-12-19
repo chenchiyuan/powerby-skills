@@ -3,7 +3,7 @@ description: 项目初始化 - 创建PowerBy项目结构，定义迭代系统主
 handoffs:
   - label: Initialize Project
     agent: powerby-command
-    prompt: 初始化PowerBy项目，创建基础目录结构，定义迭代系统主任务
+    prompt: 初始化PowerBy项目，创建基础目录结构，定义迭代系统主任务，并生成项目宪章docs/constitution.md。项目宪章必须包含：1) 核心理念（零假设原则、Mixin思维、小步提交等）；2) 工作流程（顾问式流程）；3) 技术标准（SOLID、DRY、奥卡姆剃刀原则等）；4) 决策框架；5) 质量门禁。这是约束整个项目的最高法则，不是产品文档。
 ---
 
 ## User Input
@@ -28,7 +28,8 @@ $ARGUMENTS
 
 3. **生成项目宪章文档**
    - 路径：`docs/constitution.md`
-   - 包含：项目概述、主任务、创建时间
+   - 包含：核心理念、工作流程、技术标准、决策框架、质量门禁等最高法则
+   - 这是约束产品、架构、研发的最高指导原则，不是产品功能文档
 
 4. **创建项目元数据文件**
    - 路径：`.powerby/project.json`

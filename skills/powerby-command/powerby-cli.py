@@ -195,6 +195,37 @@ class PowerByCLI:
 
         print(f"📝 创建迭代文件: {iterations_file}")
 
+        # 创建项目宪章文档
+        self._create_constitution_doc(project_name)
+
+    def _create_constitution_doc(self, project_name: str):
+        """创建项目宪章文档"""
+        template_constitution = self.template_dir / "docs" / "constitution.md"
+
+        if not template_constitution.exists():
+            print(f"⚠️  警告: 找不到宪章模板: {template_constitution}")
+            return
+
+        # 读取模板内容
+        with open(template_constitution, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # 替换模板变量
+        timestamp = subprocess.check_output(
+            ["date", "-u", "+%Y-%m-%d %H:%M:%S UTC"],
+            text=True
+        ).strip()
+
+        content = content.replace("{{TIMESTAMP}}", timestamp)
+        content = content.replace("{{PROJECT_NAME}}", project_name)
+
+        # 写入文档
+        constitution_file = self.project_root / "docs" / "constitution.md"
+        with open(constitution_file, 'w', encoding='utf-8') as f:
+            f.write(content)
+
+        print(f"📜 创建项目宪章: {constitution_file}")
+
     def _show_success_message(self):
         """显示成功安装信息"""
         print("\n" + "="*50)
