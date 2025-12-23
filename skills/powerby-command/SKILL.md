@@ -88,6 +88,9 @@ license: MIT. LICENSE.txt has complete terms
 - `/powerby.implement` - 开发实现 (P6)
 - `/powerby.review` - 代码审查 (P7)
 
+### Bug-Fix流程指令
+- `/powerby-bugfix` - Bug诊断与修复（独立流程）
+
 ### 快速流程指令
 - `/powerby.quick` - 快速流程（≤3天需求）
 
@@ -102,7 +105,7 @@ license: MIT. LICENSE.txt has complete terms
 - `powerby command_name [参数]`
 - `use powerby-command skill with command_name [参数]`
 
-提取指令名称：`initialize`, `define`, `research`, `design`, `plan`, `implement`, `review`
+提取指令名称：`initialize`, `define`, `research`, `design`, `plan`, `implement`, `review`, `bugfix`
 
 ### 第二步：检查前置条件
 
@@ -131,6 +134,11 @@ license: MIT. LICENSE.txt has complete terms
 **P7阶段（review）前置条件**：
 - ✅ 实现报告存在：`docs/iterations/*/implementation-report.md`
 
+**Bug-Fix（bugfix）前置条件**：
+- ✅ 问题描述清晰（必须）
+- ✅ 错误日志或代码片段（必须）
+- ✅ 复现步骤（如果可能）
+
 **快速流程（quick）前置条件**：
 - ✅ 项目已初始化（如果需要新项目）
 - ✅ 现有架构文档存在（如果基于现有系统）
@@ -150,6 +158,9 @@ license: MIT. LICENSE.txt has complete terms
 - **P5 plan** → 调用 `powerby-engineer` 技能
 - **P6 implement** → 调用 `powerby-engineer` 技能
 - **P7 review** → 调用 `powerby-code-review` 技能
+
+### Bug-Fix流程技能协调 ⭐
+- **bugfix** → 调用 `powerby-bugfix` 技能（独立流程）
 
 ### 快速流程技能协调
 - **quick** → 调用 `powerby-fullstack` 技能
@@ -459,6 +470,46 @@ handoffs:
 
 ---
 
+### /powerby-bugfix (Bug-Fix - 故障诊断与修复)
+
+**执行步骤**：
+
+1. **调用powerby-bugfix技能**
+   - 要求执行Bug诊断与修复
+   - 传递问题上下文信息
+
+2. **验证输出文档**
+   - 检查是否生成：`bugs/bug-{id}.md`
+
+3. **更新项目元数据**
+   - 在`.powerby/bugs.json`中记录bug修复状态（如果存在）
+
+**调用技能**：`powerby-bugfix` - Bug诊断与修复
+
+**传递的任务描述模板**：
+```
+请帮我诊断和修复以下问题：
+- 问题描述: {问题}
+- 上下文信息: {代码/日志/PRD}
+
+请使用单文档方式记录完整修复过程。
+```
+
+**输出示例**：
+```
+✅ Bug-Fix 任务完成
+
+📋 问题报告: bugs/bug-001-{问题标识}.md
+🎯 修复状态: 已完成
+⏱️ 修复时间: X小时
+
+🔍 诊断结果: [根因]
+🔧 修复方案: [方案]
+✅ 验证结果: [验证]
+```
+
+---
+
 ### /powerby.review (P7-P8 - 代码审查和交付)
 
 **执行步骤**：
@@ -715,14 +766,16 @@ Flow Guardian将提供：
 #### 增强功能
 - 🔧 **质量门禁强化**: 整合Fail-Fast和文档契约要求
 - 🔧 **技能协调升级**: 确保所有技能遵循统一原则
+- 🔧 **新增Bug-Fix支持**: 集成powerby-bugfix技能，独立的问题诊断与修复流程
 
 #### 变更类型
 - **核心原则**: 重大增强
 - **流程优化**: 重要改进
+- **新技能集成**: Bug-Fix专项技能
 
 ---
 
 **版本**: v2.2.0
 **适用范围**: PowerBy Lifecycle 全流程协调
-**依赖技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review
+**依赖技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-bugfix
 **协作技能**: powerby-flow-guardian

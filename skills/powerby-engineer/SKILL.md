@@ -629,6 +629,7 @@ description: 世界顶级资深软件研发工程师，负责P5-P6阶段的完�
 **下游**：
 - 将代码和测试交给 `powerby-code-review` skill 进行审查
 - 调用 `test-spec-design` atomic skill 生成测试规格
+- 遇到代码问题时，可以调用 `powerby-bugfix` skill 进行专业诊断和修复
 
 ### 调用原子技能
 
@@ -919,7 +920,7 @@ description: 世界顶级资深软件研发工程师，负责P5-P6阶段的完�
 **版本**: v2.2.0
 **适用范围**: PowerBy Lifecycle P5-P6阶段
 **依赖技能**: requirement-alignment, test-spec-design, solution-evaluation
-**协作技能**: powerby-architect, powerby-code-review
+**协作技能**: powerby-architect, powerby-code-review, powerby-bugfix
 
 ## 初始化指令
 
