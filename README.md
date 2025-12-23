@@ -1,7 +1,7 @@
 # PowerBy Skills - AI驱动的产品开发流程技能包
 
-**版本**: v2.2.0
-**更新日期**: 2025-12-20
+**版本**: v2.3.0
+**更新日期**: 2025-12-23
 **技能类型**: 完整技能生态系统 (Complete Skill Ecosystem)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -64,6 +64,7 @@ PowerBy Skills 是一套完整的AI驱动产品开发流程技能包，涵盖从
 | **powerby-engineer** | 资深工程师 | TDD实现、质量保证 | P5-P6 |
 | **powerby-code-review** | 首席审查师 | 代码审计、验收方案 | P7-P8 |
 | **powerby-command** | 指令管理 | 流程协调、状态管理 | 全流程 |
+| **powerby-bugfix** | 故障诊断师 | 证据驱动诊断、单文档修复 | 独立流程 |
 | **powerby-flow-guardian** | 流程守护 | 状态检查、问题诊断 | 全流程 |
 
 ### 完整工作流程
@@ -88,6 +89,7 @@ graph TB
         ARCH[powerby-architect<br/>架构师]
         ENG[powerby-engineer<br/>工程师]
         CR[powerby-code-review<br/>代码审查]
+        BUGFIX[powerby-bugfix<br/>故障诊断师] 🔧
         FG[powerby-flow-guardian<br/>流程守护者]
         CMD[powerby-command<br/>指令管理] ⭐
     end
@@ -101,6 +103,7 @@ graph TB
         PLAN[/powerby.plan]
         IMPLEMENT[/powerby.implement]
         REVIEW[/powerby.review]
+        BUGFIX[/powerby-bugfix]
     end
 
     %% 指令到CMD的关系
@@ -112,12 +115,17 @@ graph TB
     PLAN --> CMD
     IMPLEMENT --> CMD
     REVIEW --> CMD
+    BUGFIX --> CMD
 
     %% CMD到技能的映射
     CMD --> PM
     CMD --> ARCH
     CMD --> ENG
     CMD --> CR
+    CMD --> BUGFIX
+
+    %% Bug-Fix独立流程
+    BUGFIX -.-> BUGFIX
 
     %% 流程维护
     CMD -.-> FG
@@ -499,12 +507,35 @@ chmod 644 .claude/commands/powerby-*.md
 - ✅ powerby-engineer: 完整整合7条核心原则
 - ✅ powerby-command: 整合7条核心原则到工作流程
 - ✅ powerby-architect: 整合Fail-Fast钢铁纪律到架构设计
+- ✅ **powerby-bugfix**: 新增专项故障诊断与修复技能（v1.0.0）
 - ✅ 所有技能文档版本同步到v2.2.0
 
 #### 变更类型
 - **核心原则**: 重大增强
 - **流程创新**: 文档驱动TDD
 - **质量门禁**: 文档化率硬性标准
+- **新技能**: Bug-Fix专项技能（独立流程）
+
+### v2.3.0 (2025-12-23) ⭐ 最新版本
+
+**Bug-Fix专项技能发布**
+
+#### 新增功能
+- ✨ **powerby-bugfix技能**: 独立的故障诊断与修复流程
+  - 证据驱动诊断：基于日志、堆栈、代码事实的分析方法
+  - 单文档记录：bug、分析、任务、验证全部在一个文档中
+  - 五阶段流程：问题报告→诊断分析→修复计划→实施修复→验证交付
+  - 最小代价修复：奥卡姆剃刀原则，选择最直接的修复方案
+
+#### 技能集成
+- 🔧 **Command集成**: 新增/powerby-bugfix指令
+- 🔧 **Engineer协作**: powerby-engineer可调用powerby-bugfix处理代码问题
+- 🔧 **文档完善**: 更新README.md技能列表和工作流程图
+
+#### 变更类型
+- **新技能**: Bug-Fix专项技能
+- **流程扩展**: 独立于P0-P8的问题修复流程
+- **文档更新**: 完整集成到项目文档体系
 
 ### v2.1.0 (2025-12-19)
 
@@ -535,7 +566,7 @@ chmod 644 .claude/commands/powerby-*.md
 
 ### 版本规划
 
-**v2.3.0 (计划中)**
+**v2.4.0 (计划中)**
 - 📋 自动化测试套件
 - 📊 可视化进度仪表板
 - 🔗 第三方工具集成
