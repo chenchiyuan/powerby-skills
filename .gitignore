@@ -238,3 +238,6 @@ proposals/
 # Reference materials (not part of the distributed package)
 references/
 spec-kit/
+
+# macOS
+.DS_Store
