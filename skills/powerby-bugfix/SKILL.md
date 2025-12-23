@@ -151,6 +151,194 @@ Bug-Fix技能采用五阶段标准流程：
 **输出**：
 - 验证报告和代码交付
 
+## 临时文件管理机制
+
+### 📁 temp_scripts目录规范
+
+为了确保项目目录整洁有序，bug修复过程中的所有临时代码和验证脚本必须统一存放在 `temp_scripts/` 目录下。
+
+### 🔧 临时代码使用原则
+
+#### 1. 优先调用已有代码
+- **首要原则**：在修复和验证过程中，优先调用项目现有的代码模块
+- **避免重复**：不重复实现已有功能
+- **模块复用**：充分利用项目中已验证的组件
+
+#### 2. 临时代码分类
+
+**临时分析脚本** (`temp_scripts/analysis/`)
+- 用于代码分析、静态检查
+- 用于问题复现的辅助脚本
+- 用于数据提取和日志分析
+
+**临时验证脚本** (`temp_scripts/validation/`)
+- 用于修复后的验证测试
+- 用于回归测试的临时脚本
+- 用于性能对比的验证工具
+
+**临时模拟脚本** (`temp_scripts/mock/`)
+- 用于模拟外部依赖
+- 用于创建测试数据和场景
+- 用于替代难以访问的资源
+
+### 📋 临时文件命名规范
+
+```
+temp_scripts/
+├── analysis/
+│   ├── bug-{id}-code-analyzer.{py|js|sh}    # 代码分析脚本
+│   ├── bug-{id}-log-parser.{py|js|sh}       # 日志解析脚本
+│   └── bug-{id}-dependency-check.{py|js}    # 依赖检查脚本
+├── validation/
+│   ├── bug-{id}-test-{component}.{py|js}    # 验证测试脚本
+│   ├── bug-{id}-regression-check.{py|js}    # 回归检查脚本
+│   └── bug-{id}-performance-compare.{py|js} # 性能对比脚本
+├── mock/
+│   ├── bug-{id}-mock-{service}.{py|js|json} # 模拟服务
+│   ├── bug-{id}-test-data.{csv|json|yaml}   # 测试数据
+│   └── bug-{id}-scenario-{name}.{py|js}     # 测试场景
+└── logs/                                     # 临时日志目录
+    ├── bug-{id}-analysis.log                # 分析日志
+    ├── bug-{id}-test-results.log            # 测试结果日志
+    └── bug-{id}-debug.log                   # 调试日志
+```
+
+### 🧹 临时文件清理机制
+
+#### 清理触发条件
+在Bug修复进入"验证交付"阶段时，必须执行临时文件清理：
+
+1. **验证完成后**：确认修复有效后立即清理
+2. **修复失败时**：如果修复失败，也要清理临时文件
+3. **任务终止时**：无论任何原因导致任务终止，都要清理临时文件
+
+#### 清理检查清单
+在离开Bug-Fix任务前，必须执行以下清理操作：
+
+```markdown
+### 临时文件清理清单
+
+#### 必须删除的文件/目录
+- [ ] `temp_scripts/analysis/` 下所有文件
+- [ ] `temp_scripts/validation/` 下所有文件
+- [ ] `temp_scripts/mock/` 下所有文件
+- [ ] `temp_scripts/logs/` 下所有文件
+- [ ] `temp_scripts/` 目录本身（如果为空）
+
+#### 保留的文件
+- [ ] `temp_scripts/README.md` (如果存在，说明临时目录用途)
+- [ ] 任何用户明确要求保留的文件
+
+#### 清理验证
+- [ ] 检查工作目录是否整洁
+- [ ] 确认无遗留的临时文件
+- [ ] 验证项目目录结构完整
+```
+
+#### 自动清理脚本
+```bash
+#!/bin/bash
+# bug-fix-cleanup.sh
+
+echo "🧹 开始清理Bug-Fix临时文件..."
+
+BUG_ID=$1
+if [ -z "$BUG_ID" ]; then
+    echo "❌ 错误：请提供Bug ID"
+    exit 1
+fi
+
+# 清理特定Bug的临时文件
+echo "📁 清理 temp_scripts/ 目录..."
+
+# 删除与当前bug相关的所有临时文件
+find temp_scripts -name "*bug-${BUG_ID}*" -type f -delete
+
+# 清理空的子目录
+find temp_scripts -type d -empty -delete
+
+# 检查并清理temp_scripts目录（如果为空）
+if [ -d "temp_scripts" ] && [ -z "$(ls -A temp_scripts)" ]; then
+    rmdir temp_scripts
+    echo "✅ temp_scripts 目录已删除（目录为空）"
+else
+    echo "✅ temp_scripts 目录保留（包含其他文件或非空）"
+fi
+
+# 验证清理结果
+if [ ! -d "temp_scripts" ] || [ -z "$(ls -A temp_scripts 2>/dev/null)" ]; then
+    echo "✅ 清理完成：工作目录整洁"
+else
+    echo "⚠️ 警告：仍有临时文件残留"
+    ls -la temp_scripts/
+fi
+
+echo "🎯 Bug-${BUG_ID} 临时文件清理完成"
+```
+
+### 🛡️ 安全保护机制
+
+#### 1. 目录保护
+- **永远不清理**：`src/`、`docs/`、`tests/` 等核心目录
+- **永远不清理**：`.powerby/` 目录及任何用户数据
+- **明确范围**：临时文件清理仅限于 `temp_scripts/` 目录
+
+#### 2. 确认机制
+```bash
+# 清理前必须确认
+echo "⚠️ 即将清理临时文件，请确认："
+echo "  Bug ID: $BUG_ID"
+echo "  目录: temp_scripts/"
+read -p "是否继续清理？(y/N): " confirm
+
+if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+    echo "❌ 清理已取消"
+    exit 1
+fi
+```
+
+#### 3. 备份保护
+```bash
+# 重要临时文件可以备份，但不推荐
+echo "💡 提示：如需备份临时文件，请使用："
+echo "  tar -czf temp_scripts_backup_bug_${BUG_ID}.tar.gz temp_scripts/"
+```
+
+### 📝 在Bug文档中记录临时文件
+
+每个Bug文档的"实施修复"阶段必须包含临时文件记录：
+
+```markdown
+## 四、实施修复
+
+### 临时文件使用记录
+本次修复过程中创建了以下临时文件：
+
+#### 分析脚本
+- `temp_scripts/analysis/bug-001-code-analyzer.py` - 代码静态分析
+- `temp_scripts/logs/bug-001-analysis.log` - 分析结果日志
+
+#### 验证脚本
+- `temp_scripts/validation/bug-001-test-auth.py` - 修复验证测试
+- `temp_scripts/validation/bug-001-regression-check.sh` - 回归检查脚本
+
+#### 清理状态
+- ✅ 所有临时文件已清理
+- ✅ 工作目录整洁
+- ✅ 无遗留文件
+
+### 修改明细
+[实际代码修改...]
+```
+
+### ⚠️ 重要提醒
+
+1. **及时清理**：修复完成后必须立即清理临时文件
+2. **范围明确**：只清理 `temp_scripts/` 目录及其子目录
+3. **安全第一**：永远不清理项目核心目录和用户数据
+4. **验证确认**：清理后必须验证工作目录整洁
+5. **文档记录**：在Bug文档中记录所有临时文件的使用和清理
+
 ## 单文档结构 (bug-{id}.md)
 
 所有Bug-Fix过程都在一个文档中完成，结构如下：
