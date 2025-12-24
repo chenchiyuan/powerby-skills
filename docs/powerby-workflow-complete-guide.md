@@ -1,9 +1,9 @@
 # PowerBy 工作流完整指南
 **Complete Guide to PowerBy Workflow**
 
-**文档版本**: v3.3.0
+**文档版本**: v3.4.0
 **创建日期**: 2025-12-18
-**最后更新**: 2025-12-19
+**最后更新**: 2025-12-24
 **维护者**: PowerBy Team
 **适用范围**: 专注MVP的产品开发生命周期管理框架
 **更新说明**:
@@ -12,6 +12,7 @@
 - v3.2.1 - 修正MCS协议，强调constitution.md为最高宪法，所有阶段必须严格遵循
 - v3.2.2 - 优化MCS协议，从"严禁读取"改为"优先级参考"，建立核心参考文档和次要参考文档体系
 - v3.3.0 - MVP精简优化：移除非功能性属性扫描、简化发布流程、精简元数据追踪
+- v3.4.0 - GitHub分支管理自动化：集成powerby-github-branch技能，实现P0-P8自动化分支管理
 
 ---
 
@@ -1016,11 +1017,82 @@ constitution.md（最高宪法）> Gate 8交付 > Gate 7审查 > Gate 6实现 > 
 - **编号**: 从001开始递增
 - **命名**: 使用有意义的英文名称
 
-### 8.2 分支管理
+### 8.2 GitHub分支管理 (GitFlow)
 
-- **分支命名**: 与迭代编号保持一致
-- **分支隔离**: 每个迭代有独立的Git分支
-- **合并策略**: 通过Pull Request进行代码合并
+PowerBy集成了完整的GitFlow分支管理策略，通过独立的 `powerby-github-branch` 技能实现自动化分支管理。
+
+#### 8.2.1 分支策略架构
+
+```mermaid
+graph TB
+    main[main - 生产就绪] -->|合并| develop
+    develop[develop - 开发集成] -->|合并| feature001[feature/001-task-manager]
+    develop -->|合并| feature002[feature/002-payment-system]
+    main -->|hotfix| hotfix001[hotfix/003-security-fix]
+    develop -->|bugfix| bugfix001[bugfix/002-login-error]
+```
+
+#### 8.2.2 分支类型与命名规范
+
+**主分支 (长期分支)**
+- `main`: 生产就绪代码，强制PR + 2个审查者
+- `develop`: 开发集成分支，强制PR + 1个审查者
+
+**功能分支 (每个迭代)**
+- `feature/{id}-{name}`: 完整的P0-P8迭代生命周期
+  - 示例: `feature/001-task-manager`, `feature/002-payment-system`
+  - 从develop创建，P8完成后合并到develop
+
+**Bug修复分支 (独立流程)**
+- `bugfix/{id}-{description}`: 一般Bug修复 (P2/P3级别)
+  - 从develop创建，修复后合并到develop
+- `hotfix/{id}-{description}`: 紧急修复 (P0/P1级别)
+  - 从main创建，同时合并到main和develop
+
+#### 8.2.3 自动化流程集成
+
+**P0-P8迭代分支管理**
+```
+P1阶段完成 → 自动调用 powerby-github-branch.create_feature_branch()
+→ 创建 feature/{id}-{name} 分支
+
+P8阶段完成 → 自动调用 powerby-github-branch.merge_branch()
+→ 合并分支到develop并清理
+```
+
+**Bug修复分支管理**
+```
+Bug修复开始 → powerby-bugfix 调用 powerby-github-branch.create_bugfix_branch()
+→ 根据严重程度自动选择 bugfix/ 或 hotfix/ 分支
+
+修复完成 → powerby-bugfix 调用 powerby-github-branch.merge_and_cleanup()
+→ 合并到相应分支并清理
+```
+
+#### 8.2.4 技能协作
+
+| 调用方 | 功能 | 触发时机 | 自动化程度 |
+|--------|------|---------|-----------|
+| powerby-command | 创建feature分支 | P1阶段完成后 | 全自动 |
+| powerby-command | 合并feature分支 | P8阶段完成后 | 全自动 |
+| powerby-bugfix | 创建bugfix/hotfix分支 | Bug修复开始时 | 全自动 |
+| powerby-bugfix | 合并和清理分支 | Bug修复完成后 | 全自动 |
+
+#### 8.2.5 分支管理工具
+
+PowerBy提供了三个自动化脚本：
+
+- `scripts/create-iteration-branch.sh`: 创建迭代分支
+- `scripts/cleanup-branches.sh`: 清理已合并分支
+- `scripts/list-branches.sh`: 查看分支状态和进度
+
+#### 8.2.6 分支策略优势
+
+- ✅ **并行开发**: 多个feature分支同时进行，不相互干扰
+- ✅ **独立Bug修复**: bugfix/hotfix独立流程，快速响应问题
+- ✅ **标准化流程**: 清晰的命名规范和生命周期管理
+- ✅ **自动集成**: 与P0-P8流程和Bug修复流程无缝集成
+- ✅ **技能解耦**: 分支管理独立为专门技能，职责清晰
 
 ### 8.3 文档组织
 

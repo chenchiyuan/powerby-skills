@@ -1,12 +1,14 @@
 # PowerBy 项目软件生命周期框架
 ## Project Software Development Lifecycle Framework
 
-**版本**: v2.2.0
+**版本**: v2.3.0
 **创建日期**: 2025-12-17
-**最后更新**: 2025-12-19
-**状态**: MVP精简版 - 包含P0+P1合并优化 + Px执行协议
+**最后更新**: 2025-12-24
+**状态**: MVP精简版 - 包含P0+P1合并优化 + Px执行协议 + GitHub分支管理
 **目标**: 专注于MVP的核心流程管理，遵循奥卡姆剃刀原则
-**更新说明**: 引入Px执行协议，强调先拆解任务再执行的抽象原则
+**更新说明**:
+- v2.2.0 - 引入Px执行协议，强调先拆解任务再执行的抽象原则
+- v2.3.0 - 集成GitHub分支管理自动化，实现P0-P8分支生命周期管理
 
 ---
 
@@ -79,7 +81,31 @@ graph TB
 
 > **说明**: P8运维交付为可选流程，独立于MVP开发流程
 
-### 1.3 文档目录结构
+### 1.3 GitHub分支管理 (GitFlow)
+
+PowerBy集成了完整的GitFlow分支管理策略，通过独立的 `powerby-github-branch` 技能实现自动化分支管理：
+
+**分支策略架构**:
+```mermaid
+graph TB
+    main[main - 生产就绪] -->|合并| develop
+    develop[develop - 开发集成] -->|合并| feature001[feature/001-task-manager]
+    develop -->|合并| feature002[feature/002-payment-system]
+    main -->|hotfix| hotfix001[hotfix/003-security-fix]
+    develop -->|bugfix| bugfix001[bugfix/002-login-error]
+```
+
+**分支类型**:
+- **主分支**: `main` (生产) + `develop` (集成)
+- **功能分支**: `feature/{id}-{name}` (P0-P8完整迭代)
+- **修复分支**: `bugfix/{id}-{desc}` (P2/P3) + `hotfix/{id}-{desc}` (P0/P1)
+
+**自动化集成**:
+- P1完成后 → 自动创建 `feature/{id}-{name}` 分支
+- P8完成后 → 自动合并分支到 `develop`
+- Bug修复时 → 自动选择 `bugfix/` 或 `hotfix/` 分支
+
+### 1.4 文档目录结构
 
 ```
 project-root/
