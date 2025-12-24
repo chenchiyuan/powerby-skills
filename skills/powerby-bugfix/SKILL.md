@@ -557,6 +557,22 @@ echo "  tar -czf temp_scripts_backup_bug_${BUG_ID}.tar.gz temp_scripts/"
 ### 执行记录
 [记录实际执行过程，与计划对比]
 
+### 分支信息 🆕
+- **Bug级别**: P0/P1/P2/P3
+- **分支类型**: {hotfix/bugfix}
+- **分支名称**: {分支完整名称}
+- **源分支**: {main/develop}
+- **目标分支**: {main/develop或两者}
+
+### 分支创建记录
+```bash
+# 创建分支命令记录
+git checkout {源分支}
+git pull origin {源分支}
+git checkout -b {分支名}
+git push -u origin {分支名}
+```
+
 ### 临时文件使用记录
 本次修复过程中创建了以下临时文件：
 
@@ -590,6 +606,32 @@ echo "  tar -czf temp_scripts_backup_bug_${BUG_ID}.tar.gz temp_scripts/"
 
 ### 防御性变更
 [是否添加了断言或快速失败逻辑]
+
+### 分支管理 🆕
+#### 合并状态
+- [ ] {分支名} 已合并到 {目标分支}
+- [ ] 本地分支已删除
+- [ ] 远程分支已删除
+
+#### 分支清理命令记录
+```bash
+# hotfix分支清理示例
+git checkout develop
+git merge hotfix/001-{问题描述}
+git branch -d hotfix/001-{问题描述}
+git push origin --delete hotfix/001-{问题描述}
+
+# bugfix分支清理示例
+git checkout develop
+git merge bugfix/002-{问题描述}
+git branch -d bugfix/002-{问题描述}
+git push origin --delete bugfix/002-{问题描述}
+```
+
+#### 分支状态验证
+- [ ] 分支列表中无残留分支
+- [ ] 合并历史记录正确
+- [ ] 目标分支包含修复内容
 
 ### 临时文件清理验证
 **清理检查清单**：
@@ -697,15 +739,162 @@ Bug编号采用以下格式：
 3. 更新全局索引
 4. 生成迭代Bug索引（如适用）
 
+## 分支管理集成
+
+### Bug修复分支策略
+
+Bug-Fix技能集成GitFlow分支管理策略，通过调用 `powerby-github-branch` 技能实现分支管理：
+
+#### 分支类型选择
+
+**P0/P1级别Bug（紧急修复）**
+- 分支类型：`hotfix/{id}-{问题描述}`
+- 分支源：从 `main` 分支创建
+- 合并策略：同时合并到 `main` 和 `develop`
+- 示例：`hotfix/001-security-vulnerability`
+
+**P2/P3级别Bug（一般修复）**
+- 分支类型：`bugfix/{id}-{问题描述}`
+- 分支源：从 `develop` 分支创建
+- 合并策略：合并到 `develop`
+- 示例：`bugfix/002-login-timeout`
+
+#### 分支管理流程
+
+**阶段1：分支创建**
+- 调用 `powerby-github-branch.create_bugfix_branch()`
+- 根据严重程度自动选择分支类型
+- 创建分支并设置上游
+
+**阶段2：Bug修复**
+- 在创建的分支上进行修复工作
+- 所有修复操作都在此分支上进行
+
+**阶段3：分支合并和清理**
+- 调用 `powerby-github-branch.merge_and_cleanup()`
+- 自动合并到目标分支
+- 清理本地和远程分支
+
+#### 与powerby-github-branch的集成
+
+**创建分支**：
+```markdown
+请帮我诊断和修复以下问题：
+- 问题描述: {问题}
+- 严重程度: {P0/P1/P2/P3}
+- 上下文信息: {代码/日志/PRD}
+
+请使用单文档方式记录完整修复过程。
+
+**分支管理**：
+- 调用 powerby-github-branch.create_bugfix_branch()
+- Bug级别: {P0/P1/P2/P3}
+- 建议分支: {hotfix/bugfix}/{id}-{描述}
+- 当前分支: {根据级别选择的分支}
+```
+
+**合并和清理**：
+```markdown
+修复完成后，自动调用 powerby-github-branch.merge_and_cleanup()
+
+**分支状态**：
+- 分支名: {分支完整名称}
+- 合并状态: {待合并/已合并}
+- 清理状态: {待清理/已清理}
+```
+
+#### 分支状态追踪
+
+在Bug文档中记录分支管理信息：
+
+```markdown
+## 五、实施修复
+
+### 分支信息 🆕
+- **Bug级别**: P0/P1/P2/P3
+- **分支类型**: {hotfix/bugfix}
+- **分支名称**: {分支完整名称}
+- **源分支**: {main/develop}
+- **目标分支**: {main/develop或两者}
+
+### 分支操作记录
+- [ ] 已调用 powerby-github-branch 创建分支
+- [ ] 修复工作在正确分支上进行
+- [ ] 已调用 powerby-github-branch 合并和清理分支
+```
+
+### 与powerby-command的集成
+
+当通过 `powerby-bugfix` 指令调用时，powerby-command会：
+
+1. **分析Bug严重程度**：判断是P0/P1还是P2/P3
+2. **调用分支管理**：请求 `powerby-github-branch` 创建分支
+3. **传递分支信息**：在任务描述中包含分支信息
+4. **报告状态**：返回分支创建结果
+
+#### 传递的任务描述
+
+```markdown
+**分支管理**：
+- 调用 powerby-github-branch.create_bugfix_branch()
+- Bug级别: {P0/P1/P2/P3}
+- 建议分支: {hotfix/bugfix}/{id}-{描述}
+- 当前分支: {根据级别选择的分支}
+- 源分支: {main/develop}
+- 合并策略: {hotfix: main+develop / bugfix: develop}
+```
+
+### 独立使用场景
+
+Bug-Fix技能也可以独立使用，直接调用分支管理：
+
+```markdown
+# 独立创建Bug修复分支
+powerby-github-branch.create_bugfix_branch(
+    bug_id="001",
+    description="login-timeout",
+    severity="P2",
+    source_branch="develop"
+)
+
+# 独立合并和清理
+powerby-github-branch.merge_and_cleanup(
+    branch_name="bugfix/001-login-timeout",
+    target_branch="develop"
+)
+```
+
 ## 与其他技能的协作
 
 ### 上游技能
 - 接收来自 `powerby-command` 的修复任务
+- 调用 `powerby-github-branch` 进行分支管理
 - 与 `powerby-engineer` 协作处理复杂问题
 
 ### 下游技能
 - 为 `powerby-code-review` 提供修复后的代码
-- 向 `powerby-command` 汇报修复结果
+- 向 `powerby-command` 汇报修复结果和分支状态
+- 调用 `powerby-github-branch` 汇报分支操作结果
+
+### 技能协作流程
+
+```
+powerby-command 识别Bug
+    ↓
+调用 powerby-bugfix
+    ↓
+powerby-bugfix 调用 powerby-github-branch.create_bugfix_branch()
+    ↓
+powerby-github-branch 创建分支
+    ↓
+powerby-bugfix 进行Bug修复
+    ↓
+powerby-bugfix 调用 powerby-github-branch.merge_and_cleanup()
+    ↓
+powerby-github-branch 合并并清理分支
+    ↓
+返回结果给 powerby-command
+```
 
 ## 质量标准
 
@@ -762,6 +951,36 @@ Bug编号采用以下格式：
 
 ## 变更日志 (Changelog)
 
+### v1.4.0 - 2025-12-24
+**重大更新**: 集成GitHub分支管理技能
+
+#### 核心变更
+- 🌟 **GitHub分支管理**: 集成独立的 `powerby-github-branch` 技能
+- 🔀 **调用式分支管理**: 不直接操作分支，通过API调用实现
+- 📊 **状态追踪**: 通过github-branch技能追踪分支状态
+- 🧹 **自动化清理**: 调用github-branch完成合并和清理
+
+#### 架构优化
+- **技能解耦**: 分支管理由专门的 `powerby-github-branch` 处理
+- **职责分离**: bugfix专注Bug诊断和修复，分支管理独立
+- **API调用**: 通过标准化API调用分支管理功能
+
+#### 分支策略
+- **P0/P1级别**: 通过 `powerby-github-branch` 创建 `hotfix/*` 分支
+- **P2/P3级别**: 通过 `powerby-github-branch` 创建 `bugfix/*` 分支
+- **自动流程**: 创建、合并、清理全自动化
+- **状态同步**: 与github-branch技能同步分支状态
+
+#### 变更类型
+- **架构改进**: 集成独立分支管理技能
+- **工作流程**: 通过API调用实现分支管理
+- **依赖更新**: 新增 powerby-github-branch v1.0.0 依赖
+
+### v1.3.0 - 2025-12-24
+**中间版本**: 直接集成分支管理（已回滚）
+
+此版本已被v1.4.0替代，采用更优雅的调用式方案。
+
 ### v1.0.0 - 2025-12-20
 **初始版本发布**
 
@@ -769,7 +988,7 @@ Bug编号采用以下格式：
 - ✨ **Bug-Fix专项技能**: 独立的故障诊断与修复流程
 - ✨ **证据驱动诊断**: 基于日志、堆栈、代码事实的分析方法
 - ✨ **单文档记录**: bug、分析、任务、验证全部在一个文档中
-- ✨ **五阶段流程**: 问题报告→诊断分析→修复计划→实施修复→验证交付
+- ✨ **七阶段流程**: 问题报告→诊断分析→修复方案确认→用户确认→实施修复→验证交付
 - ✨ **最小代价修复**: 奥卡姆剃刀原则，选择最直接的修复方案
 
 #### 核心特性
@@ -777,15 +996,16 @@ Bug编号采用以下格式：
 - 🔧 **聚焦小问题**: 适合快速修复的聚焦型bug
 - 🔧 **完整追踪**: 从问题到交付的完整记录
 - 🔧 **易于管理**: 只需维护一个文档
+- 🔧 **用户确认**: 修复方案必须获得用户确认
 
 #### 变更类型
 - **新技能**: 全新技能类别
-- **流程创新**: 五阶段Bug-Fix流程
+- **流程创新**: 七阶段Bug-Fix流程
 - **文档标准**: 单文档记录标准
 
 ---
 
-**版本**: v1.0.0
-**适用范围**: Bug诊断与修复（独立流程）
-**依赖技能**: 无（独立运行）
-**协作技能**: powerby-command, powerby-engineer, powerby-code-review
+**版本**: v1.4.0
+**适用范围**: Bug诊断与修复（独立流程）+ 分支管理
+**依赖技能**: powerby-github-branch v1.0.0
+**协作技能**: powerby-command, powerby-engineer, powerby-code-review, powerby-github-branch

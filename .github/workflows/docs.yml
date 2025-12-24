@@ -1,0 +1,129 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'docs/**' ]
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build documentation
+        run: |
+          mkdir -p dist/docs
+          # 复制所有文档到构建目录
+          cp -r docs/* dist/docs/
+          # 生成文档索引
+          echo "# PowerBy Skills Documentation" > dist/docs/index.md
+          echo "" >> dist/docs/index.md
+          echo "## Iterations" >> dist/docs/index.md
+          for dir in docs/iterations/*/; do
+            if [ -d "$dir" ]; then
+              iteration_name=$(basename "$dir")
+              echo "- [$iteration_name](./iterations/$iteration_name/README.md)" >> dist/docs/index.md
+            fi
+          done
+          echo "" >> dist/docs/index.md
+          echo "## Bug Reports" >> dist/docs/index.md
+          echo "- [Bug Index](./bugs/index.md)" >> dist/docs/index.md
+          echo "" >> dist/docs/index.md
+          echo "## Skills" >> dist/docs/index.md
+          for skill in skills/powerby-*/; do
+            if [ -d "$skill" ]; then
+              skill_name=$(basename "$skill")
+              echo "- [$skill_name](../skills/$skill_name/README.md)" >> dist/docs/index.md
+            fi
+          done
+
+      - name: Validate documentation links
+        run: |
+          # 检查所有Markdown文件的链接
+          find dist/docs -name "*.md" -exec grep -H "\[.*\](" {} \; | \
+            while read -r line; do
+              file=$(echo "$line" | cut -d: -f1)
+              link=$(echo "$line" | sed 's/.*\[.*\](\(.*\)).*/\1/')
+              if [[ "$link" == http* ]]; then
+                continue  # 跳过外部链接
+              fi
+              if [[ "$link" == \#* ]]; then
+                continue  # 跳过锚点链接
+              fi
+              if [ ! -f "dist/docs/$link" ]; then
+                echo "Broken link in $file: $link"
+                exit 1
+              fi
+            done
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: dist/docs/
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download documentation
+        uses: actions/download-artifact@v3
+        with:
+          name: documentation
+          path: dist/docs/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/docs
+          publish_branch: gh-pages
+
+      - name: Update docs index
+        run: |
+          echo "Documentation deployed to GitHub Pages: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+  generate-iteration-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate iteration index
+        run: |
+          cat > docs/iterations/index.md << 'EOF'
+          # PowerBy Iterations Index
+
+          ## Active Iterations
+          EOF
+
+          for dir in docs/iterations/*/; do
+            if [ -d "$dir" ]; then
+              iteration_name=$(basename "$dir")
+              echo "- [$iteration_name](./$iteration_name/README.md)" >> docs/iterations/index.md
+            fi
+          done
+
+      - name: Commit iteration index update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/iterations/index.md
+          git commit -m "docs: update iterations index" || echo "No changes to index"
+          git push

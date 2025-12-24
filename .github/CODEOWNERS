@@ -1,0 +1,25 @@
+# Global code owners
+* @chenchiyuan
+
+# All skills and core functionality
+/skills/ @chenchiyuan
+
+# Documentation
+/docs/ @chenchiyuan
+
+# Iterations and project management
+/docs/iterations/ @chenchiyuan
+/docs/bugs/ @chenchiyuan
+
+# GitHub workflows and automation
+/.github/ @chenchiyuan
+
+# Configuration files
+/package.json @chenchiyuan
+/package-lock.json @chenchiyuan
+/.gitignore @chenchiyuan
+/README.md @chenchiyuan
+
+# Templates and scripts
+/templates/ @chenchiyuan
+/scripts/ @chenchiyuan

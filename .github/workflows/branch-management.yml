@@ -1,0 +1,84 @@
+name: Branch Management
+
+on:
+  push:
+    branches: [ '**' ]
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate branch name
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Validating branch: $BRANCH_NAME"
+
+          # 定义有效的分支命名模式
+          VALID_PATTERNS=(
+            "^main$"
+            "^develop$"
+            "^feature/[0-9]{3}-[a-z0-9-]+$"
+            "^bugfix/[0-9]{3}-[a-z0-9-]+$"
+            "^hotfix/[0-9]{3}-[a-z0-9-]+$"
+          )
+
+          VALID=false
+          for pattern in "${VALID_PATTERNS[@]}"; do
+            if [[ "$BRANCH_NAME" =~ $pattern ]]; then
+              VALID=true
+              echo "✅ Branch name '$BRANCH_NAME' matches pattern: $pattern"
+              break
+            fi
+          done
+
+          if [ "$VALID" = false ]; then
+            echo "❌ Invalid branch name: $BRANCH_NAME"
+            echo "Valid patterns:"
+            for pattern in "${VALID_PATTERNS[@]}"; do
+              echo "  - $pattern"
+            done
+            exit 1
+          fi
+
+      - name: Auto-assign reviewer
+        if: startsWith(github.ref_name, 'feature/') || startsWith(github.ref_name, 'bugfix/') || startsWith(github.ref_name, 'hotfix/')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.pulls.createReviewRequest({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              reviewers: ['chenchiyuan']
+            })
+
+  update-iteration-status:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'feature/')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract iteration ID
+        id: extract
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          ITERATION_ID=$(echo "$BRANCH_NAME" | sed 's|feature/||')
+          echo "id=$ITERATION_ID" >> $GITHUB_OUTPUT
+          echo "📋 Detected iteration: $ITERATION_ID"
+
+      - name: Update iteration index
+        run: |
+          cat >> docs/iterations/active.md << EOF
+
+## ${{ steps.extract.outputs.id }}
+- **Branch**: ${{ github.ref_name }}
+- **Status**: Active
+- **Last Updated**: $(date +%Y-%m-%d)
+- **PR**: ${{ github.event.pull_request.html_url }}
+EOF

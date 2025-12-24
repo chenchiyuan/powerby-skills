@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run format check
+        run: npm run format-check
+
+      - name: Run tests
+        run: npm test -- --coverage
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+
+  validate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate iteration documents
+        run: |
+          # 检查迭代文档完整性
+          for dir in docs/iterations/*/; do
+            if [ -d "$dir" ]; then
+              echo "Validating $dir"
+              # 检查必需文件是否存在
+              [ -f "$dir/prd.md" ] || (echo "Missing prd.md in $dir" && exit 1)
+              [ -f "$dir/architecture.md" ] || (echo "Missing architecture.md in $dir" && exit 1)
+              [ -f "$dir/tasks.md" ] || (echo "Missing tasks.md in $dir" && exit 1)
+            fi
+          done
+
+      - name: Validate bug documents
+        run: |
+          # 检查Bug文档结构
+          for file in docs/bugs/**/*.md; do
+            if [ -f "$file" ]; then
+              # 验证YAML frontmatter
+              head -1 "$file" | grep -q "^---" || (echo "Missing YAML frontmatter in $file" && exit 1)
+            fi
+          done
+
+  build-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build skill documentation
+        run: |
+          # 生成技能索引
+          echo "# PowerBy Skills Index" > docs/skills-index.md
+          for skill in skills/powerby-*/; do
+            if [ -d "$skill" ]; then
+              skill_name=$(basename "$skill")
+              echo "- [$skill_name](./$skill/README.md)" >> docs/skills-index.md
+            fi
+          done
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: docs/

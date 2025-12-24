@@ -1,0 +1,182 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'skills/**'
+      - 'docs/iterations/**'
+      - 'docs/bugs/**'
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type (major/minor/patch)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get version type
+        id: version
+        run: |
+          # 获取版本类型（手动触发或自动检测）
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION_TYPE="${{ github.event.inputs.version_type }}"
+          else
+            # 自动检测版本类型
+            if git log --oneline --grep="feat" --grep="feature" ${{ github.sha }}^..${{ github.sha }} | grep -q .; then
+              VERSION_TYPE="minor"
+            else
+              VERSION_TYPE="patch"
+            fi
+          fi
+          echo "type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Calculate new version
+        id: new_version
+        run: |
+          VERSION=$(echo ${{ steps.latest_tag.outputs.tag }} | sed 's/v//')
+          IFS='.' read -ra VERSION_PARTS <<< "$VERSION"
+          MAJOR=${VERSION_PARTS[0]:-0}
+          MINOR=${VERSION_PARTS[1]:-0}
+          PATCH=${VERSION_PARTS[2]:-0}
+
+          VERSION_TYPE="${{ steps.version.outputs.type }}"
+          if [ "$VERSION_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$VERSION_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          if gh release view ${{ steps.new_version.outputs.tag }} --repo ${{ github.repository }} >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate changelog
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          cat > CHANGELOG.md << EOF
+          # Changelog
+
+          ## [v${{ steps.new_version.outputs.version }}] - $(date +%Y-%m-%d)
+
+          ### Added
+          $(git log --oneline --grep="feat" --grep="feature" --format="- %s" ${{ steps.latest_tag.outputs.tag }}..HEAD 2>/dev/null || echo "- Initial release")
+
+          ### Fixed
+          $(git log --oneline --grep="fix" --format="- %s" ${{ steps.latest_tag.outputs.tag }}..HEAD 2>/dev/null || echo "- No fixes")
+
+          ### Changed
+          $(git log --oneline --grep="docs" --grep="refactor" --format="- %s" ${{ steps.latest_tag.outputs.tag }}..HEAD 2>/dev/null || echo "- No changes")
+
+          ### Skills Updated
+          $(git log --oneline --name-only --pretty=format: ${{ steps.latest_tag.outputs.tag }}..HEAD | grep "skills/powerby-" | sort -u | sed 's/^/- /' || echo "- No skills updated")
+
+          EOF
+
+      - name: Create GitHub Release
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          gh release create ${{ steps.new_version.outputs.tag }} \
+            --title "PowerBy Skills v${{ steps.new_version.outputs.version }}" \
+            --notes-file CHANGELOG.md \
+            --draft=false \
+            --prerelease=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update package.json version
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          npm version ${{ steps.new_version.outputs.version }} --no-git-tag-version
+
+      - name: Commit version update
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.new_version.outputs.version }}" || echo "No version changes to commit"
+          git push
+
+      - name: Create iteration tracking issue
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          gh issue create \
+            --title "Release v${{ steps.new_version.outputs.version }} Complete" \
+            --body "Release v${{ steps.new_version.outputs.version }} has been successfully created.
+
+          ## Summary
+          - Version: v${{ steps.new_version.outputs.version }}
+          - Tag: ${{ steps.new_version.outputs.tag }}
+          - Changes: See [CHANGELOG.md](./CHANGELOG.md)
+
+          ## Next Steps
+          - [ ] Review release notes
+          - [ ] Update documentation if needed
+          - [ ] Notify stakeholders
+
+          Created by GitHub Actions" \
+            --label "release,automation" \
+            --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release assets
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          # 打包技能文档
+          mkdir -p release-assets
+          tar -czf release-assets/powerby-skills-v${{ steps.new_version.outputs.version }}.tar.gz docs/ skills/
+          gh release upload ${{ steps.new_version.outputs.tag }} release-assets/* \
+            --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

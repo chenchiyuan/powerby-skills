@@ -94,6 +94,13 @@ license: MIT. LICENSE.txt has complete terms
 ### 快速流程指令
 - `/powerby.quick` - 快速流程（≤3天需求）
 
+**💡 分支管理说明**
+- GitFlow分支管理由独立的`powerby-github-branch`技能处理
+- 每个P0-P8完整迭代自动创建独立的`feature`分支
+- Bug修复使用独立的`bugfix`/`hotfix`分支
+- 所有指令执行自动在正确分支上进行
+- 分支状态与迭代阶段自动同步
+
 此技能将解析指令、检查前置条件、调用相应技能执行任务，并提供流程指导和错误处理。
 
 ## 工作流程决策树
@@ -231,6 +238,10 @@ handoffs:
 
 **下一步建议**：使用 `/powerby.define` 开始需求定义阶段
 
+**分支管理**：
+- P0阶段不创建分支
+- 等待进入P1阶段时创建feature分支
+
 ---
 
 ### /powerby.define (P1 - 需求定义+澄清)
@@ -254,6 +265,11 @@ handoffs:
 
 **调用技能**：`powerby-product` - 需求定义
 
+**分支管理**：
+- 检查是否需要创建新的feature分支
+- 如果是第一个迭代，从develop创建`feature/001-{项目名}`分支
+- 所有P1阶段工作在此分支上进行
+
 **传递的任务描述模板**：
 ```
 基于以下信息执行需求定义+澄清：
@@ -272,6 +288,11 @@ handoffs:
 - 11大类覆盖度分析
 - 高优先级模糊点澄清
 - 澄清记录同步
+
+**P1完成后自动触发**：
+- 调用 powerby-github-branch 创建 feature/{迭代ID}-{项目名} 分支
+- 初始化迭代文档结构
+- 设置分支状态为 active
 ```
 
 **预期输出**：
@@ -282,6 +303,11 @@ handoffs:
   ├── docs/iterations/001-{项目名}/prd.md (产品需求文档)
   ├── docs/iterations/001-{项目名}/function-points.md (功能点清单)
   └── docs/iterations/001-{项目名}/clarifications.md (澄清记录)
+
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P1 已完成
+  ✓ 下一步阶段: P3 (技术调研)
 
 🔒 质量门禁 Gate 1: MVP需求定稿（含澄清）
   ✓ 核心价值定义清晰
@@ -333,6 +359,11 @@ handoffs:
 
 📄 输出文档:
   └── docs/iterations/001-{项目名}/research.md (技术调研报告)
+
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P3 已完成
+  ✓ 下一步阶段: P4 (架构设计)
 
 🔒 质量门禁 Gate 3: 技术调研完整性
   ✓ 技术选型评估
@@ -386,6 +417,11 @@ handoffs:
   ├── docs/iterations/001-{项目名}/data-model.md (数据模型)
   └── docs/iterations/001-{项目名}/contracts/api.yaml (API契约)
 
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P4 已完成
+  ✓ 下一步阶段: P5 (任务规划)
+
 🔒 质量门禁 Gate 4: 架构设计清晰性
   ✓ 系统架构明确
   ✓ 模块职责清晰
@@ -433,6 +469,11 @@ handoffs:
 📄 输出文档:
   ├── docs/iterations/001-{项目名}/tasks.md (任务计划)
   └── docs/iterations/001-{项目名}/checklists/acceptance.md (验收清单)
+
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P5 已完成
+  ✓ 下一步阶段: P6 (开发实现)
 
 🔒 质量门禁 Gate 5: 开发规划详细性
   ✓ 任务分解合理
@@ -482,6 +523,11 @@ handoffs:
 📄 输出文档:
   └── docs/iterations/001-{项目名}/implementation-report.md (实现报告)
 
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P6 已完成
+  ✓ 下一步阶段: P7 (代码审查)
+
 🔒 质量门禁 Gate 6: 开发实现质量
   ✓ 功能完整实现
   ✓ 代码质量达标
@@ -501,10 +547,25 @@ handoffs:
    - 传递问题上下文信息
 
 2. **验证输出文档**
-   - 检查是否生成：`bugs/bug-{id}.md`
+   - 检查是否生成：`docs/bugs/global/bug-{id}.md`
 
 3. **更新项目元数据**
    - 在`.powerby/bugs.json`中记录bug修复状态（如果存在）
+
+**分支管理**：
+- 根据Bug严重程度自动选择分支类型：
+  - P0/P1级别 → 创建`hotfix/{id}-{描述}`分支（从main创建）
+  - P2/P3级别 → 创建`bugfix/{id}-{描述}`分支（从develop创建）
+- 修复完成后自动合并到相应分支
+- 紧急修复需要同时合并到main和develop
+
+**分支管理**：
+- 调用 `powerby-github-branch.create_bugfix_branch()`
+- 根据Bug严重程度自动选择分支类型：
+  - P0/P1级别 → 创建`hotfix/{id}-{描述}`分支（从main创建）
+  - P2/P3级别 → 创建`bugfix/{id}-{描述}`分支（从develop创建）
+- 修复完成后自动合并到相应分支
+- 紧急修复需要同时合并到main和develop
 
 **调用技能**：`powerby-bugfix` - Bug诊断与修复
 
@@ -512,18 +573,29 @@ handoffs:
 ```
 请帮我诊断和修复以下问题：
 - 问题描述: {问题}
+- 严重程度: {P0/P1/P2/P3}
 - 上下文信息: {代码/日志/PRD}
 
 请使用单文档方式记录完整修复过程。
+
+**分支信息**：
+- Bug级别: {P0/P1/P2/P3}
+- 建议分支: {hotfix/bugfix}/{id}-{描述}
+- 当前分支: {根据级别选择的分支}
 ```
 
 **输出示例**：
 ```
 ✅ Bug-Fix 任务完成
 
-📋 问题报告: bugs/bug-001-{问题标识}.md
+📋 问题报告: docs/bugs/global/bug-001-{问题标识}.md
 🎯 修复状态: 已完成
 ⏱️ 修复时间: X小时
+
+📊 分支状态:
+  ✓ Bug分支: {hotfix/bugfix}/001-{描述}
+  ✓ 合并状态: 已合并到 {develop/main}
+  ✓ 分支清理: 已删除临时分支
 
 🔍 诊断结果: [根因]
 🔧 修复方案: [方案]
@@ -549,7 +621,14 @@ handoffs:
    - 标记Gate 7和Gate 8为已通过
    - 更新状态为`completed`
 
+4. **触发分支合并** 🆕
+   - **自动调用** `powerby-github-branch.merge_branch()`
+   - 合并 `feature/{迭代ID}-{项目名}` 到 `develop`
+   - 删除feature分支
+   - 更新分支状态为 `completed`
+
 **调用技能**：`powerby-code-review` - 代码审查和交付
+**分支管理**：自动调用 `powerby-github-branch` 处理分支合并
 
 **传递的任务描述模板**：
 ```
@@ -574,6 +653,11 @@ _link}
   ├── docs/iterations/001-{项目名}/code-review-report.md (审查报告)
   └── docs/iterations/001-{项目名}/delivery-report.md (交付报告)
 
+📊 分支状态:
+  ✓ 当前分支: feature/001-{项目名}
+  ✓ 阶段状态: P8 已完成
+  ✓ 下一步: 合并到develop并清理分支
+
 🔒 质量门禁 Gate 7: 代码审查严格性
   ✓ 代码规范检查
   ✓ 安全性审查
@@ -583,6 +667,11 @@ _link}
   ✓ 功能验收通过
   ✓ 文档交付完整
   ✓ 知识转移完成
+
+🔄 自动分支操作:
+  - 合并 feature/001-{项目名} 到 develop
+  - 删除 feature/001-{项目名} 分支
+  - 更新分支状态记录
 
 🎉 项目完成！所有P0-P8阶段已成功完成
 ```
@@ -927,7 +1016,39 @@ function checkVersionCompatibility(projectJson) {
 
 ---
 
-**版本**: v2.2.0
+**版本**: v2.5.0
 **适用范围**: PowerBy Lifecycle 全流程协调
-**依赖技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-bugfix
+**依赖技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-bugfix, powerby-github-branch
 **协作技能**: powerby-flow-guardian
+
+## 变更日志 (Changelog)
+
+### v2.5.0 - 2025-12-24
+**重大更新**: 集成GitHub分支管理技能
+
+#### 核心变更
+- 🌟 **GitHub分支管理**: 集成独立的 `powerby-github-branch` 技能
+- 🔀 **自动分支流程**: P1完成后自动创建feature分支，P8完成后自动合并
+- 🐛 **Bug修复分支**: 调用github-branch技能处理bugfix/hotfix分支
+- 📊 **状态同步**: 分支状态与迭代阶段自动同步
+
+#### 架构优化
+- **技能解耦**: 将分支管理从command中解耦为独立技能
+- **单一职责**: command专注流程协调，github-branch专注分支管理
+- **自动化集成**: 在关键节点自动触发分支操作
+
+#### 分支策略
+- **主分支**: main (生产) + develop (集成)
+- **功能分支**: `feature/{id}-{name}` (P0-P8完整迭代)
+- **Bug分支**: `bugfix/{id}-{desc}` (一般修复) + `hotfix/{id}-{desc}` (紧急修复)
+- **自动流程**: 创建、合并、清理全自动化
+
+#### 变更类型
+- **架构改进**: 技能解耦和职责分离
+- **工作流程**: 自动化分支管理集成
+- **新技能依赖**: powerby-github-branch v1.0.0
+
+### v2.4.0 - 2025-12-24
+**中间版本**: 首次集成分支管理（已回滚）
+
+此版本已被v2.5.0替代，采用更优雅的独立技能方案。
