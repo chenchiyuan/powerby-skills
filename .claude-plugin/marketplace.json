@@ -5,28 +5,23 @@
     "email": "contact@powerby.dev"
   },
   "metadata": {
-    "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期",
-    "version": "1.0.0"
+    "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期，采用三层立体诊断分析框架",
+    "version": "3.1.0"
   },
   "plugins": [
     {
-      "name": "powerby-core",
-      "description": "PowerBy核心技能包 - 包含产品、架构、工程、审查全流程技能",
+      "name": "powerby",
+      "description": "PowerBy全栈技能包 - 包含产品、架构、工程、审查、Bug修复、GitHub管理等完整技能集合。支持P0-P8生命周期、三层立体诊断分析、需求对齐澄清等核心能力。",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/powerby-product",
         "./skills/powerby-architect",
         "./skills/powerby-engineer",
-        "./skills/powerby-code-review"
-      ]
-    },
-    {
-      "name": "powerby-atomic",
-      "description": "PowerBy原子技能包 - 专精特定任务的精细化技能",
-      "source": "./",
-      "strict": false,
-      "skills": [
+        "./skills/powerby-code-review",
+        "./skills/powerby-bugfix",
+        "./skills/powerby-github-branch",
+        "./skills/powerby-fullstack",
         "./skills/requirement-alignment",
         "./skills/mvp-prioritization",
         "./skills/function-point-checker",
