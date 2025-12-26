@@ -535,12 +535,6 @@ powerby-command 解析指令
 - 📦 **[第三方安装指南](skills/powerby-command/THIRD_PARTY_INSTALLATION.md)** - Claude插件市场安装
 - ✅ **[命令验证报告](skills/powerby-command/COMMANDS_VALIDATION_REPORT.md)** - 安装完整性验证
 
-### 实践案例
-
-- [任务管理系统案例](examples/task-management-system/)
-- [电商平台案例](examples/ecommerce-platform/)
-- [博客系统案例](examples/blog-system/)
-
 ## 🛠️ 故障排除
 
 ### 常见问题
