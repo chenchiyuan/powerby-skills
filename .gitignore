@@ -230,13 +230,13 @@ dist/
 build/
 
 # Reference materials (not part of the distributed package)
-# references/
+references/
 
 # Internal proposals (not part of the distributed package)
 proposals/
 
 # Reference materials (not part of the distributed package)
-# references/
+references/
 spec-kit/
 
 # macOS
