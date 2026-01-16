@@ -123,6 +123,83 @@ output_docs: [
 - **Q-Gate 4 (P4→P5)**：架构快速设计检查
 - **Q-Gate 5 (P5→P7)**：任务快速规划检查
 
+## 分支管理 🆕
+
+遵循 PowerBy Git 分支管理规范，与 powerby-git 和 powerby-github-branch 协作。
+
+### 分支命名规范
+
+| 类型 | 模式 | 示例 |
+|------|------|------|
+| Feature | `feature/{id}-{name}` | `feature/010-user-feedback` |
+
+### 分支管理流程
+
+#### P0 阶段：Git 环境检查
+
+在快速初始化时，检查 Git 环境：
+
+```bash
+# 检查是否存在 develop 分支
+git rev-parse --verify develop
+
+# 检查是否存在迭代追踪文件
+cat .powerby/iterations.json
+```
+
+#### P1 阶段：分支创建 🆕
+
+**人工确认产品功能列表通过后**，向用户提交分支创建请求：
+
+```markdown
+## 分支创建请求
+
+**迭代编号**: {id}
+**项目名称**: {name}
+**分支名称**: feature/{id}-{name}
+**源分支**: develop
+
+### 执行内容（需要您同意）
+1. 验证 develop 分支存在且最新
+2. 创建 `feature/{id}-{name}` 分支
+3. 推送到远程并设置上游分支
+
+### 请确认
+```
+确认创建 feature 分支：[是/否]
+如果否，请说明原因：___________
+```
+
+**只有用户明确同意后，才能创建分支。**
+
+**分支创建后**：
+- 所有 P1-P5 工作在 feature 分支上进行
+- 文档保存在 `docs/iterations/{id}-{name}/`
+- 每次提交触发 pre-commit 钩子检查
+
+#### P5 阶段：任务交接 🆕
+
+完成任务规划后，将任务交给 powerby-engineer 进行 P6 实现：
+
+```markdown
+**任务交接**：
+- 当前分支: feature/{id}-{name}
+- 任务计划: docs/iterations/{id}-{name}/tasks.md
+- 架构设计: docs/iterations/{id}-{name}/architecture.md
+- 下一步: powerby-engineer 执行 P6 开发实现
+
+**注意**：继续在同一个 feature 分支上开发，最终由 powerby-code-review 在 P8 阶段统一合并
+```
+
+### 与其他技能的协作
+
+- **powerby-github-branch**：负责远程分支创建、合并、清理
+- **powerby-git**：负责本地提交检查、文件白名单验证
+- **powerby-engineer**：P5 后接管任务，继续在同一分支开发
+- **powerby-code-review**：P8 阶段执行分支合并和清理
+
+---
+
 ## 人工确认机制
 
 ### 确认点1：P1完成后 - 产品功能列表确认
@@ -256,6 +333,12 @@ output_docs: [
 ### 确认人
 姓名：___________
 日期：___________
+
+**确认通过后**：
+1. ✅ 显示分支创建请求，等待用户同意
+2. ✅ 用户同意后，创建 feature 分支：`feature/{id}-{name}`
+3. ✅ 更新分支状态
+4. ✅ 进入 P3 阶段
 ```
 
 ---
@@ -362,6 +445,11 @@ output_docs: [
 ### 确认人
 姓名：___________
 日期：___________
+
+**分支状态**：
+- 当前分支: feature/{id}-{name}
+- 所有 P1-P4 工作在此分支上进行
+- P5 完成后交给 powerby-engineer 继续开发
 ```
 
 ---
@@ -467,6 +555,18 @@ docs/iterations/{id}-{name}/
 **下游**：
 - 将快速任务清单交给 `powerby-engineer` 进行P6实现
 - 遵循 `powerby-code-review` 的审查标准
+- 分支管理由 `powerby-github-branch` 处理
+- 本地提交检查由 `powerby-git` 处理
+
+### Git 分支管理协作 🆕
+
+**调用 powerby-github-branch**：
+- P1 人工确认通过后：创建 feature 分支
+- 分支命名：`feature/{id}-{name}`
+
+**调用 powerby-git**：
+- 每次提交时：pre-commit 钩子检查
+- 合并前：pre-merge 钩子检查
 
 ### 调用原子技能
 
@@ -541,6 +641,9 @@ docs/iterations/{id}-{name}/
 - [ ] 任务粒度合适（1天）
 - [ ] 依赖关系已明确
 - [ ] 验收标准已定义
+- [ ] **分支状态已记录** 🆕
+  - [ ] feature 分支存在且是最新的
+  - [ ] 准备好交给 powerby-engineer
 
 ---
 
@@ -614,7 +717,18 @@ docs/iterations/{id}-{name}/
 
 ---
 
-**版本**: v1.0.0
+**版本**: v1.1.0
+**更新日期**: 2026-01-13
+
+### v1.1.0 更新内容 🆕
+- **新增分支管理流程**：添加 P0 Git 环境检查、P1 分支创建、P5 任务交接流程
+- **集成 powerby-github-branch**：用户确认后创建 feature 分支
+- **集成 powerby-git**：本地提交检查和文件白名单验证
+- **更新协作关系**：明确与 powerby-github-branch、powerby-git 的协作方式
+- **更新确认模板**：P1/P4 确认后显示分支状态
+- **更新质量检查清单**：新增分支状态记录检查项
+- **⚠️ 安全更新**：所有分支操作必须经过用户确认，禁止自动创建分支
+
 **适用范围**: 快速需求处理流程（P0-P5）
 **依赖技能**: requirement-alignment, solution-evaluation, mermaid-architecture, mvp-prioritization
-**协作技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review
+**协作技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-github-branch, powerby-git

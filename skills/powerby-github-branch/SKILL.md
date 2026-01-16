@@ -1,6 +1,6 @@
 ---
 name: powerby-github-branch
-description: GitHub分支管理专项技能，负责GitFlow分支管理策略的自动化实施。独立于P0-P8生命周期，专门处理分支创建、合并、清理等操作，为powerby-command和powerby-bugfix提供分支管理能力。
+description: GitHub分支管理专项技能，负责GitFlow分支管理策略的自动化实施。独立于P0-P8生命周期，专门处理分支创建、合并、清理等远程操作。与powerby-git协作，powerby-git负责本地检查和验证，github-branch负责远程分支操作。为powerby-command、powerby-fullstack和powerby-bugfix提供分支管理能力。
 license: MIT. LICENSE.txt has complete terms
 ---
 
@@ -123,16 +123,17 @@ hotfix/{id}-{description}
 
 ### 功能分支生命周期管理
 
-#### 阶段1：分支创建 (P1阶段自动触发)
-**触发条件**: P1阶段完成后，创建feature分支
+#### 阶段1：分支创建 (P1阶段，用户确认后执行)
+**触发条件**: P1阶段完成，用户确认同意创建分支
 
 **执行内容**:
-- 验证迭代ID和项目名称格式
-- 检查develop分支是否存在且最新
-- 创建feature/{id}-{name}分支
-- 推送远程并设置上游分支
-- 创建迭代文档结构
-- 更新分支状态记录
+1. 上游技能（powerby-command/powerby-fullstack）提交分支创建请求
+2. 用户确认同意
+3. 验证迭代ID和项目名称格式
+4. 检查develop分支是否存在且最新
+5. 创建feature/{id}-{name}分支
+6. 推送远程并设置上游分支
+7. 更新分支状态记录
 
 **输出**:
 - 新的feature分支
@@ -150,19 +151,20 @@ hotfix/{id}-{description}
 - 分支状态更新
 - 开发进度报告
 
-#### 阶段3：分支合并 (P8阶段自动触发)
-**触发条件**: P8阶段完成后，合并feature分支
+#### 阶段3：分支合并 (P8阶段，用户确认后执行)
+**触发条件**: P8阶段完成，用户确认同意合并和清理
 
 **执行内容**:
-- 验证P8阶段已完成
-- 合并feature分支到develop
-- 处理合并冲突（如有）
-- 删除feature分支
-- 更新文档记录
+1. 上游技能（powerby-code-review）提交分支操作请求
+2. 用户确认同意（合并+清理 / 仅合并 / 保留分支）
+3. 验证P8阶段已完成
+4. 合并feature分支到develop
+5. 如果用户同意删除：删除feature分支
+6. 更新文档记录
 
 **输出**:
 - 合并完成确认
-- 分支清理报告
+- 分支清理报告（如执行）
 
 ### Bug修复分支管理
 
@@ -171,61 +173,55 @@ hotfix/{id}-{description}
 **分支源**: 从 `main` 分支创建
 **合并策略**: 同时合并到 `main` 和 `develop`
 
-```bash
-# 创建hotfix分支
-git checkout main
-git pull origin main
-git checkout -b hotfix/001-{问题描述}
-
-# 修复完成后
-git checkout main
-git merge hotfix/001-{问题描述}
-git push origin main
-
-git checkout develop
-git merge main
-git push origin develop
-
-git branch -d hotfix/001-{问题描述}
-git push origin --delete hotfix/001-{问题描述}
-```
+**执行流程（需要用户确认）**：
+1. powerby-bugfix 提交分支创建请求
+2. 用户确认同意
+3. 创建 hotfix 分支
+4. Bug 修复完成后，提交合并请求
+5. 用户确认同意后，同时合并到 main 和 develop
+6. 如果同意删除：清理 hotfix 分支
 
 #### P2/P3级别Bug（一般修复）
 **分支类型**: `bugfix/{id}-{问题描述}`
 **分支源**: 从 `develop` 分支创建
 **合并策略**: 合并到 `develop`
 
-```bash
-# 创建bugfix分支
-git checkout develop
-git pull origin develop
-git checkout -b bugfix/002-{问题描述}
-
-# 修复完成后
-git checkout develop
-git merge bugfix/002-{问题描述}
-git push origin develop
-
-git branch -d bugfix/002-{问题描述}
-git push origin --delete bugfix/002-{问题描述}
-```
+**执行流程（需要用户确认）**：
+1. powerby-bugfix 提交分支创建请求
+2. 用户确认同意
+3. 创建 bugfix 分支
+4. Bug 修复完成后，提交合并请求
+5. 用户确认同意后，合并到 develop
+6. 如果同意删除：清理 bugfix 分支
 
 ## 指令接口
+
+### ⚠️ 所有分支操作必须经过用户确认
+
+**重要原则**：
+- 禁止自动创建、合并或删除分支
+- 所有操作必须由上游技能提交请求
+- 上游技能负责向用户展示操作请求并获取确认
+- 只有用户明确同意后才能执行操作
 
 ### 分支创建指令
 ```markdown
 **任务**: 创建新的feature分支
 
+**前置条件**: 上游技能已向用户提交创建请求，用户已确认同意
+
 **参数**:
 - iteration_id: 迭代ID (3位数字，如 001)
 - project_name: 项目名称 (英文短横线分隔)
 - source_branch: 源分支 (默认: develop)
+- user_approved: 用户是否已确认 (必须为 true)
 
 **调用示例**:
 create_feature_branch(
     iteration_id="001",
     project_name="task-manager",
-    source_branch="develop"
+    source_branch="develop",
+    user_approved=true  // 必须为 true，表示用户已确认
 )
 ```
 
@@ -233,16 +229,20 @@ create_feature_branch(
 ```markdown
 **任务**: 合并feature分支到develop
 
+**前置条件**: 上游技能已向用户提交合并请求，用户已确认同意
+
 **参数**:
 - branch_name: 要合并的分支名
 - target_branch: 目标分支 (默认: develop)
-- delete_source: 是否删除源分支 (默认: true)
+- delete_source: 是否删除源分支 (必须由用户明确选择)
+- user_approved: 用户是否已确认 (必须为 true)
 
 **调用示例**:
 merge_branch(
     branch_name="feature/001-task-manager",
     target_branch="develop",
-    delete_source=true
+    delete_source=true,  // true/false，由用户决定
+    user_approved=true   // 必须为 true，表示用户已确认
 )
 ```
 
@@ -250,20 +250,24 @@ merge_branch(
 ```markdown
 **任务**: 清理已合并的分支
 
+**前置条件**: 上游技能已向用户提交清理请求，用户已确认同意
+
 **参数**:
 - branch_type: 分支类型 (feature/bugfix/hotfix/all)
 - dry_run: 是否试运行 (默认: false)
+- user_approved: 用户是否已确认 (必须为 true)
 
 **调用示例**:
 cleanup_branches(
     branch_type="all",
-    dry_run=false
+    dry_run=false,
+    user_approved=true  // 必须为 true，表示用户已确认
 )
 ```
 
 ### 分支列表指令
 ```markdown
-**任务**: 查看分支状态
+**任务**: 查看分支状态（此操作不需要用户确认）
 
 **参数**:
 - branch_type: 分支类型 (feature/bugfix/hotfix/all)
@@ -278,6 +282,13 @@ list_branches(
 
 ## 自动化脚本
 
+### ⚠️ 所有脚本执行前需要用户确认
+
+**重要提示**：
+- 创建分支脚本和清理分支脚本都需要用户确认后才能执行
+- 上游技能负责向用户展示操作请求并获取确认
+- 脚本参数中需要包含 `USER_APPROVED=true` 表示用户已确认
+
 ### 创建迭代分支
 ```bash
 #!/bin/bash
@@ -287,6 +298,15 @@ list_branches(
 ITERATION_ID="$1"
 PROJECT_NAME="$2"
 SOURCE_BRANCH="${3:-develop}"
+USER_APPROVED="${4:-false}"
+
+# ⚠️ 检查用户确认
+if [ "$USER_APPROVED" != "true" ]; then
+    echo "⚠️ 未获得用户确认，无法创建分支"
+    echo "请先向上游技能确认创建请求"
+    echo "Usage: create-iteration-branch.sh <迭代ID> <项目名> <源分支> <USER_APPROVED=true>"
+    exit 1
+fi
 
 # 验证格式
 if ! [[ "$ITERATION_ID" =~ ^[0-9]{3}$ ]]; then
@@ -300,6 +320,8 @@ if ! [[ "$PROJECT_NAME" =~ ^[a-z0-9][a-z0-9-]*[a-z0-9]$ ]]; then
 fi
 
 BRANCH_NAME="feature/${ITERATION_ID}-${PROJECT_NAME}"
+
+echo "✅ 用户已确认，创建分支: $BRANCH_NAME"
 
 # 创建分支
 git checkout "$SOURCE_BRANCH"
@@ -315,19 +337,46 @@ echo "✅ 分支创建成功: $BRANCH_NAME"
 #!/bin/bash
 # cleanup-branches.sh
 
-# 清理已合并的feature分支
-git branch --merged develop | grep "feature/" | xargs git branch -d
+# ⚠️ 此脚本需要用户确认后才能执行
+# 上游技能必须先向用户展示清理请求并获取同意
 
-# 清理已合并的bugfix分支
-git branch --merged develop | grep "bugfix/" | xargs git branch -d
+# 试运行：查看将被清理的分支
+echo "📋 将会被清理的分支："
+echo ""
+echo "🟢 Feature分支:"
+git branch --merged develop | grep "feature/" || echo "  无"
+echo ""
+echo "🔴 Bugfix分支:"
+git branch --merged develop | grep "bugfix/" || echo "  无"
+echo ""
+echo "🟠 Hotfix分支:"
+git branch --merged main | grep "hotfix/" || echo "  无"
+echo ""
+echo "💡 提示：需要用户确认后才能执行清理"
 
-# 清理已合并的hotfix分支
-git branch --merged main | grep "hotfix/" | xargs git branch -d
+# 用户确认检查
+if [ "$USER_APPROVED" = "true" ]; then
+    echo ""
+    echo "✅ 用户已确认，开始清理..."
 
-# 清理远程分支
-git remote prune origin
+    # 清理已合并的feature分支
+    git branch --merged develop | grep "feature/" | xargs -r git branch -d
 
-echo "✅ 分支清理完成"
+    # 清理已合并的bugfix分支
+    git branch --merged develop | grep "bugfix/" | xargs -r git branch -d
+
+    # 清理已合并的hotfix分支
+    git branch --merged main | grep "hotfix/" | xargs -r git branch -d
+
+    # 清理远程分支
+    git remote prune origin
+
+    echo "✅ 分支清理完成"
+else
+    echo ""
+    echo "⚠️ 未获得用户确认，跳过清理操作"
+    echo "如需执行，请设置 USER_APPROVED=true"
+fi
 ```
 
 ### 查看分支状态
@@ -361,11 +410,64 @@ echo "紧急修复分支: $(git branch | grep -c 'hotfix/' || echo 0)"
 
 ### 上游技能
 - **powerby-command**: 请求创建/合并feature分支
+- **powerby-fullstack**: 快速流程中请求创建feature分支
 - **powerby-bugfix**: 请求创建bugfix/hotfix分支
+- **powerby-code-review**: P8阶段请求合并feature分支
 
 ### 下游技能
 - **powerby-command**: 返回分支操作结果
+- **powerby-fullstack**: 返回分支创建状态
 - **powerby-bugfix**: 返回Bug修复分支状态
+- **powerby-code-review**: 返回分支合并和清理结果
+
+### 与 powerby-git 的协作 🆕
+
+**职责分工**：
+- **powerby-git**：负责本地分支管理、提交检查、文件白名单验证
+  - `powerby-git check --type=commit`：提交前检查
+  - `powerby-git check --type=merge`：合并前全量检查
+  - `powerby-git status`：查看分支状态
+- **powerby-github-branch**：负责远程分支操作、合并、清理
+  - `create_feature_branch()`：创建feature分支
+  - `merge_branch()`：合并分支到develop
+  - `cleanup_branches()`：清理已合并的分支
+
+**协作流程**：
+```
+开发者提交代码
+    ↓
+powerby-git check --type=commit（本地检查）
+    ↓
+    ✅ 检查通过
+    ↓
+开发者推送代码
+    ↓
+powerby-code-review 审查通过
+    ↓
+powerby-git check --type=merge（合并前检查）
+    ↓
+    ✅ 检查通过
+    ↓
+powerby-github-branch.merge_branch()（远程操作）
+    ↓
+合并到 develop 并清理分支
+```
+
+**数据流向**：
+```
+powerby-git → [本地检查通过] → powerby-github-branch → [远程操作完成]
+```
+
+**典型场景**：
+1. **P1阶段创建分支**：
+   - powerby-fullstack 人工确认通过
+   - powerby-git 检查当前分支状态
+   - powerby-github-branch 创建 feature 分支
+
+2. **P8阶段合并分支**：
+   - powerby-code-review 审查通过
+   - powerby-git check --type=merge 全量检查
+   - powerby-github-branch 合并并清理
 
 ### 协作流程
 
@@ -505,6 +607,33 @@ git push origin develop --force
 
 ## 变更日志 (Changelog)
 
+### v1.2.0 - 2026-01-13
+**分支操作安全更新** 🆕
+
+#### 核心变更
+- ⚠️ **禁止自动操作**: 所有分支创建/合并/删除操作必须经过用户确认
+- ✨ **新增 user_approved 参数**: 所有操作指令必须包含用户确认标志
+- ✨ **更新协作流程**: 上游技能负责向用户展示操作请求并获取确认
+- ✨ **风险提示**: 在执行操作前向用户展示风险信息
+
+#### 分支管理流程更新
+- **P1阶段**: 用户确认后才创建 feature 分支
+- **P8阶段**: 用户确认后才执行合并和清理
+- **Bug修复**: 用户确认后才创建和清理 hotfix/bugfix 分支
+
+### v1.1.0 - 2026-01-13
+**与 powerby-git 集成更新** 🆕
+
+#### 新增功能
+- ✨ **与 powerby-git 协作**: 明确职责分工，github-branch 处理远程操作，git 处理本地检查
+- ✨ **集成 powerby-fullstack**: 支持快速流程中的分支创建
+- ✨ **集成 powerby-code-review**: P8 阶段自动合并和清理
+
+#### 核心变更
+- **职责清晰化**: powerby-git 负责本地检查，github-branch 负责远程操作
+- **数据流向**: powerby-git → [检查通过] → github-branch → [远程操作]
+- **协作流程**: 添加 P1 创建分支和 P8 合并分支的完整流程
+
 ### v1.0.0 - 2025-12-24
 **初始版本发布**
 
@@ -534,7 +663,8 @@ git push origin develop --force
 
 ---
 
-**版本**: v1.0.0
+**版本**: v1.2.0
+**更新日期**: 2026-01-13
 **适用范围**: GitHub分支管理（独立模块）
 **依赖技能**: 无（独立运行）
-**协作技能**: powerby-command, powerby-bugfix
+**协作技能**: powerby-command, powerby-fullstack, powerby-bugfix, powerby-code-review, powerby-git
