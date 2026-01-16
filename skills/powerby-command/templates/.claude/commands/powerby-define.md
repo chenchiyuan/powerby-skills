@@ -66,7 +66,15 @@ $ARGUMENTS
    - 在`.powerby/project.json`中更新当前阶段为P1
    - 标记Gate 1为已通过
 
-5. **创建迭代记录**
+5. **创建分支** (标准流程 - Gate 1通过后自动触发)
+   ```bash
+   powerby-git start --type=feature --name={id}-{name}
+   ```
+   - 从develop分支创建feature分支
+   - 安装Git Hooks (pre-commit, pre-merge)
+   - 输出分支状态信息
+
+6. **创建迭代记录**
    - 在`.powerby/iterations.json`中记录迭代001
 
 ### 输出格式：
@@ -84,8 +92,9 @@ $ARGUMENTS
   ✓ 功能点完整性验证
   ✓ 最小可行产品范围确认
   ✓ 模糊点已澄清
+  ✓ feature分支已创建，Git Hooks已安装
 
-🎯 下一步: 使用 /powerby.research 进入技术调研阶段
+🎯 下一步: 使用 /powerby.research 进入技术调研阶段 (在 feature 分支上)
 ```
 
 ### 使用示例：

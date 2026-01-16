@@ -220,6 +220,43 @@ $ARGUMENTS
 - 依赖关系已明确
 - 验收标准已定义
 
+**🚨 分支创建环节** (快速流程 - Q-Gate 5通过后)
+
+在任务规划完成后，**必须提交分支创建请求**：
+
+```markdown
+## 分支创建请求
+
+**迭代编号**: {id}
+**迭代名称**: {name}
+**分支名称**: feature/{id}-{name}
+**源分支**: develop
+
+### 文档产出
+- prd.md ✅
+- function-points.md ✅
+- clarifications.md ✅
+- technical-research.md ✅
+- architecture.md ✅
+- tasks.md ✅
+
+### 执行操作
+1. 验证 develop 分支存在且最新
+2. 创建 `feature/{id}-{name}` 分支
+3. 安装 Git Hooks (pre-commit, pre-merge)
+4. 切换到新分支
+
+### 请确认
+```
+确认创建 feature 分支：[是/否]
+如果否，请说明原因：___________
+```
+
+**分支创建后**：
+- 所有后续工作在 feature 分支上进行
+- 交给 `/powerby.implement` 或 `powerby-engineer` 进行开发实现
+```
+
 ---
 
 ## 质量门禁 (Q-Gates)
@@ -301,6 +338,11 @@ docs/iterations/{id}-{name}/
 
 快速流程完成后：
 
+**分支创建** (Q-Gate 5通过后):
+```bash
+powerby-git start --type=feature --name={id}-{name}
+```
+
 **选项1**: 使用 `/powerby.implement` 进行开发实现
 ```bash
 /powerby.implement --tasks-path=docs/iterations/{id}-{name}/tasks.md
@@ -310,6 +352,8 @@ docs/iterations/{id}-{name}/
 ```bash
 请使用 powerby-engineer skill，基于 docs/iterations/{id}-{name}/tasks.md 进行开发实现
 ```
+
+**注意**: 所有开发工作在 feature 分支上进行
 
 ---
 
@@ -382,6 +426,7 @@ docs/iterations/{id}-{name}/
   ✓ P4: 架构快速设计
   ✓ ✓ 人工确认：架构实现
   ✓ P5: 任务快速规划
+  ✓ ✓ 分支创建：feature/{id}-{name} (Q-Gate 5通过后)
 
 📄 输出文档:
   └── docs/iterations/{id-{name}/ (7个核心文档)
@@ -390,8 +435,9 @@ docs/iterations/{id}-{name}/
   ✓ 所有Q-Gate通过
   ✓ 人工确认通过
   ✓ 文档质量达标
+  ✓ feature分支已创建，Git Hooks已安装
 
-🎯 下一步: 交给 /powerby.implement 或 powerby-engineer 进行实现
+🎯 下一步: 交给 /powerby.implement 或 powerby-engineer 进行实现 (在 feature 分支上)
 ```
 
 ### 效率指标
