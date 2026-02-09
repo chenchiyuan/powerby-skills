@@ -28,6 +28,7 @@ POWERBY_COMMANDS = [
     "powerby-implement",
     "powerby-review",
     "powerby-quick",
+    "powerby-bugfix",
 ]
 
 class PowerByCLI:

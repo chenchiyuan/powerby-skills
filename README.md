@@ -53,7 +53,6 @@ PowerBy Skills 是一套完整的AI驱动产品开发流程技能包，涵盖从
 - **📏 质量门禁**: 8个质量门禁确保每个阶段输出质量
 - **⚡ 快速流程**: 支持≤3天小需求的快速处理
 - **📚 文档驱动**: 完整的文档体系和可追溯性
-- **🛡️ 流程守护**: Flow Guardian确保严格遵循流程
 - **🌿 GitFlow集成**: 标准GitFlow分支管理，支持并行开发和独立Bug修复
 - **🔬 三层立体诊断**: Bug修复采用表现层-逻辑层-数据层立体诊断框架 🔥
 - **🔍 需求对齐**: 问题报告阶段先对齐需求再诊断，确保方向正确 🔥
@@ -69,7 +68,6 @@ PowerBy Skills 是一套完整的AI驱动产品开发流程技能包，涵盖从
 | **powerby-command** | 指令管理 | 流程协调、状态管理 | 全流程 |
 | **powerby-bugfix** | 故障诊断师 | 证据驱动诊断、单文档修复 | 独立流程 |
 | **powerby-github-branch** | GitHub分支管理专家 | GitFlow分支管理自动化 | 为其他技能提供支持 |
-| **powerby-flow-guardian** | 流程守护 | 状态检查、问题诊断 | 全流程 |
 
 ### 完整工作流程
 
@@ -94,7 +92,6 @@ graph TB
         ENG[powerby-engineer<br/>工程师]
         CR[powerby-code-review<br/>代码审查]
         BUGFIX[powerby-bugfix<br/>故障诊断师] 🔧
-        FG[powerby-flow-guardian<br/>流程守护者]
         CMD[powerby-command<br/>指令管理] ⭐
     end
 
@@ -130,9 +127,6 @@ graph TB
 
     %% Bug-Fix独立流程
     BUGFIX -.-> BUGFIX
-
-    %% 流程维护
-    CMD -.-> FG
 
     classDef commandSkill fill:#4caf50,stroke:#388e3c,stroke-width:3px,color:#fff
     class CMD commandSkill
@@ -311,7 +305,6 @@ P0 → P1 → P3 → P4 → P5 → P6 → P7
 sequenceDiagram
     participant User
     participant CMD as powerby-command
-    participant FG as powerby-flow-guardian
     participant PM as powerby-product
     participant ARCH as powerby-architect
     participant ENG as powerby-engineer
@@ -319,14 +312,11 @@ sequenceDiagram
 
     User->>CMD: 输入指令 (如 /powerby.define)
     CMD->>CMD: 解析指令
-    CMD->>FG: 检查当前状态和前置条件
-    FG-->>CMD: 返回状态分析
     CMD->>CMD: 验证指令合法性
 
     alt 指令合法
         CMD->>对应技能: 调用相应技能
         对应技能-->>CMD: 返回执行结果
-        CMD->>FG: 更新项目状态
         CMD-->>User: 返回成功结果和下一步指导
     else 指令不合法
         CMD-->>User: 返回错误信息和解决建议
@@ -356,7 +346,7 @@ sequenceDiagram
 2. **充分确认**: 每个阶段都等待门禁检查通过
 3. **记录决策**: 所有重要决策都有文档记录
 4. **及时更新**: 状态变化立即更新到项目元数据
-5. **主动澄清**: 遇到模糊点主动询问Flow Guardian
+5. **主动澄清**: 遇到模糊点主动询问用户
 
 ### ❌ 避免做法
 
@@ -469,21 +459,6 @@ powerby-command 解析指令
 - 安全性审查
 - 性能评估
 - 验收方案设计
-
-### Flow Guardian流程守护
-
-**功能职责**：
-- ✅ 状态检查：实时跟踪项目当前阶段
-- ✅ 前置验证：确保每个阶段的前置条件满足
-- ✅ 门禁检查：验证每个阶段的质量门禁
-- ✅ 流程指导：提供下一步操作建议
-
-**使用方式**：
-```bash
-/powerby-flow-guardian analyze  # 查看当前状态
-/powerby-flow-guardian check    # 检查前置条件
-/powerby-flow-guardian guide    # 获取操作指导
-```
 
 ## 📚 学习资源
 

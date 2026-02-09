@@ -87,6 +87,19 @@ graph TB
 > - P2阶段已合并到P1中，采用"需求定稿制"融合澄清过程
 > - P8运维交付为可选流程，独立于MVP开发流程
 
+### 1.2.1 变更控制（Change Control）
+
+为避免需求漂移与实现偏离，所有阶段必须记录变更并关联证据。
+
+**记录位置**：`docs/{project}/implementation/decisions.md`
+
+**最小变更记录字段**：
+- 变更ID（CHG-001）
+- 变更类型（PRD/架构/实现）
+- 原因与影响范围
+- 批准人
+- 证据位置（文件路径/行号/commit）
+
 ### 1.3 GitHub分支管理 (GitFlow)
 
 PowerBy集成了完整的GitFlow分支管理策略，通过独立的 `powerby-github-branch` 技能实现自动化分支管理：
@@ -273,6 +286,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] 高优先级模糊点已全部澄清(≤5个问题)
 - [ ] 所有澄清已同步回prd.md对应章节
 - [ ] 覆盖度状态: 核心类别≥80%为"Clear"
+- [ ] 变更记录：PRD相关变更已记录并可追溯（CHG-xxx）
 
 #### 2.6 状态流转
 - **起始状态**: `P0_COMPLETED`
@@ -360,7 +374,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 
 | 文档名称 | 文档路径 | 模板状态 | 内容要点 |
 |---------|---------|---------|---------|
-| 技术调研报告 | `docs/{project}/research.md` | 📋 待创建 | - 调研项列表<br/>- 每项的备选方案对比<br/>- 最终决策<br/>- 决策理由<br/>- 被拒绝方案及原因 |
+| 技术调研报告 | `docs/{project}/technical-research.md` | 📋 待创建 | - 调研项列表<br/>- 每项的备选方案对比<br/>- 最终决策<br/>- 决策理由<br/>- 被拒绝方案及原因 |
 
 #### 2.5 验收标准
 - [ ] 所有关键技术选型已完成决策
@@ -382,7 +396,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 
 #### 2.2 输入条件
 - ✅ P3已完成
-- ✅ research.md已产出
+- ✅ technical-research.md已产出
 - ✅ Architect已就位
 
 #### 2.3 主要活动 (遵循Px执行协议)
@@ -455,6 +469,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] 数据模型已定义
 - [ ] API契约已定义
 - [ ] 关键决策点已评估并选定方案
+- [ ] 变更记录：架构相关变更已记录并可追溯（CHG-xxx）
 
 **变更点说明检查**
 - [ ] 是否有关键概述说明为什么需要变更
@@ -517,6 +532,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] 并行任务已标记[P]
 - [ ] 4类Checklist已创建
 - [ ] 预估工作量已评估
+- [ ] 计划确认：范围/依赖/阻塞项已一次性确认
 
 #### 2.6 状态流转
 - **起始状态**: `P4_COMPLETED`
@@ -568,9 +584,10 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] tasks.md中所有任务已标记完成[x]
 - [ ] 所有代码已提交到版本控制
 - [ ] 单元测试覆盖率 ≥ 80%(可配置)
-- [ ] 集成测试已通过
+- [ ] 集成测试通过率 ≥ 60%(可配置)
 - [ ] checklists/中的Checklist已更新
 - [ ] 工作日志已记录
+- [ ] 变更记录：实现相关变更已记录并可追溯（CHG-xxx）
 
 #### 2.6 状态流转
 - **起始状态**: `P5_COMPLETED`
@@ -622,7 +639,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 
 | 文档名称 | 文档路径 | 模板状态 | 内容要点 |
 |---------|---------|---------|---------|
-| 代码审查报告 | `docs/{project}/reviews/code-review-{id}.md` | 📋 待创建 | - 最终结论(APPROVED/CHANGES REQUESTED)<br/>- 总体评价<br/>- 功能完成列表<br/>- 建议测试方案<br/>- 详细修改建议 |
+| 代码审查报告 | `docs/{project}/reviews/code-review-report.md` | 📋 待创建 | - 最终结论(APPROVED/CHANGES REQUESTED)<br/>- 总体评价<br/>- 功能完成列表<br/>- 建议测试方案<br/>- 详细修改建议 |
 | 验收测试报告 | `docs/{project}/reviews/acceptance-test.md` | 📋 待创建 | - 功能验收测试记录<br/>- 每个User Story的测试结果<br/>- 发现的问题 |
 
 #### 2.5 验收标准 (Gate 5)
@@ -631,6 +648,8 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] 功能验收测试已全部通过
 - [ ] Checklist验证无差异
 - [ ] 代码已合并到主分支
+- [ ] 安全基线：高危=0，中危≤2（可配置）
+- [ ] 证据索引：R/A/I 对照表可追溯到文件与commit
 
 #### 2.6 状态流转
 - **起始状态**: `P6_COMPLETED`
@@ -687,6 +706,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - [ ] 监控和告警已配置
 - [ ] 项目文档已归档
 - [ ] 项目总结已完成
+- [ ] 交付清单与证据索引已归档
 
 #### 2.6 状态流转
 - **起始状态**: `P7_COMPLETED`
@@ -717,7 +737,7 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 | 1 | 项目宪章模板 | `templates/constitution-template.md` | P0 | 📋 待创建 |
 | 2 | PRD模板 | `templates/prd-template.md` | P0 | 📋 待创建 |
 | 3 | 需求澄清模板 | `templates/clarifications-template.md` | P0 | 📋 待创建 |
-| 4 | 技术调研模板 | `templates/research-template.md` | P0 | 📋 待创建 |
+| 4 | 技术调研模板 | `templates/technical-research-template.md` | P0 | 📋 待创建 |
 | 5 | 架构设计模板 | `templates/architecture-template.md` | P0 | 📋 待创建 |
 | 6 | 数据模型模板 | `templates/data-model-template.md` | P0 | 📋 待创建 |
 | 7 | 任务计划模板 | `templates/tasks-template.md` | P0 | 📋 待创建 |
@@ -728,6 +748,15 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 | 12 | 项目总结模板 | `templates/retrospective-template.md` | P2 | 📋 待创建 |
 
 ---
+
+### 3.3 文档命名与路径一致性
+
+为避免歧义，生命周期内采用以下唯一命名：
+- `docs/{project}/technical-research.md`
+- `docs/{project}/implementation/implementation-report.md`
+- `docs/{project}/reviews/code-review-report.md`
+
+禁止出现未定义别名（如 research.md、code-review-{id}.md）。
 
 ---
 
@@ -757,6 +786,11 @@ PowerBy框架强调**迭代思维与复用优先**的核心理念，确保在每
 - 完成一个子任务标记一个
 - 遇到阻塞记录并继续
 - 避免"大爆炸"式一次性输出
+
+### 4.3 最小测试策略（P6/P7默认要求）
+
+- 每个P0功能至少 1 个单元测试 + 1 个集成/验收步骤
+- 在 `docs/{project}/checklists/testing.md` 中记录测试证据
 
 #### 贯穿始终
 - tasks.md从P1阶段开始使用

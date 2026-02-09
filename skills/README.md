@@ -28,6 +28,14 @@
 | [mvp-prioritization](./mvp-prioritization/SKILL.md) | MVP优先级评估、功能原子化、无情削减 | 功能评审、MVP定义、优先级排序 | product |
 | [function-point-checker](./function-point-checker/SKILL.md) | 功能点检查、格式验证、质量分析 | PRD文档检查、功能点审查、质量保证 | product |
 
+### 辅助治理 Skills（Optional 层）
+
+这些是可选辅助技能，由用户主动触发，用于强化交付验收与证据链。
+
+| Skill | 核心能力 | 适用场景 | 被谁复用 |
+|-------|---------|---------|---------|
+| [powerby-reviewer](./powerby-reviewer/SKILL.md) | 交付完成确认、证据链治理、三向对齐与DoD量化 | 交付验收、完成确认、质量门禁检查 | 手动触发 |
+
 ## 🔄 完整工作流程
 
 ```mermaid
@@ -91,6 +99,13 @@ graph LR
 
 # 只需要代码审查
 用户: "使用 powerby-code-review skill，请审查这个PR"
+```
+
+### 场景2.1：使用辅助治理技能
+
+```bash
+# 需要交付完成确认
+用户: "使用 powerby-reviewer skill，对当前迭代做交付完成确认"
 ```
 
 ### 场景3：使用原子能力技能✨

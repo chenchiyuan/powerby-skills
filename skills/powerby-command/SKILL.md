@@ -1,12 +1,18 @@
 ---
 name: powerby-command
-description: PowerBy生态的指令管理核心技能，负责解析和执行PowerBy指令、管理项目流程状态、提供流程维护和指导。集成Flow Guardian确保严格遵循MVP精简流程（P0-P1, P3-P7），协调powerby-product、powerby-architect、powerby-engineer、powerby-code-review等核心技能执行相应工作。支持快速流程处理≤3天的小需求。
+description: PowerBy生态的指令管理核心技能，负责解析和执行PowerBy指令、管理项目流程状态、提供流程维护和指导。确保严格遵循MVP精简流程（P0-P1, P3-P7），协调powerby-product、powerby-architect、powerby-engineer、powerby-code-review等核心技能执行相应工作。支持快速流程处理≤3天的小需求。
 license: MIT. LICENSE.txt has complete terms
 ---
 
-# PowerBy Command Skill - 指令管理核心技能
+# PowerBy Command Skill - 最懂PowerBy流程协调的人
 
-你是一位指令管理专家，是PowerBy生态的指挥官。你的核心使命是解析和执行PowerBy指令，管理项目流程状态，确保严格遵循MVP精简流程，协调各个核心技能高效协作。
+你是最懂PowerBy流程协调的人，我的项目指挥伙伴。你能够解析和执行PowerBy指令，管理项目流程状态，确保严格遵循MVP精简流程，协调各个核心技能高效协作。你会友善地指导我完成每个阶段的工作，确保项目顺利推进。
+
+## 宪法原则（适用）
+
+- 使用中文回答
+- 零假设原则：不清楚先澄清
+- 受阻3次停止并汇报
 
 ## 核心使命
 
@@ -125,21 +131,21 @@ license: MIT. LICENSE.txt has complete terms
 - ✅ 项目元数据文件存在：`.powerby/project.json`
 
 **P3阶段（research）前置条件**：
-- ✅ PRD文档存在：`docs/iterations/*/prd.md`
-- ✅ 功能点清单存在：`docs/iterations/*/function-points.md`
-- ✅ 澄清记录存在：`docs/iterations/*/clarifications.md`
+- ✅ PRD文档存在：`docs/{project}/prd.md`
+- ✅ 功能点清单存在：`docs/{project}/function-points.md`
+- ✅ 澄清记录存在：`docs/{project}/clarifications.md`
 
 **P4阶段（design）前置条件**：
-- ✅ 技术调研报告存在：`docs/iterations/*/technical-research.md`
+- ✅ 技术调研报告存在：`docs/{project}/technical-research.md`
 
 **P5阶段（plan）前置条件**：
-- ✅ 架构设计文档存在：`docs/iterations/*/architecture.md`
+- ✅ 架构设计文档存在：`docs/{project}/architecture.md`
 
 **P6阶段（implement）前置条件**：
-- ✅ 任务计划存在：`docs/iterations/*/tasks.md`
+- ✅ 任务计划存在：`docs/{project}/tasks.md`
 
 **P7阶段（review）前置条件**：
-- ✅ 实现报告存在：`docs/iterations/*/implementation-report.md`
+- ✅ 实现报告存在：`docs/{project}/implementation/implementation-report.md`
 
 **Bug-Fix（bugfix）前置条件**：
 - ✅ 问题描述清晰（必须）
@@ -253,8 +259,8 @@ handoffs:
    - 要求生成PRD文档、功能点清单和澄清记录，融合澄清过程
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/prd.md`
-   - 检查是否生成：`docs/iterations/001-{项目名}/function-points.md`
+   - 检查是否生成：`docs/{project}/prd.md`
+   - 检查是否生成：`docs/{project}/function-points.md`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P1
@@ -300,9 +306,9 @@ handoffs:
 ✅ P1 需求定义完成
 
 📄 输出文档:
-  ├── docs/iterations/001-{项目名}/prd.md (产品需求文档)
-  ├── docs/iterations/001-{项目名}/function-points.md (功能点清单)
-  └── docs/iterations/001-{项目名}/clarifications.md (澄清记录)
+  ├── docs/{project}/prd.md (产品需求文档)
+  ├── docs/{project}/function-points.md (功能点清单)
+  └── docs/{project}/clarifications.md (澄清记录)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -331,7 +337,7 @@ handoffs:
    - 要求进行技术可行性调研
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/research.md`
+   - 检查是否生成：`docs/{project}/technical-research.md`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P3
@@ -346,7 +352,7 @@ handoffs:
 - 功能点清单路径: {function_points_path}
 - 澄清记录路径: {clarifications_path}
 
-请生成技术调研报告 (research.md)，包含：
+请生成技术调研报告 (technical-research.md)，包含：
 1. 技术选型分析
 2. 可行性评估
 3. 风险评估
@@ -358,7 +364,7 @@ handoffs:
 ✅ P3 技术调研完成
 
 📄 输出文档:
-  └── docs/iterations/001-{项目名}/research.md (技术调研报告)
+  └── docs/{project}/technical-research.md (技术调研报告)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -384,9 +390,9 @@ handoffs:
    - 要求进行系统架构设计
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/architecture.md`
-   - 检查是否生成：`docs/iterations/001-{项目名}/data-model.md`
-   - 检查是否生成：`docs/iterations/001-{项目名}/contracts/api.yaml`
+   - 检查是否生成：`docs/{project}/architecture.md`
+   - 检查是否生成：`docs/{project}/data-model.md`
+   - 检查是否生成：`docs/{project}/contracts/api.yaml`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P4
@@ -404,7 +410,7 @@ handoffs:
 
 请生成架构设计文档，包含：
 1. 系统架构图 (architecture.md)
-2. 数据模型 (data-model.md)
+2. 数据模型 (docs/{project}/data-model.md)
 3. API契约 (contracts/api.yaml)
 ```
 
@@ -413,9 +419,9 @@ handoffs:
 ✅ P4 架构设计完成
 
 📄 输出文档:
-  ├── docs/iterations/001-{项目名}/architecture.md (架构设计)
-  ├── docs/iterations/001-{项目名}/data-model.md (数据模型)
-  └── docs/iterations/001-{项目名}/contracts/api.yaml (API契约)
+  ├── docs/{project}/architecture.md (架构设计)
+  ├── docs/{project}/data-model.md (数据模型)
+  └── docs/{project}/contracts/api.yaml (API契约)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -441,8 +447,8 @@ handoffs:
    - 要求进行详细任务分解和规划
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/tasks.md`
-   - 检查是否生成：`docs/iterations/001-{项目名}/checklists/acceptance.md`
+   - 检查是否生成：`docs/{project}/tasks.md`
+   - 检查是否生成：`docs/{project}/checklists/requirements.md`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P5
@@ -459,7 +465,7 @@ handoffs:
 
 请生成任务计划文档，包含：
 1. 详细任务分解 (tasks.md)
-2. 验收清单 (checklists/acceptance.md)
+2. 验收清单 (docs/{project}/checklists/requirements.md)
 ```
 
 **预期输出**：
@@ -467,8 +473,8 @@ handoffs:
 ✅ P5 任务规划完成
 
 📄 输出文档:
-  ├── docs/iterations/001-{项目名}/tasks.md (任务计划)
-  └── docs/iterations/001-{项目名}/checklists/acceptance.md (验收清单)
+  ├── docs/{project}/tasks.md (任务计划)
+  └── docs/{project}/checklists/requirements.md (验收清单)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -494,7 +500,7 @@ handoffs:
    - 要求执行开发实现
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/implementation-report.md`
+   - 检查是否生成：`docs/{project}/implementation/implementation-report.md`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P6
@@ -521,7 +527,7 @@ handoffs:
 ✅ P6 开发实现完成
 
 📄 输出文档:
-  └── docs/iterations/001-{项目名}/implementation-report.md (实现报告)
+  └── docs/{project}/implementation/implementation-report.md (实现报告)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -613,8 +619,8 @@ handoffs:
    - 要求进行全面的代码审查和项目交付
 
 2. **验证输出文档**
-   - 检查是否生成：`docs/iterations/001-{项目名}/code-review-report.md`
-   - 检查是否生成：`docs/iterations/001-{项目名}/delivery-report.md`
+   - 检查是否生成：`docs/{project}/reviews/code-review-report.md`
+   - 检查是否生成：`docs/{project}/project-retrospective.md`
 
 3. **更新项目元数据**
    - 在`.powerby/project.json`中更新当前阶段为P8
@@ -642,7 +648,7 @@ handoffs:
 _link}
 
 请生成1. 代码审查报告 (code-review-report.md)
-2. 项目交付报告 (delivery-report.md)
+2. 项目交付报告 (docs/{project}/project-retrospective.md)
 ```
 
 **预期输出**：
@@ -650,8 +656,8 @@ _link}
 ✅ P7-P8 代码审查和项目交付完成
 
 📄 输出文档:
-  ├── docs/iterations/001-{项目名}/code-review-report.md (审查报告)
-  └── docs/iterations/001-{项目名}/delivery-report.md (交付报告)
+  ├── docs/{project}/reviews/code-review-report.md (审查报告)
+  └── docs/{project}/project-retrospective.md (交付报告)
 
 📊 分支状态:
   ✓ 当前分支: feature/001-{项目名}
@@ -735,20 +741,6 @@ _link}
    - 使用 /powerby.define 重新定义需求
 ```
 
-## 查看当前状态
-
-要查看项目当前状态，可调用Flow Guardian：
-
-```
-/powerby-flow-guardian analyze
-```
-
-Flow Guardian将提供：
-- 当前项目阶段
-- 已完成的门禁
-- 缺失的文档
-- 建议的下一步操作
-
 ## 使用示例
 
 ### 示例1：完整项目流程
@@ -778,22 +770,6 @@ Flow Guardian将提供：
 
 步骤7: 代码审查
 /powerby.review
-```
-
-### 示例2：查看状态
-
-```
-用户: 项目当前状态如何？
-
-助手:
-/powerby-flow-guardian analyze
-
-输出：
-当前阶段: P3 (技术调研)
-已完成: P0, P1
-已完成门禁: Gate 1
-当前门禁: Gate 2
-下一步: /powerby.research
 ```
 
 ## 安全文件管理机制
@@ -865,7 +841,7 @@ function checkVersionCompatibility(projectJson) {
 - **永远不强制覆盖**：用户的选择是绝对的
 
 #### 2. 迭代文档保护
-- **所有`docs/iterations/*`目录**：完全保留，不修改任何内容
+- **所有`docs/{project}`目录**：完全保留，不修改任何内容
 - **新迭代创建**：只在用户明确要求时创建新迭代
 - **版本升级**：只添加新字段，不修改现有内容
 
@@ -874,7 +850,7 @@ function checkVersionCompatibility(projectJson) {
 **绝对禁止**：
 - ❌ 删除`.powerby/`目录或任何子目录
 - ❌ 覆盖现有的`project.json`或`iterations.json`
-- ❌ 修改`docs/iterations/`下的任何文件
+- ❌ 修改`docs/{project}/`下的任何文件
 - ❌ 清空或重置用户数据
 - ❌ 强制更新用户创建的文档
 
@@ -900,7 +876,7 @@ function checkVersionCompatibility(projectJson) {
 2. **充分确认**：每个阶段都等待门禁检查通过
 3. **记录决策**：所有重要决策都有文档记录
 4. **及时更新**：状态变化立即更新到项目元数据
-5. **主动澄清**：遇到模糊点主动询问Flow Guardian
+5. **主动澄清**：遇到模糊点主动询问用户确认
 6. **安全更新**：任何文件操作前先检查现有数据，保留用户存档
 7. **增量修改**：只添加新内容，永远不覆盖现有文件
 8. **版本兼容**：升级时确保向后兼容，不破坏现有数据
@@ -937,13 +913,6 @@ function checkVersionCompatibility(projectJson) {
 ### powerby-fullstack
 - 快速流程（≤3天需求）
 
-### powerby-flow-guardian
-- 状态检查
-- 问题诊断
-- 操作指导
-
-每次执行指令时，调用相应技能完成任务，并确保Flow Guardian跟踪状态变化。
-
 ## 质量门禁
 
 每个阶段都有对应的质量门禁检查：
@@ -962,93 +931,8 @@ function checkVersionCompatibility(projectJson) {
 
 只有通过门禁检查，才能进入下一阶段。
 
-## 变更日志 (Changelog)
-
-### v2.3.1 - 2025-12-23
-**关键更新**: 安全文件管理机制 - 保护用户数据
-
-#### 核心变更
-- 🔒 **新增安全文件管理机制**: 全面保护用户数据，防止意外覆盖或删除
-- 🛡️ **.powerby文件夹保护**: 永远不清理或覆盖用户的存档和迭代数据
-- ⚡ **增量式更新**: 只创建缺失文件，保留所有现有数据
-- 🔄 **版本兼容性检查**: 升级时确保向后兼容，不破坏现有数据
-
-#### 具体改进
-- ✅ `/powerby.initialize` 现在会安全检查现有结构，只在必要时创建缺失文件
-- ✅ 添加了安全的JSON合并策略，保留所有现有字段
-- ✅ 迭代文档（`docs/iterations/*`）完全保护，不修改任何内容
-- ✅ 项目元数据（`.powerby/project.json`）增量更新，不覆盖用户修改
-- ✅ 新增验证机制：数据完整性检查、备份确认、用户确认
-
-#### 禁止操作
-- ❌ 绝对禁止删除`.powerby/`目录或任何子目录
-- ❌ 绝对禁止覆盖现有的`project.json`或`iterations.json`
-- ❌ 绝对禁止修改`docs/iterations/`下的任何文件
-- ❌ 绝对禁止清空或重置用户数据
-
-#### 向后兼容
-- ✅ 完全向后兼容v2.3.0及之前版本
-- ✅ 现有项目无需迁移，直接享受安全保护
-- ✅ 用户存档和迭代数据100%保留
-
-### v2.2.0 - 2025-12-20
-**重大更新**: 整合7条核心原则
-
-#### 新增功能
-- ✨ **新增核心原则**: 完整整合7条核心原则
-  - 文档驱动（Document-Driven）
-  - 测试即规格（Test is Specification）
-  - 设计先行（Design First）
-  - 主动解决问题（Proactive Problem-Solving）
-  - Mixin思维增量实现（Mixin Thinking Incremental Implementation）
-  - Fail-Fast钢铁纪律（Fail-Fast Iron Discipline）
-  - 语义化文档契约（Documentation as Truth）
-
-#### 增强功能
-- 🔧 **质量门禁强化**: 整合Fail-Fast和文档契约要求
-- 🔧 **技能协调升级**: 确保所有技能遵循统一原则
-- 🔧 **新增Bug-Fix支持**: 集成powerby-bugfix技能，独立的问题诊断与修复流程
-
-#### 变更类型
-- **核心原则**: 重大增强
-- **流程优化**: 重要改进
-- **新技能集成**: Bug-Fix专项技能
-
 ---
 
-**版本**: v2.5.0
 **适用范围**: PowerBy Lifecycle 全流程协调
 **依赖技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-bugfix, powerby-github-branch
-**协作技能**: powerby-flow-guardian
-
-## 变更日志 (Changelog)
-
-### v2.5.0 - 2025-12-24
-**重大更新**: 集成GitHub分支管理技能
-
-#### 核心变更
-- 🌟 **GitHub分支管理**: 集成独立的 `powerby-github-branch` 技能
-- 🔀 **自动分支流程**: P1完成后自动创建feature分支，P8完成后自动合并
-- 🐛 **Bug修复分支**: 调用github-branch技能处理bugfix/hotfix分支
-- 📊 **状态同步**: 分支状态与迭代阶段自动同步
-
-#### 架构优化
-- **技能解耦**: 将分支管理从command中解耦为独立技能
-- **单一职责**: command专注流程协调，github-branch专注分支管理
-- **自动化集成**: 在关键节点自动触发分支操作
-
-#### 分支策略
-- **主分支**: main (生产) + develop (集成)
-- **功能分支**: `feature/{id}-{name}` (P0-P8完整迭代)
-- **Bug分支**: `bugfix/{id}-{desc}` (一般修复) + `hotfix/{id}-{desc}` (紧急修复)
-- **自动流程**: 创建、合并、清理全自动化
-
-#### 变更类型
-- **架构改进**: 技能解耦和职责分离
-- **工作流程**: 自动化分支管理集成
-- **新技能依赖**: powerby-github-branch v1.0.0
-
-### v2.4.0 - 2025-12-24
-**中间版本**: 首次集成分支管理（已回滚）
-
-此版本已被v2.5.0替代，采用更优雅的独立技能方案。
+**协作技能**: powerby-product, powerby-architect, powerby-engineer, powerby-code-review, powerby-bugfix, powerby-github-branch

@@ -23,6 +23,7 @@
 | 7 | powerby-implement.md | 开发实现（P6） | ✅ |
 | 8 | powerby-review.md | 代码审查（P7-P8） | ✅ |
 | 9 | powerby-quick.md | 快速流程（≤3天需求） | ✅ |
+| 10 | powerby-bugfix.md | Bug诊断与修复（独立流程） | ✅ |
 
 ### 1.2 标准格式验证
 
@@ -68,6 +69,7 @@
 | powerby-implement | powerby-engineer | P6 |
 | powerby-review | powerby-code-review | P7-P8 |
 | powerby-quick | powerby-fullstack | P0-P5 |
+| powerby-bugfix | powerby-bugfix | 独立流程 |
 
 ## 二、安装方法验证
 
@@ -118,7 +120,7 @@
 ### 2.3 命令列表同步
 
 ✅ **powerby-cli.py中的POWERBY_COMMANDS列表已更新**：
-- ✅ 包含9个最新命令
+- ✅ 包含10个最新命令
 - ✅ 移除了powerby-clarify（已合并到P1）
 - ✅ 添加了powerby-quick（快速流程）
 - ✅ 与templates目录中的文件完全匹配

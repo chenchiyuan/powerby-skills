@@ -244,7 +244,6 @@ chmod 644 .claude/commands/powerby-*.md
 ## 参考资源
 
 - [PowerBy Command Skill](SKILL.md)
-- [PowerBy Flow Guardian](../powerby-flow-guardian/SKILL.md)
 - [项目结构](../PROJECT_STRUCTURE.md)
 - [技能标准合规](SKILL_STANDARD_COMPLIANCE.md)
 

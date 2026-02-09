@@ -21,7 +21,7 @@ description: 经验丰富的首席工程师和流程守护者，负责P7-P8阶�
 - **自动编号**：为每个审查迭代分配三位数字编号（001, 002, 003...）
 - **语义命名**：分支名称采用 `{编号}-{功能名}` 格式
 - **分支隔离**：每个迭代拥有独立的Git分支
-- **文档组织**：审查文档存储在 `docs/iterations/{id}-{name}/` 目录
+- **文档组织**：审查文档存储在 `docs/{project}/reviews/` 目录
 - **元数据追踪**：在 `.powerby/iterations.json` 中记录审查状态和交付信息
 - **审查跟踪**：生成code-review-report.md并持续更新审查结果
 
@@ -557,7 +557,7 @@ function-points.md是功能审核的核心文档，所有功能点相关的讨�
 如果未通过Gate 7，继续完善审查，直到通过为止。
 
 ### 📤 输出文档
-- `docs/iterations/{id}-{name}/code-review-report.md` - 代码审计报告
+- `docs/{project}/reviews/code-review-report.md` - 代码审计报告
 - **功能点清单验证报告** ⭐新增：包含在审计报告中，基于function-points.md的功能点验证结果
 
 ---
@@ -849,7 +849,7 @@ git branch -a | grep "feature/{迭代ID}"
 如果未通过Gate 8，继续完善交付，直到通过为止。
 
 ### 📤 输出文档
-- `docs/iterations/{id}-{name}/delivery-report.md` - 项目交付报告
+- `docs/{project}/project-retrospective.md` - 项目交付报告
 
 ---
 
@@ -1131,9 +1131,9 @@ git branch -a | grep "feature/{迭代ID}"
 ### 触发场景2：用户提供完整上下文
 ```
 用户: "请审查PR #123，文档路径：
-- prd.md: docs/project/prd.md
-- architecture.md: docs/project/architecture.md
-- tasks.md: docs/project/tasks.md"
+- prd.md: docs/{project}/prd.md
+- architecture.md: docs/{project}/architecture.md
+- tasks.md: docs/{project}/tasks.md"
 ```
 
 你的回应：
@@ -1218,38 +1218,3 @@ git branch -a | grep "feature/{迭代ID}"
 我将严格按照审计清单对代码进行全面审查，重点验证功能点实现与function-points.md的一致性，并输出结构化的审计报告。"
 
 ---
-
-## 更新日志
-
-**版本**: v2.2.0
-**更新日期**: 2026-01-13
-
-### v2.2.0 更新内容 🆕
-- **新增 P8 分支管理流程**：添加完整的分支合并和清理流程
-- **集成 powerby-git**：在合并前执行 `powerby-git check --type=merge` 进行全量检查
-- **集成 powerby-github-branch**：用户确认后调用 `powerby-github-branch.merge_branch()` 进行分支合并
-- **更新 Gate 8 检查清单**：增加分支管理完成状态验证
-- **更新交付报告模板**：新增"分支管理状态"章节
-- **明确职责分工**：本地检查由 powerby-git 负责，远程操作由 powerby-github-branch 负责
-- **⚠️ 安全更新**：所有分支操作必须经过用户确认，禁止自动删除分支
-
-### v2.1.1 更新内容 ⭐新增
-- 新增"受阻处理机制（3次尝试原则）"章节
-- 集成PowerBy Constitution中规定的"3次尝试然后停止"协议
-- 添加四步阻塞问题处理流程：记录失败→研究替代→反思基本→尝试不同角度
-- 提供标准化的阻塞报告模板
-- 强调立即停止和寻求指导的执行要求
-
-### v2.1.0 更新内容
-- 新增功能点清单（function-points.md）作为审查基准文档
-- 在Step 1中增加对function-points.md的接收和读取
-- 在Step 2审查清单中新增"功能点一致性验证"类别
-- 在审计报告模板中新增"功能点完成情况"部分
-- 更新可追溯性验证表格，增加function-points.md列
-- 更新Gate 7检查，增加功能点一致性验证要求
-- 强调"一个功能迭代同一份文档只有一份，永远维护最新状态"原则
-
-### 核心改进
-- **v2.2.0**: 通过集成 Git 分支管理流程，实现 P8 阶段自动化的分支合并和清理，确保迭代闭环
-- **v2.1.1**: 通过集成受阻处理机制，确保审查过程遵循PowerBy Constitution原则，在遇到无法解决的问题时能够系统化地处理和升级
-- **v2.1.0**: 通过集成功能点清单，代码审查现在能够：基于结构化的功能点列表进行验证、确保所有P0功能点都已正确实现、提供更精确的功能验收方案、建立从需求到实现的完整追踪链路

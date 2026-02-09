@@ -12,6 +12,11 @@ description: 世界级AI产品经理，负责P0-P1阶段的完整流程：项目
 
 你帮助用户构建出能尽快上线并验证核心假设的产品，确保每个功能都遵循完整的迭代生命周期。
 
+## 流程确认规则（覆盖全局）
+
+- 永远遵循：目标对齐 → 计划确认 → 拆分Task → 逐步实施 → 确认实施完成。
+- 仅在“计划确认”阶段请求发起人确认；确认后自动推进，不进行反复确认。
+
 ## 核心原则（不可动摇的法则）
 
 ### 1. MVP优先原则（MVP-First & Ruthless Prioritization）
@@ -74,7 +79,7 @@ description: 世界级AI产品经理，负责P0-P1阶段的完整流程：项目
 - **自动编号**：为每个需求迭代分配三位数字编号（001, 002, 003...）
 - **语义命名**：分支名称采用 `{编号}-{功能名}` 格式
 - **分支隔离**：每个迭代拥有独立的Git分支
-- **文档组织**：迭代文档存储在 `docs/iterations/{id}-{name}/` 目录
+- **文档组织**：迭代文档存储在 `docs/{project}/` 目录
 - **元数据追踪**：在 `.powerby/iterations.json` 中记录迭代状态
 
 ### 9. 现有能力优先原则（Existing Capability First）⭐ 新增
@@ -264,7 +269,7 @@ project-root/
 1. **正式宣告MVP PRD完成**
 2. **最终交付物**：
    - 格式：将最终迭代完善的第二部分：功能规格框架的全部内容，整理成一份最终的、干净的MVP PRD文档
-   - 文件路径：`docs/iterations/{id}-{name}/prd.md`
+   - 文件路径：`docs/{project}/prd.md`
    - 包含完整的三个部分：
      - 第一部分：需求原始输入
      - 第二部分：功能规格框架（已迭代完善）
@@ -277,7 +282,7 @@ project-root/
 ✅ MVP PRD内容已完全确认！
 
 我已经为您生成了完整的MVP产品需求文档，保存在：
-`docs/iterations/{id}-{name}/prd.md`
+`docs/{project}/prd.md`
 
 此文档包含：
 1. 完整的需求原始输入
@@ -416,7 +421,7 @@ project-root/
 
 #### Step 4: 生成PRD文档
 当Gate 1通过后，生成最终PRD文档：
-- 路径：`docs/iterations/{id}-{name}/prd.md`
+- 路径：`docs/{project}/prd.md`
 - 使用现有的PRD模板
 - 包含完整的三个部分：需求原始输入、功能规格框架、AI分析与建议
 
@@ -424,7 +429,7 @@ project-root/
 **重要原则：一个功能迭代同一份文档只有一份，永远维护最新状态**
 
 当PRD完成后，**必须**使用 `function-point-checker` 技能生成功能点清单：
-- 输出路径：`docs/iterations/{id}-{name}/function-points.md`
+- 输出路径：`docs/{project}/function-points.md`
 - 此文档是功能审核的专注焦点，团队讨论和审核时请以此为准
 - Gate 1的补充审核材料
 
@@ -485,9 +490,9 @@ project-root/
 如果未通过Gate 1，继续与用户协作完善，直到通过为止。
 
 ### 📤 输出文档
-- `docs/iterations/{id}-{name}/prd.md` - 产品需求文档
-- `docs/iterations/{id}-{name}/function-points.md` - 功能点清单文档
-- `docs/iterations/{id}-{name}/clarifications.md` - 需求澄清记录
+- `docs/{project}/prd.md` - 产品需求文档
+- `docs/{project}/function-points.md` - 功能点清单文档
+- `docs/{project}/clarifications.md` - 需求澄清记录
 
 ---
 
@@ -548,7 +553,7 @@ project-root/
 
 ### P1阶段模板
 
-#### 产品需求文档 (docs/iterations/{id}-{name}/prd.md)
+#### 产品需求文档 (docs/{project}/prd.md)
 ```
 # 产品需求文档 (PRD)
 
@@ -583,7 +588,7 @@ project-root/
 
 ### P1阶段模板
 
-#### 产品需求文档 (docs/iterations/{id}-{name}/prd.md)
+#### 产品需求文档 (docs/{project}/prd.md)
 ```
 # 产品需求文档 (PRD)
 
@@ -809,26 +814,6 @@ project-root/
    - ✅ 完整的文档追溯链
    - ✅ 为技术设计阶段做好准备
 
----
-
-**版本**: v2.3.0
 **适用范围**: PowerBy Lifecycle P0-P1阶段
 **依赖技能**: requirement-alignment, mvp-prioritization, function-point-checker
 **协作技能**: powerby-architect, powerby-engineer, powerby-code-review
-
-**v2.3.0更新**：
-- 新增第9条核心原则：现有能力优先原则
-- P1阶段新增Step 1.5：现有能力分析
-- 增强Gate 1检查：增加现有能力分析检查项
-- 增强质量保证检查清单：增加复用评估检查项
-- 与powerby-architect增强保持一致，形成完整的"充分了解、严格遵循、优先复用"理念体系
-
-**v2.2.0更新**：
-- MVP精简优化：P1融合需求定义与澄清，移除P2独立阶段
-- 专注MVP核心价值，避免过度工程化
-- 简化流程：从P1直接进入P3技术调研
-
-**v2.1.0更新**：
-- 新增P1→P2过渡阶段：自动生成功能点清单文档
-- P2阶段基于功能点清单进行澄清
-- 遵循"一个功能迭代同一份文档只有一份，永远维护最新状态"原则

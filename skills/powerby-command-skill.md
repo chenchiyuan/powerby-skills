@@ -36,7 +36,6 @@ graph TB
         ARCH[powerby-architect<br/>架构师]
         ENG[powerby-engineer<br/>工程师]
         CR[powerby-code-review<br/>代码审查]
-        FG[powerby-flow-guardian<br/>流程守护者]
         CMD[powerby-command<br/>指令管理] ⭐新增
     end
 
@@ -67,9 +66,6 @@ graph TB
     CMD --> ENG
     CMD --> CR
 
-    %% 流程维护
-    CMD -.-> FG
-
     classDef commandSkill fill:#4caf50,stroke:#388e3c,stroke-width:3px,color:#fff
     class CMD commandSkill
 ```
@@ -96,7 +92,6 @@ graph TB
 sequenceDiagram
     participant User
     participant CMD as powerby-command
-    participant FG as powerby-flow-guardian
     participant PM as powerby-product
     participant ARCH as powerby-architect
     participant ENG as powerby-engineer
@@ -104,14 +99,11 @@ sequenceDiagram
 
     User->>CMD: 输入指令 (如 /powerby.define)
     CMD->>CMD: 解析指令
-    CMD->>FG: 检查当前状态和前置条件
-    FG-->>CMD: 返回状态分析
     CMD->>CMD: 验证指令合法性
 
     alt 指令合法
         CMD->>对应技能: 调用相应技能
         对应技能-->>CMD: 返回执行结果
-        CMD->>FG: 更新项目状态
         CMD-->>User: 返回成功结果
     else 指令不合法
         CMD-->>User: 返回错误信息
@@ -180,8 +172,7 @@ class SkillInvoker:
             'powerby-product': PowerByProductSkill(),
             'powerby-architect': PowerByArchitectSkill(),
             'powerby-engineer': PowerByEngineerSkill(),
-            'powerby-code-review': PowerByCodeReviewSkill(),
-            'powerby-flow-guardian': PowerByFlowGuardianSkill()
+            'powerby-code-review': PowerByCodeReviewSkill()
         }
 
     async def invoke_skill(self, skill_name: str, task: str, context: Dict) -> Dict:
@@ -215,7 +206,6 @@ class PowerByCommandExecutor:
         self.parser = PowerByCommandParser()
         self.invoker = SkillInvoker()
         self.state_manager = ProjectStateManager()
-        self.flow_guardian = PowerByFlowGuardian()
 
     async def execute(self, user_input: str) -> Dict:
         """执行指令"""
@@ -334,7 +324,6 @@ class PowerByCommandExecutor:
         return [
             f'建议执行: {next_command}',
             f'下个阶段: {next_phase}',
-            '使用 /powerby-flow-guardian analyze 查看当前状态'
         ]
 ```
 
@@ -557,88 +546,13 @@ powerby [command] [参数]
 
 ---
 
-## 六、流程维护集成
-
-### 6.1 与Flow Guardian的协作
-
-```python
-class PowerByCommandWithFlowGuardian:
-    """集成Flow Guardian的指令执行器"""
-
-    def __init__(self):
-        self.executor = PowerByCommandExecutor()
-        self.flow_guardian = PowerByFlowGuardian()
-
-    async def execute_with_guidance(self, user_input: str) -> Dict:
-        """执行指令并提供流程指导"""
-        # 1. 解析指令
-        command = self.executor.parser.parse_command(user_input)
-
-        # 2. 获取当前状态
-        current_state = self.flow_guardian.analyze_current_state()
-
-        # 3. 提供状态反馈
-        guidance = self._generate_guidance(command, current_state)
-
-        # 4. 执行指令
-        result = await self.executor.execute(user_input)
-
-        # 5. 更新状态和建议
-        if result['success']:
-            result['guidance'] = guidance
-            result['current_state'] = self.flow_guardian.analyze_current_state()
-
-        return result
-
-    def _generate_guidance(self, command: Command, state: Dict) -> Dict:
-        """生成流程指导"""
-        guidance = {
-            'current_phase': state.get('current_phase'),
-            'health_score': state.get('health_score', 0),
-            'recommendations': [],
-            'next_steps': []
-        }
-
-        # 检查指令合法性
-        if not self._is_command_valid(command, state):
-            guidance['recommendations'].append(
-                f'当前阶段: {state.get("current_phase")}, '
-                f'建议指令: {self._get_recommended_command(state)}'
-            )
-
-        # 提供下一步建议
-        next_steps = self.executor._get_next_steps(command)
-        guidance['next_steps'] = next_steps
-
-        return guidance
-```
-
-### 6.2 流程状态可视化
-
-```bash
-# 查看当前状态
-/powerby-flow-guardian analyze
-
-# 执行指令
-/powerby.define "产品想法"
-
-# 查看执行结果和下一步建议
-# 系统会自动显示：
-# ✅ P1阶段完成
-# 📍 当前状态: P1_COMPLETED
-# 🎯 下一步: /powerby.clarify
-# 📊 健康度: 85/100
-```
-
----
-
 ## 七、最佳实践
 
 ### 7.1 指令使用原则
 
 1. **严格遵循流程**: 不跳过前置阶段
 2. **提供完整信息**: 尽量提供所有必要参数
-3. **及时检查状态**: 使用Flow Guardian查看当前状态
+3. **及时检查状态**: 通过项目元数据和输出提示确认状态
 4. **关注错误提示**: 仔细阅读错误信息和解决建议
 
 ### 7.2 错误处理
@@ -672,7 +586,7 @@ class PowerByCommandWithFlowGuardian:
 
 1. **统一的调用接口**: 所有指令通过powerby-command skill统一管理
 2. **技能协作**: 自动调用对应的核心技能完成任务
-3. **流程保障**: 集成Flow Guardian确保流程合规
+3. **流程保障**: 通过门禁检查与文档完整性确保流程合规
 4. **用户友好**: 提供清晰的状态反馈和操作指导
 
 这个设计完全符合PowerBy生态的skill标准，通过技能协作的方式实现了完整的开发流程管理。

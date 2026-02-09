@@ -1,0 +1,33 @@
+{
+  "name": "powerby-git",
+  "version": "1.0.0",
+  "description": "PowerBy Git分支管理专项技能，负责分支生命周期管理、提交合规检查、文件清理验证",
+  "main": "src/index.js",
+  "bin": {
+    "powerby-git": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest --coverage",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "lint": "eslint src/",
+    "hook:install": "node src/hooks/install.js"
+  },
+  "keywords": [
+    "powerby",
+    "git",
+    "branch",
+    "cli"
+  ],
+  "author": "PowerBy",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "simple-git": "^3.19.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
