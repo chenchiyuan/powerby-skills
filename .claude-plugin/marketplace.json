@@ -5,8 +5,8 @@
     "email": "contact@powerby.dev"
   },
   "metadata": {
-    "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期，采用三层立体诊断分析框架",
-    "version": "3.1.0"
+    "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期和ASP自治式规格精炼流程",
+    "version": "3.2.0"
   },
   "plugins": [
     {
@@ -28,7 +28,31 @@
         "./skills/function-point-checker",
         "./skills/solution-evaluation",
         "./skills/mermaid-architecture",
-        "./skills/test-spec-design"
+        "./skills/test-spec-design",
+        "./skills/powerby-huicheng-push"
+      ]
+    },
+    {
+      "name": "powerby-asp",
+      "description": "PowerBy ASP (Autonomous Spec Protocol) - 自治式规格精炼工厂。全新独立研发流程，通过 Product-Reviewer 对抗性协作自动产出高质量产品规格。与 P0-P8 流程完全隔离。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/powerby-asp-product",
+        "./skills/powerby-asp-reviewer",
+        "./skills/powerby-asp-codex-reviewer",
+        "./skills/powerby-asp-visualizer"
+      ]
+    },
+    {
+      "name": "powerby-asp-arch",
+      "description": "PowerBy ASP Architecture Design - 架构设计流程。基于已交付产品文档，通过 Architect-Reviewer 对抗性协作自动产出高质量架构文档。独立于产品 ASP 和 P0-P8 流程。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/powerby-asp-architect",
+        "./skills/powerby-asp-arch-reviewer",
+        "./skills/powerby-asp-arch-codex-reviewer"
       ]
     }
   ]
