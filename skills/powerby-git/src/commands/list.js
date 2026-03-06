@@ -3,7 +3,7 @@
  */
 
 const chalk = require('chalk');
-const { getAllBranches, isBranchMerged, getLastCommit } = require('../utils/git');
+const { getAllBranches, isBranchMerged, getLastCommitForBranch } = require('../utils/git');
 
 /**
  * 获取分支信息
@@ -11,10 +11,10 @@ const { getAllBranches, isBranchMerged, getLastCommit } = require('../utils/git'
  * @param {string} mainBranch - 主分支名
  * @returns {Promise<Object>}
  */
-async function getBranchInfo(branchName, mainBranch) {
+async function getBranchInfo(branchName, mainBranch, cwd = process.cwd()) {
   const [lastCommit, merged] = await Promise.all([
-    getLastCommit(branchName),
-    isBranchMerged(branchName, mainBranch)
+    getLastCommitForBranch(branchName, cwd),
+    isBranchMerged(branchName, mainBranch, cwd)
   ]);
 
   return {
@@ -46,31 +46,30 @@ async function executeList(options) {
   // 过滤主分支
   const filteredBranches = branches.filter(b => !mainBranches.includes(b));
 
-  // 按已合并状态过滤
-  let displayBranches = filteredBranches;
-  if (merged) {
-    displayBranches = filteredBranches.filter(b => b.isMerged);
-  } else if (unmerged) {
-    displayBranches = filteredBranches.filter(b => !b.isMerged);
-  }
-
-  // 获取分支详细信息
   const branchInfos = await Promise.all(
-    displayBranches.map(b => getBranchInfo(b, mainBranch))
+    filteredBranches.map(b => getBranchInfo(b, mainBranch, cwd))
   );
 
+  // 按已合并状态过滤
+  let displayBranches = branchInfos;
+  if (merged) {
+    displayBranches = branchInfos.filter(b => b.isMerged);
+  } else if (unmerged) {
+    displayBranches = branchInfos.filter(b => !b.isMerged);
+  }
+
   // 排序：未合并的在前，已合并的在后
-  branchInfos.sort((a, b) => {
+  displayBranches.sort((a, b) => {
     if (a.isMerged === b.isMerged) return 0;
     return a.isMerged ? 1 : -1;
   });
 
   return {
     success: true,
-    branches: branchInfos,
-    count: branchInfos.length,
-    mergedCount: branchInfos.filter(b => b.isMerged).length,
-    unmergedCount: branchInfos.filter(b => !b.isMerged).length
+    branches: displayBranches,
+    count: displayBranches.length,
+    mergedCount: displayBranches.filter(b => b.isMerged).length,
+    unmergedCount: displayBranches.filter(b => !b.isMerged).length
   };
 }
 

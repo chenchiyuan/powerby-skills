@@ -62,7 +62,7 @@ function generateSuggestions(validation, tempFiles) {
     suggestions.push('运行 powerby-git check --type=commit 检查详情');
   }
 
-  if (branchStatus.isClean && tempFiles.length === 0) {
+  if (validation.summary.invalid === 0 && tempFiles.length === 0) {
     suggestions.push('工作区很干净，可以提交了');
   }
 
@@ -139,6 +139,7 @@ function configureStatusCommand(program) {
 
 module.exports = {
   executeStatus,
+  generateSuggestions,
   formatStatusReport,
   configureStatusCommand
 };

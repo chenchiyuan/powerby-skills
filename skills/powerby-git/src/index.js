@@ -18,6 +18,7 @@ const { configureListCommand } = require('./commands/list');
 const { configureCheckCommand } = require('./commands/check');
 const { configureCleanupCommand } = require('./commands/cleanup');
 const { configureStatusCommand } = require('./commands/status');
+const { configureIterationCommand } = require('./commands/iteration');
 
 /**
  * 创建 CLI 程序
@@ -37,6 +38,7 @@ function createProgram() {
   configureCheckCommand(program);
   configureCleanupCommand(program);
   configureStatusCommand(program);
+  configureIterationCommand(program);
 
   // 默认命令
   program.action(() => {

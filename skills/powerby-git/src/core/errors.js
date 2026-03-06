@@ -42,6 +42,66 @@ const ERRORS = {
     code: 'E008',
     message: '无效的参数',
     hint: '请检查命令参数是否正确'
+  },
+  E009: {
+    code: 'E009',
+    message: 'PowerBy 元数据缺失',
+    hint: '请先初始化 .powerby/iterations.json，再执行分支自动化流程'
+  },
+  E010: {
+    code: 'E010',
+    message: '迭代记录不存在',
+    hint: '请确认迭代编号、名称与 docs/iterations 目录一致'
+  },
+  E011: {
+    code: 'E011',
+    message: '工作区不干净',
+    hint: '请先提交、暂存或清理未提交变更后重试'
+  },
+  E012: {
+    code: 'E012',
+    message: '分支不符合迭代约束',
+    hint: '请切换到期望的 feature 分支后继续'
+  },
+  E013: {
+    code: 'E013',
+    message: '分支状态非法',
+    hint: '请检查分支状态是否满足当前生命周期动作要求'
+  },
+  E014: {
+    code: 'E014',
+    message: '分支不存在',
+    hint: '请确认目标分支已经创建，或先同步本地 Git 状态'
+  },
+  E015: {
+    code: 'E015',
+    message: '源分支不存在',
+    hint: '请确认源分支已经存在，例如 develop 分支'
+  },
+  E016: {
+    code: 'E016',
+    message: '迭代元数据写入失败',
+    hint: '请检查 .powerby 目录权限与 JSON 文件格式'
+  },
+  E017: {
+    code: 'E017',
+    message: '合并预检测回滚失败',
+    hint: '请先执行 git merge --abort 清理现场，再重新触发流程'
+  },
+  E018: {
+    code: 'E018',
+    message: '远程分支操作失败',
+    hint: '请检查远程仓库配置、权限和网络状态后重试'
+  },
+  E019: {
+    code: 'E019',
+    message: '分支保护规则不满足',
+    hint: '请先满足分支保护规则约束后再执行合并'
+  },
+  E020: {
+    code: 'E020',
+    message: '分支历史报告生成失败',
+    hint: '请检查 docs/iterations 目录权限以及 Git 历史是否可读取'
   }
 };
 
