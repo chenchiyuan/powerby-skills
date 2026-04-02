@@ -43,17 +43,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate iteration documents
-        run: |
-          # 检查迭代文档完整性
-          for dir in docs/iterations/*/; do
-            if [ -d "$dir" ]; then
-              echo "Validating $dir"
-              # 检查必需文件是否存在
-              [ -f "$dir/prd.md" ] || (echo "Missing prd.md in $dir" && exit 1)
-              [ -f "$dir/architecture.md" ] || (echo "Missing architecture.md in $dir" && exit 1)
-              [ -f "$dir/tasks.md" ] || (echo "Missing tasks.md in $dir" && exit 1)
-            fi
-          done
+        run: python3 .github/workflows/scripts/validate-iteration-docs.py
 
       - name: Validate bug documents
         run: |

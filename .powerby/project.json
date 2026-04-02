@@ -2,11 +2,15 @@
   "name": "powerby-skills",
   "description": "PowerBy Skills - AI驱动的项目管理生命周期工具集",
   "version": "2.0.0",
-  "current_phase": "P1",
-  "completed_gates": ["Gate 1: MVP需求定稿检查"],
+  "current_phase": "P6",
+  "completed_gates": [
+    "Gate 1: MVP需求定稿检查",
+    "Gate 5: 开发规划详细性",
+    "Gate 6: 开发实现质量"
+  ],
   "status": "active",
   "created_at": "2026-02-09T00:00:00Z",
-  "updated_at": "2026-02-09T00:00:00Z",
+  "updated_at": "2026-03-30T00:00:00Z",
   "team": {
     "product_manager": "powerby-product",
     "architect": "powerby-architect",
@@ -48,13 +52,13 @@
     "P5": {
       "name": "任务规划",
       "description": "任务分解和开发计划",
-      "completed": false,
+      "completed": true,
       "gate": "Gate 5: 开发规划详细性"
     },
     "P6": {
       "name": "开发实现",
       "description": "代码实现和测试",
-      "completed": false,
+      "completed": true,
       "gate": "Gate 6: 开发实现质量"
     },
     "P7": {
