@@ -1,0 +1,3125 @@
+[
+  {
+    "object_id": "goal-001",
+    "object_type": "goal",
+    "name": "自动化产品规格精炼",
+    "description": "用户输入一句话需求，系统自动完成「三轮递进式探究 → 规格草拟 → 双向覆盖审查 → 自我修正 → 可视化交付」全流程，产出逻辑自洽、边界清晰、可逐条审核的产品规格",
+    "evidence_refs": [
+      "ev-bf7b5f7e2c7f",
+      "ev-d57664be65ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "goal-002",
+    "object_type": "goal",
+    "name": "减少文档格式和交互浪费",
+    "description": "极客开发者/架构师不愿在文档格式和反复 Prompt 交互中浪费时间，只关心最终的规格质量",
+    "evidence_refs": [
+      "ev-d57664be65ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-003",
+    "object_type": "goal",
+    "name": "对抗性协作质量保证",
+    "description": "通过 Product Agent 和 Reviewer Agent 自动 PK 循环，确保规格质量，避免模糊定义和逻辑缺陷",
+    "evidence_refs": [
+      "ev-0927c0d6755f",
+      "ev-32c8dfedf3cd"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "prd.md"
+    }
+  },
+  {
+    "object_id": "role-001",
+    "object_type": "role",
+    "name": "极客开发者/架构师",
+    "description": "希望通过自然语言快速启动项目，不愿在文档格式和反复 Prompt 交互中浪费时间，只关心最终的规格质量",
+    "evidence_refs": [
+      "ev-d57664be65ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-001",
+    "object_type": "scenario",
+    "name": "一键触发全流程规格生成",
+    "description": "用户通过 /powerby-asp \"需求描述\" 命令一键触发，系统自动完成从需求探究到可视化交付的完整流程",
+    "evidence_refs": [
+      "ev-3d71d91972a1",
+      "ev-6704fd4217ed",
+      "ev-d57664be65ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + powerby-asp.md"
+    }
+  },
+  {
+    "object_id": "scenario-002",
+    "object_type": "scenario",
+    "name": "三轮递进式需求探究",
+    "description": "第一轮探究意图与价值 → 第二轮探究功能边界 → 第三轮确认优先级与验收标准，每轮展示摘要并等待用户确认",
+    "evidence_refs": [
+      "ev-6a239a4dd40e",
+      "ev-7ba93d808783",
+      "ev-ed5ece2838d8"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + function-points.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "scenario-003",
+    "object_type": "scenario",
+    "name": "黑盒精炼循环",
+    "description": "Drafting + Refining 阶段自动化循环，Product Agent 和 Reviewer Agent 自动 PK，用户无需介入，最多 5 轮",
+    "evidence_refs": [
+      "ev-1f12d279e8af",
+      "ev-4902bc78b8f2",
+      "ev-ed5ece2838d8"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "prd.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "scenario-004",
+    "object_type": "scenario",
+    "name": "多 AI 交替审查",
+    "description": "支持 Claude 内部自动审查 + Codex 通过 codex exec 自动调用，按用户配置的审查序列执行",
+    "evidence_refs": [
+      "ev-6a239a4dd40e",
+      "ev-81f408d5ce3f",
+      "ev-ed5ece2838d8"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + function-points.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "constraint-001",
+    "object_type": "constraint",
+    "name": "纯 Skill 提示词实现",
+    "description": "所有功能通过 Skill 提示词文件（SKILL.md）和命令文件实现，不写任何代码",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-ef7c32bef8bc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-002",
+    "object_type": "constraint",
+    "name": "流程隔离",
+    "description": "powerby-asp 是全新独立流程，与现有 P0-P8 流程完全隔离，禁止混淆命名、阶段、角色、产物、门禁",
+    "evidence_refs": [
+      "ev-0927c0d6755f",
+      "ev-ef7c32bef8bc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + prd.md"
+    }
+  },
+  {
+    "object_id": "constraint-003",
+    "object_type": "constraint",
+    "name": "单会话模拟隔离",
+    "description": "Reviewer 审查时仅接收 spec.md + constitution.md + proposal.md + prd_logs/ 历史审查记录，通过 Prompt 策略屏蔽 Product Agent 思考过程和用户对话历史",
+    "evidence_refs": [
+      "ev-32c8dfedf3cd",
+      "ev-6a239a4dd40e",
+      "ev-ef7c32bef8bc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + prd.md"
+    }
+  },
+  {
+    "object_id": "constraint-004",
+    "object_type": "constraint",
+    "name": "零假设原则",
+    "description": "系统不假设用户一开始就提供了完美需求，必须通过苏格拉底式提问来挖掘，模糊必追问，必要信息不可跳过",
+    "evidence_refs": [
+      "ev-023f80b2867d",
+      "ev-3cfa887e3ca4",
+      "ev-4df22bd2b12f"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "prd.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "constraint-005",
+    "object_type": "constraint",
+    "name": "最大循环次数限制",
+    "description": "REFINING 阶段最多 5 轮 PK，超限触发 ESCALATION 报警，输出未解决问题清单并请求人工介入",
+    "evidence_refs": [
+      "ev-4902bc78b8f2",
+      "ev-6a239a4dd40e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + prd.md"
+    }
+  },
+  {
+    "object_id": "constraint-006",
+    "object_type": "constraint",
+    "name": "严禁镀金",
+    "description": "Product Agent 修复时只修补 Reviewer 指出的问题，不添加新功能（No Gold Plating）",
+    "evidence_refs": [
+      "ev-4902bc78b8f2",
+      "ev-606a3297878c",
+      "ev-6a239a4dd40e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + prd.md"
+    }
+  },
+  {
+    "object_id": "non-goal-001",
+    "object_type": "non_goal",
+    "name": "多 Agent 真隔离（独立会话）",
+    "description": "需要 Claude Code 支持独立会话管理，当前技术约束不支持",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-db5dca970d49"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "non-goal-002",
+    "object_type": "non_goal",
+    "name": "constitution.md 自动生成",
+    "description": "宪法文件应由用户手动维护，不属于 ASP 职责",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-db5dca970d49"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "non-goal-003",
+    "object_type": "non_goal",
+    "name": "跨迭代 Spec 关联",
+    "description": "复杂度高，MVP 不需要",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-db5dca970d49"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "non-goal-004",
+    "object_type": "non_goal",
+    "name": "自动化测试用例生成",
+    "description": "属于后续实现阶段职责",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-db5dca970d49"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "non-goal-005",
+    "object_type": "non_goal",
+    "name": "与 CI/CD 集成",
+    "description": "超出 ASP 流程范围",
+    "evidence_refs": [
+      "ev-392687161f3c",
+      "ev-db5dca970d49"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "proposal.md + product-map.md"
+    }
+  },
+  {
+    "object_id": "goal-004",
+    "object_type": "goal",
+    "name": "自治式产品规格精炼",
+    "description": "通过自动化流程将用户的一句话需求转化为经过多轮审查、逻辑自洽的产品规格文档，减少人工反复修改的成本",
+    "evidence_refs": [
+      "ev-762a408b3acc",
+      "ev-c72ccfcde7f7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md, docs/iterations/006-powerby-arch/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-005",
+    "object_type": "goal",
+    "name": "架构设计自动化",
+    "description": "基于已交付的产品文档自动生成高质量架构设计，通过多 AI 对抗审查保证架构质量，前期苏格拉底式澄清减少后期返工",
+    "evidence_refs": [
+      "ev-c216acb94a97",
+      "ev-c72ccfcde7f7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/proposal.md, docs/iterations/006-powerby-arch/product-map.md"
+    }
+  },
+  {
+    "object_id": "goal-006",
+    "object_type": "goal",
+    "name": "迭代编号自动化管理",
+    "description": "自动递增迭代编号并管理迭代目录结构，支持产品流程与架构流程的关联",
+    "evidence_refs": [
+      "ev-4bef4a0c5053"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/007-asp-iteration-numbering/product-map.md"
+    }
+  },
+  {
+    "object_id": "role-002",
+    "object_type": "role",
+    "name": "Product Agent",
+    "description": "负责探究用户需求、生成 proposal.md 和 spec.md 的 AI 角色",
+    "evidence_refs": [
+      "ev-2a9ab8a4d59f",
+      "ev-84c305471618"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md"
+    }
+  },
+  {
+    "object_id": "role-003",
+    "object_type": "role",
+    "name": "Reviewer Agent",
+    "description": "负责审查产品规格或架构文档的 AI 角色，执行三维检查协议（宪法符合性、双向覆盖、逻辑自洽性）",
+    "evidence_refs": [
+      "ev-0be600eb9ed4",
+      "ev-56203b0eaa3a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md"
+    }
+  },
+  {
+    "object_id": "role-004",
+    "object_type": "role",
+    "name": "Architect Agent",
+    "description": "负责基于产品文档生成架构设计的 AI 角色，包括系统架构、组件划分、数据流、接口定义",
+    "evidence_refs": [
+      "ev-09dfa48a548b",
+      "ev-5638091b9134"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/function-points.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "role-005",
+    "object_type": "role",
+    "name": "Orchestrator",
+    "description": "负责编排整个 ASP 流程的控制器，管理阶段转换、文件产出、审查循环",
+    "evidence_refs": [
+      "ev-13eef8d52a57",
+      "ev-4005c924a3ef"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-005",
+    "object_type": "scenario",
+    "name": "多轮对抗式审查",
+    "description": "通过多个 AI（Claude、Codex 等）交替审查产品规格或架构文档，最多 5 轮，每轮全面发现问题直到通过或触发 ESCALATION",
+    "evidence_refs": [
+      "ev-56203b0eaa3a",
+      "ev-dddf5c84fd6d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-006",
+    "object_type": "scenario",
+    "name": "苏格拉底式架构澄清",
+    "description": "架构设计前通过多轮提问穷尽架构疑问（选型、边界、约束、风险），不限轮次，以无疑问为结束条件",
+    "evidence_refs": [
+      "ev-2ecdd6ea03b7",
+      "ev-5638091b9134"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/function-points.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-007",
+    "object_type": "scenario",
+    "name": "自动迭代编号分配",
+    "description": "用户触发 ASP 流程时，系统自动读取 iterations.json 和目录扫描结果，计算下一个迭代编号并创建目录",
+    "evidence_refs": [
+      "ev-4bef4a0c5053"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/007-asp-iteration-numbering/product-map.md"
+    }
+  },
+  {
+    "object_id": "constraint-007",
+    "object_type": "constraint",
+    "name": "双向覆盖检查",
+    "description": "规格必须覆盖 proposal 中所有需求（正向覆盖），且不能包含 proposal 之外的功能（反向溢出），也不能包含明确排除项（排除项入侵）",
+    "evidence_refs": [
+      "ev-0a3b810320b9",
+      "ev-0be600eb9ed4"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-008",
+    "object_type": "constraint",
+    "name": "宪法符合性",
+    "description": "所有产品规格和架构设计必须符合 constitution.md 中定义的原则（奥卡姆剃刀、SOLID、DRY、演进式架构等）",
+    "evidence_refs": [
+      "ev-a12fd8c6ee5b",
+      "ev-e00608d2b463"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/spec.md, docs/iterations/006-powerby-arch/function-points.md"
+    }
+  },
+  {
+    "object_id": "constraint-009",
+    "object_type": "constraint",
+    "name": "上下文隔离",
+    "description": "Reviewer 审查时仅接收指定文件（spec.md、constitution.md、proposal.md、历史审查记录），屏蔽 Agent 思考过程和对话历史，保证审查客观性",
+    "evidence_refs": [
+      "ev-13eef8d52a57",
+      "ev-bc36a72254f4"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-010",
+    "object_type": "constraint",
+    "name": "最大审查轮次限制",
+    "description": "审查循环最多 5 轮，超限触发 ESCALATION 请求人工介入",
+    "evidence_refs": [
+      "ev-9696cb350541",
+      "ev-dddf5c84fd6d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/005-powerby-asp/spec.md, docs/iterations/006-powerby-arch/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-011",
+    "object_type": "constraint",
+    "name": "实现载体约束",
+    "description": "所有功能通过 Skill 提示词文件（SKILL.md）和命令文件（.claude/commands/*.md）实现，不写业务代码",
+    "evidence_refs": [
+      "ev-3eee71a931d3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-006",
+    "object_type": "non_goal",
+    "name": "业务代码生成",
+    "description": "架构阶段仅定义接口/协议规范，不产生任何业务代码实现",
+    "evidence_refs": [
+      "ev-36e057507b60"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-007",
+    "object_type": "non_goal",
+    "name": "任务拆解",
+    "description": "不在架构设计范围内生成 tasks.md，由后续阶段处理",
+    "evidence_refs": [
+      "ev-36e057507b60"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-008",
+    "object_type": "non_goal",
+    "name": "跨迭代架构关联",
+    "description": "MVP 不处理跨迭代的架构关联，复杂度高",
+    "evidence_refs": [
+      "ev-36e057507b60"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "docs/iterations/006-powerby-arch/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-007",
+    "object_type": "goal",
+    "name": "统一迭代编号体系",
+    "description": "让 ASP 流程的迭代文档与 P0-P8 流程共享统一编号体系，文档顺序一目了然",
+    "evidence_refs": [
+      "ev-d52040369154"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-008",
+    "object_type": "goal",
+    "name": "自动化Git分支管理",
+    "description": "让开发者专注于功能实现，而不是手动管理分支，确保每个迭代在独立的feature分支上开发，遵循Git最佳实践",
+    "evidence_refs": [
+      "ev-15887edcb8e0",
+      "ev-235bc34829cd",
+      "ev-dc485bc001b0"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/product-map.md, docs/iterations/008-git-branch-automation/proposal.md, docs/iterations/008-git-branch-automation/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-009",
+    "object_type": "goal",
+    "name": "还原式项目评审",
+    "description": "基于项目自身材料，将任意项目从产品目标到功能边界逐层还原为结构化对象与追踪关系网络，系统性地识别需求-实现偏差",
+    "evidence_refs": [
+      "ev-ecdc6fc66369"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/009-review-framework/product-map.md"
+    }
+  },
+  {
+    "object_id": "role-006",
+    "object_type": "role",
+    "name": "使用 PowerBy Skills 的开发者/架构师",
+    "description": "使用 PowerBy Skills 进行迭代开发的开发者或架构师",
+    "evidence_refs": [
+      "ev-d52040369154"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-007",
+    "object_type": "role",
+    "name": "使用PowerBy Skills的开发者（个人或小团队）",
+    "description": "在项目中使用GitFlow工作流程进行迭代开发的开发者",
+    "evidence_refs": [
+      "ev-586e8715f8be"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-008",
+    "object_type": "scenario",
+    "name": "ASP流程启动时自动递增编号",
+    "description": "ASP 流程启动时能自动递增编号、创建迭代目录，并与已有文档兼容共存",
+    "evidence_refs": [
+      "ev-d52040369154"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-009",
+    "object_type": "scenario",
+    "name": "迭代开始后没有正确开启Git分支",
+    "description": "迭代开始后没有正确开启Git分支，都在main分支上开发，导致代码管理混乱、无法回滚、难以并行开发等问题",
+    "evidence_refs": [
+      "ev-586e8715f8be"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-012",
+    "object_type": "constraint",
+    "name": "只修改ASP相关skill文件",
+    "description": "只修改 powerby-asp.md 和 powerby-asp-arch.md 两个 skill 文件",
+    "evidence_refs": [
+      "ev-9cf6e9af1871"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-013",
+    "object_type": "constraint",
+    "name": "编号体系与P0-P8共享序号空间",
+    "description": "编号体系与 P0-P8 共享同一序号空间，不能冲突",
+    "evidence_refs": [
+      "ev-9cf6e9af1871"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-014",
+    "object_type": "constraint",
+    "name": "Git环境依赖",
+    "description": "项目必须是Git仓库，必须存在develop分支，用户必须有分支创建和合并权限",
+    "evidence_refs": [
+      "ev-4d31d45a5abb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-015",
+    "object_type": "constraint",
+    "name": "技术栈约束",
+    "description": "必须使用GitFlow工作流程，分支命名必须遵循feature/{id}-{name}格式，合并策略必须使用--no-ff保留历史",
+    "evidence_refs": [
+      "ev-4d31d45a5abb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-016",
+    "object_type": "constraint",
+    "name": "用户交互约束",
+    "description": "所有破坏性操作（合并、删除）必须用户确认，分支创建可以自动执行（非破坏性），错误信息必须清晰且提供解决方案",
+    "evidence_refs": [
+      "ev-4d31d45a5abb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-017",
+    "object_type": "constraint",
+    "name": "兼容性约束",
+    "description": "必须与现有的powerby-github-branch技能兼容，必须与P0-P8生命周期流程集成，不能破坏现有的迭代追踪机制",
+    "evidence_refs": [
+      "ev-4d31d45a5abb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-009",
+    "object_type": "non_goal",
+    "name": "不改动P0-P8流程的skill文件",
+    "description": "范围限定，只更新 ASP 相关 skill",
+    "evidence_refs": [
+      "ev-bbf1ba39d118"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-010",
+    "object_type": "non_goal",
+    "name": "不改动reviewer/visualizer等子skill",
+    "description": "它们只关心迭代目录路径，不涉及编号逻辑",
+    "evidence_refs": [
+      "ev-bbf1ba39d118"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-011",
+    "object_type": "non_goal",
+    "name": "不改动iterations.json数据结构",
+    "description": "沿用现有字段结构",
+    "evidence_refs": [
+      "ev-bbf1ba39d118"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/007-asp-iteration-numbering/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-012",
+    "object_type": "non_goal",
+    "name": "自动解决合并冲突",
+    "description": "合并冲突需要人工判断，自动解决可能导致代码错误",
+    "evidence_refs": [
+      "ev-2325e3e86e41"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-013",
+    "object_type": "non_goal",
+    "name": "支持其他Git工作流",
+    "description": "当前需求明确使用GitFlow，支持其他工作流会增加复杂度",
+    "evidence_refs": [
+      "ev-2325e3e86e41"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-014",
+    "object_type": "non_goal",
+    "name": "Git Hooks自动安装",
+    "description": "Git Hooks安装属于powerby-git技能的职责，不在本次需求范围",
+    "evidence_refs": [
+      "ev-2325e3e86e41"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-015",
+    "object_type": "non_goal",
+    "name": "分支权限管理",
+    "description": "权限管理属于GitHub/GitLab平台层面，不在PowerBy Skills范围",
+    "evidence_refs": [
+      "ev-2325e3e86e41"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "docs/iterations/008-git-branch-automation/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-010",
+    "object_type": "goal",
+    "name": "系统性识别需求-实现偏差",
+    "description": "通过清晰定义的标准和方法进行可量化、可追溯的事实还原，防止项目方向失控",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "goal-011",
+    "object_type": "goal",
+    "name": "生成完整可追溯证据链",
+    "description": "支持审计，能够识别需求-设计-实现不一致的地方",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "goal-012",
+    "object_type": "goal",
+    "name": "对齐人类与AI编码助手",
+    "description": "通过规格驱动开发，在编写任何代码之前就对构建内容达成一致",
+    "evidence_refs": [
+      "ev-02e4967f3dfb"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-008",
+    "object_type": "role",
+    "name": "技术Leader",
+    "description": "使用评审框架进行项目评审的技术领导者",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-009",
+    "object_type": "role",
+    "name": "架构师",
+    "description": "使用评审框架进行架构评审的架构师",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-010",
+    "object_type": "role",
+    "name": "开发团队",
+    "description": "使用评审框架进行开发工作的团队成员",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-011",
+    "object_type": "role",
+    "name": "外部审计方",
+    "description": "使用评审框架进行外部审计的审计人员",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-012",
+    "object_type": "role",
+    "name": "AI Agent",
+    "description": "使用评审框架进行自动化评审的AI代理",
+    "evidence_refs": [
+      "ev-2ed1ae8451e4"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-010",
+    "object_type": "scenario",
+    "name": "项目评审流程",
+    "description": "从项目接入、证据采集、冲突决议、产品事实还原、功能事实还原、关系构建到差异识别的完整评审流程",
+    "evidence_refs": [
+      "ev-734834933ad5"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-011",
+    "object_type": "scenario",
+    "name": "规格驱动开发工作流",
+    "description": "起草变更提案、审查对齐、实现任务、归档更新规格的完整开发流程",
+    "evidence_refs": [
+      "ev-427f82b7f434"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-018",
+    "object_type": "constraint",
+    "name": "基于Claude Skill协议实现",
+    "description": "必须基于Claude Skill协议实现所有模块",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-019",
+    "object_type": "constraint",
+    "name": "事实优先、证据优先原则",
+    "description": "必须遵循事实优先、证据优先的原则，评审基于已有事实，不做猜测",
+    "evidence_refs": [
+      "ev-3d3b829eeb99",
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-020",
+    "object_type": "constraint",
+    "name": "代码是实现层最高优先级事实来源",
+    "description": "在实现层，代码优先于旧文档作为事实来源",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-021",
+    "object_type": "constraint",
+    "name": "新产品文档优先于旧文档",
+    "description": "在产品层，新文档优先于旧文档",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-022",
+    "object_type": "constraint",
+    "name": "显式保留差异",
+    "description": "需求与实现不一致时，显式保留差异，不自动和解",
+    "evidence_refs": [
+      "ev-3d3b829eeb99",
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-023",
+    "object_type": "constraint",
+    "name": "无证据时输出缺失",
+    "description": "没有证据时输出缺失/待确认，不脑补",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-024",
+    "object_type": "constraint",
+    "name": "V1优先主链路",
+    "description": "V1优先跑通产品→功能→关系→差异主链路",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-025",
+    "object_type": "constraint",
+    "name": "Markdown输出格式",
+    "description": "输出格式为Markdown文档，人类可读",
+    "evidence_refs": [
+      "ev-cbe97b22293f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-016",
+    "object_type": "non_goal",
+    "name": "自动修复代码问题",
+    "description": "框架只做还原和识别，不做修复",
+    "evidence_refs": [
+      "ev-5e650f85b52f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-017",
+    "object_type": "non_goal",
+    "name": "生成新的需求文档",
+    "description": "框架基于已有材料，不创造新内容",
+    "evidence_refs": [
+      "ev-5e650f85b52f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-018",
+    "object_type": "non_goal",
+    "name": "代码质量打分",
+    "description": "框架输出事实和差异，不做主观评价（如A/B/C评级）",
+    "evidence_refs": [
+      "ev-5e650f85b52f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-019",
+    "object_type": "non_goal",
+    "name": "性能分析、安全扫描",
+    "description": "超出还原式评审范围",
+    "evidence_refs": [
+      "ev-5e650f85b52f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-020",
+    "object_type": "non_goal",
+    "name": "项目管理功能",
+    "description": "不做任务分配、进度跟踪",
+    "evidence_refs": [
+      "ev-5e650f85b52f"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "goal-013",
+    "object_type": "goal",
+    "name": "Enable interactive selection for show commands",
+    "description": "Allow users to interactively select changes or specs when no identifier is provided to show commands, improving usability and discoverability",
+    "evidence_refs": [
+      "ev-37bb64de6e59",
+      "ev-bdd8f7dd9f6e",
+      "ev-d1638770c1c8",
+      "ev-e68b566e68b1",
+      "ev-ed9f008bdcb7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "commands_affected": [
+        "change show",
+        "spec show",
+        "top-level show"
+      ]
+    }
+  },
+  {
+    "object_id": "goal-014",
+    "object_type": "goal",
+    "name": "Provide unified show command with intelligent type detection",
+    "description": "Create a top-level show command that automatically detects whether the item is a change or spec, reducing cognitive load and command complexity",
+    "evidence_refs": [
+      "ev-30f165d68a3e",
+      "ev-b448e3463963",
+      "ev-ddba105323ee"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec show"
+    }
+  },
+  {
+    "object_id": "goal-015",
+    "object_type": "goal",
+    "name": "Enable flexible archiving without forced spec updates",
+    "description": "Allow users to archive changes without updating specs, either through explicit flags or by declining confirmation prompts, especially for changes that don't modify specs",
+    "evidence_refs": [
+      "ev-119c296760a1",
+      "ev-22e30cc2ab21",
+      "ev-4c763e274cc0",
+      "ev-cbfffb722990"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec archive"
+    }
+  },
+  {
+    "object_id": "goal-016",
+    "object_type": "goal",
+    "name": "Enable programmatic access to specs",
+    "description": "Provide JSON output and structured access to specs to enable integration with CI/CD pipelines, external tools, and automated processing",
+    "evidence_refs": [
+      "ev-0a04f2062d02",
+      "ev-6aae0aaa1640"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "commands": [
+        "spec show",
+        "spec list",
+        "spec validate"
+      ]
+    }
+  },
+  {
+    "object_id": "role-013",
+    "object_type": "role",
+    "name": "CLI user",
+    "description": "Developer or operator using OpenSpec CLI commands to manage changes and specs",
+    "evidence_refs": [
+      "ev-bdd8f7dd9f6e",
+      "ev-e68b566e68b1",
+      "ev-ed9f008bdcb7"
+    ],
+    "confidence": "inferred",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-014",
+    "object_type": "role",
+    "name": "Automation system",
+    "description": "CI/CD pipeline or automated tool that needs to interact with OpenSpec programmatically",
+    "evidence_refs": [
+      "ev-0a04f2062d02",
+      "ev-70b541656c12"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-012",
+    "object_type": "scenario",
+    "name": "Interactive change selection for show",
+    "description": "User executes show command without arguments and is prompted to select from available changes",
+    "evidence_refs": [
+      "ev-e68b566e68b1"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec change show"
+    }
+  },
+  {
+    "object_id": "scenario-013",
+    "object_type": "scenario",
+    "name": "Interactive spec selection for show",
+    "description": "User executes spec show command without arguments and is prompted to select from available specs",
+    "evidence_refs": [
+      "ev-ed9f008bdcb7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec spec show"
+    }
+  },
+  {
+    "object_id": "scenario-014",
+    "object_type": "scenario",
+    "name": "Interactive top-level show selection",
+    "description": "User executes top-level show command without arguments and is prompted to select type (change or spec) then select specific item",
+    "evidence_refs": [
+      "ev-bdd8f7dd9f6e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec show"
+    }
+  },
+  {
+    "object_id": "scenario-015",
+    "object_type": "scenario",
+    "name": "Non-interactive fallback",
+    "description": "When stdin is not a TTY or interactive mode is disabled, commands provide helpful hints instead of prompting",
+    "evidence_refs": [
+      "ev-42c693df7f12",
+      "ev-8ffb5e83ca40",
+      "ev-bbcf9039a587"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-016",
+    "object_type": "scenario",
+    "name": "Archiving without spec updates",
+    "description": "User archives a change that doesn't modify specs (like tooling or documentation changes) without unnecessary spec update prompts",
+    "evidence_refs": [
+      "ev-119c296760a1",
+      "ev-57722247c22c",
+      "ev-cbfffb722990"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec archive --skip-specs"
+    }
+  },
+  {
+    "object_id": "scenario-017",
+    "object_type": "scenario",
+    "name": "Declining spec updates during archive",
+    "description": "User declines spec update confirmation but archive operation continues instead of cancelling",
+    "evidence_refs": [
+      "ev-22e30cc2ab21",
+      "ev-8c82b374b16d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec archive"
+    }
+  },
+  {
+    "object_id": "scenario-018",
+    "object_type": "scenario",
+    "name": "Automated archiving in CI/CD",
+    "description": "CI/CD pipeline archives changes without interactive prompts using automation flags",
+    "evidence_refs": [
+      "ev-296f6296da2c",
+      "ev-70b541656c12"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "command": "openspec archive --yes"
+    }
+  },
+  {
+    "object_id": "constraint-026",
+    "object_type": "constraint",
+    "name": "Interactivity only in TTY environments",
+    "description": "Interactive prompts must only be shown when stdin is a TTY and interactivity is not explicitly disabled",
+    "evidence_refs": [
+      "ev-42c693df7f12",
+      "ev-8ffb5e83ca40",
+      "ev-bbcf9039a587",
+      "ev-e9fcfd7b5d25"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "control_mechanisms": [
+        "stdin TTY check",
+        "--no-interactive flag",
+        "OPEN_SPEC_INTERACTIVE=0 env var"
+      ]
+    }
+  },
+  {
+    "object_id": "constraint-027",
+    "object_type": "constraint",
+    "name": "Maintain backward compatibility with existing options",
+    "description": "All existing command options and flags must continue to work as before when new interactive features are added",
+    "evidence_refs": [
+      "ev-60191af19ec3",
+      "ev-e68b566e68b1",
+      "ev-ed9f008bdcb7"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-028",
+    "object_type": "constraint",
+    "name": "Safe defaults for confirmations",
+    "description": "Confirmation prompts must default to 'No' for safety, requiring explicit user consent",
+    "evidence_refs": [
+      "ev-0ab236879e43",
+      "ev-296f6296da2c"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-029",
+    "object_type": "constraint",
+    "name": "Non-blocking spec update confirmation",
+    "description": "Declining spec updates must not cancel the entire archive operation",
+    "evidence_refs": [
+      "ev-4c763e274cc0",
+      "ev-70b541656c12"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "non-goal-021",
+    "object_type": "non_goal",
+    "name": "Automatic spec updates without user awareness",
+    "description": "The system should not update specs silently; users must be informed and given control over spec updates",
+    "evidence_refs": [
+      "ev-0e0953eec6a3",
+      "ev-70b541656c12",
+      "ev-e8f3fb140ad9"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "goal-017",
+    "object_type": "goal",
+    "name": "Enable spec content filtering and validation",
+    "description": "Provide CLI commands to display filtered spec content (e.g., requirements only) and validate spec structure against schemas",
+    "evidence_refs": [
+      "ev-1a8ada4b91ef",
+      "ev-371b5dfa8d92",
+      "ev-523b8ca691ed"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-spec-commands/specs/cli-spec/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-018",
+    "object_type": "goal",
+    "name": "Provide runtime validation with detailed error reporting",
+    "description": "Enhance validation commands with strict Zod validation, detailed JSON reports, and strict mode that fails on warnings to prevent invalid specs and changes from being processed",
+    "evidence_refs": [
+      "ev-40084353451d",
+      "ev-f29235dec706"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-zod-validation/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-019",
+    "object_type": "goal",
+    "name": "Improve change review experience through delta-based storage",
+    "description": "Store only the requirements that actually change (additions, modifications, removals, renames) instead of complete future states to make GitHub diffs show only actual changes and improve reviewer experience",
+    "evidence_refs": [
+      "ev-a0acd237fe47",
+      "ev-a7926be3ac3c",
+      "ev-fe6fa6799194"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-020",
+    "object_type": "goal",
+    "name": "Align CLI with common verb-noun pattern",
+    "description": "Adopt verb-noun CLI structure (e.g., 'openspec list', 'openspec show') to match how users think ('do X to Y') and improve clarity, discoverability, and extensibility",
+    "evidence_refs": [
+      "ev-a81ebb837e3c",
+      "ev-c6e2e61df1ec"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-015",
+    "object_type": "role",
+    "name": "Spec reviewer",
+    "description": "Developer or team member who reviews specification changes on GitHub and needs to quickly identify what actually changed",
+    "evidence_refs": [
+      "ev-a7926be3ac3c",
+      "ev-fe6fa6799194"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-019",
+    "object_type": "scenario",
+    "name": "Filter spec content by requirements",
+    "description": "User executes 'openspec spec show init --requirements' to display only requirement names and SHALL statements, excluding scenario content",
+    "evidence_refs": [
+      "ev-1a8ada4b91ef"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-spec-commands/specs/cli-spec/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-020",
+    "object_type": "scenario",
+    "name": "Validate spec structure",
+    "description": "User executes 'openspec spec validate init' to parse the spec file, validate against Zod schema, and report structural issues",
+    "evidence_refs": [
+      "ev-371b5dfa8d92"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-spec-commands/specs/cli-spec/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-021",
+    "object_type": "scenario",
+    "name": "List all specs",
+    "description": "User executes 'openspec spec list' to scan the openspec/specs directory and return list of all available capabilities with optional JSON output",
+    "evidence_refs": [
+      "ev-944dad0bb7b6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-spec-commands/specs/cli-spec/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-022",
+    "object_type": "scenario",
+    "name": "Show spec as JSON",
+    "description": "User executes 'openspec spec show init --json' to parse the markdown spec file, extract headings and content hierarchically, and output valid JSON",
+    "evidence_refs": [
+      "ev-c5b2df42a241"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-add-spec-commands/specs/cli-spec/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-023",
+    "object_type": "scenario",
+    "name": "Review change with delta-based diff",
+    "description": "Reviewer views a change proposal on GitHub and sees only the 25 lines that actually changed (ADDED/MODIFIED/REMOVED sections) instead of 150+ lines of complete future state",
+    "evidence_refs": [
+      "ev-fb1fef86a36e",
+      "ev-fe6fa6799194"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-024",
+    "object_type": "scenario",
+    "name": "Archive changes with programmatic delta application",
+    "description": "User archives a completed change and the system programmatically applies RENAMED, REMOVED, MODIFIED, and ADDED deltas using normalized header matching",
+    "evidence_refs": [
+      "ev-945e06cec4b6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-025",
+    "object_type": "scenario",
+    "name": "List changes using verb-noun pattern",
+    "description": "User executes 'openspec list' (defaulting to --changes) or 'openspec list --specs' to list items using the verb-noun CLI structure",
+    "evidence_refs": [
+      "ev-2f1b63f19783",
+      "ev-b32d9d4f22aa"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-030",
+    "object_type": "constraint",
+    "name": "Header-based requirement identification",
+    "description": "Requirements must be identified and matched programmatically using normalized '### Requirement: [Name]' headers with trim-only normalization and case-sensitive comparison",
+    "evidence_refs": [
+      "ev-62337cd27205",
+      "ev-73a7720f2d65"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-031",
+    "object_type": "constraint",
+    "name": "Delta application order and atomicity",
+    "description": "Deltas must be applied in order RENAMED → REMOVED → MODIFIED → ADDED. All operations must be validated first, applied in-memory, and each spec written once. On any validation failure, abort without writing partial results",
+    "evidence_refs": [
+      "ev-8464b5f50993"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-032",
+    "object_type": "constraint",
+    "name": "Backward compatibility with deprecation period",
+    "description": "Noun-based commands (openspec spec, openspec change) must remain available with deprecation warnings for one release cycle before potential removal",
+    "evidence_refs": [
+      "ev-1d521e8034de",
+      "ev-88df44c25b2b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-033",
+    "object_type": "constraint",
+    "name": "Validation matrix for delta operations",
+    "description": "MODIFIED/REMOVED must exist in current spec; ADDED must not exist; RENAMED FROM must exist and TO must not; no duplicates after operations; no cross-section conflicts (e.g., same item in MODIFIED and REMOVED)",
+    "evidence_refs": [
+      "ev-8464b5f50993"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-022",
+    "object_type": "non_goal",
+    "name": "Dry-run support in v1",
+    "description": "Dry-run functionality for archive operations is explicitly deferred to keep v1 scope minimal",
+    "evidence_refs": [
+      "ev-8464b5f50993"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-023",
+    "object_type": "non_goal",
+    "name": "Idempotency detection in v1",
+    "description": "No-op detection for idempotent operations is not implemented in v1; system aborts on precondition failures with clear errors",
+    "evidence_refs": [
+      "ev-8464b5f50993"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-delta-based-changes/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-021",
+    "object_type": "goal",
+    "name": "Provide intuitive CLI command structure",
+    "description": "Enable users to discover and execute commands using verb-first structure that clearly communicates actions, with nouns refining scope via flags or arguments",
+    "evidence_refs": [
+      "ev-65e1cc36bc08",
+      "ev-f2e8fd1fc354"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-022",
+    "object_type": "goal",
+    "name": "Reduce friction in validation workflows",
+    "description": "Allow teams to validate all changes/specs before release and ensure consistency across multiple related changes without requiring individual ID specification",
+    "evidence_refs": [
+      "ev-c9f2f6ab655c"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-023",
+    "object_type": "goal",
+    "name": "Provide helpful guidance instead of errors",
+    "description": "When users run validation commands without arguments, provide interactive selection or helpful guidance rather than error messages",
+    "evidence_refs": [
+      "ev-c9f2f6ab655c"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-024",
+    "object_type": "goal",
+    "name": "Maintain tool-agnostic design",
+    "description": "Ensure update command respects user's AI tool selection and does not force creation or updates of unwanted AI tool configuration files",
+    "evidence_refs": [
+      "ev-c404fb8efb11",
+      "ev-f03dcf36577e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-025",
+    "object_type": "goal",
+    "name": "Reduce time-to-green with actionable error messages",
+    "description": "Provide validation errors with specific remediation steps, file/section hints, and suggested commands to help users quickly correct structure or formatting issues",
+    "evidence_refs": [
+      "ev-db8037815464"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-improve-validate-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-016",
+    "object_type": "role",
+    "name": "Team member",
+    "description": "Developer working in a team where different members may use different AI tools",
+    "evidence_refs": [
+      "ev-42695d50bb2e",
+      "ev-c404fb8efb11"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-017",
+    "object_type": "role",
+    "name": "Developer resolving validation failures",
+    "description": "Developer who needs to understand and fix validation errors quickly",
+    "evidence_refs": [
+      "ev-db8037815464"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-improve-validate-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-026",
+    "object_type": "scenario",
+    "name": "Verb-first command discovery",
+    "description": "User runs a command like 'openspec list' where the verb communicates the action clearly and nouns refine scope via flags or arguments",
+    "evidence_refs": [
+      "ev-65e1cc36bc08"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-027",
+    "object_type": "scenario",
+    "name": "Backward compatibility for noun commands",
+    "description": "Users run noun-prefixed commands such as 'openspec spec ...' or 'openspec change ...' and receive deprecation warnings pointing to verb-first alternatives",
+    "evidence_refs": [
+      "ev-b1627cfb1ba3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-028",
+    "object_type": "scenario",
+    "name": "Disambiguation guidance",
+    "description": "When item names are ambiguous between changes and specs, 'openspec show' and 'openspec validate' accept '--type spec|change' flag with clear help text documentation",
+    "evidence_refs": [
+      "ev-5ad1d72b4f39"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-029",
+    "object_type": "scenario",
+    "name": "Interactive validation selection",
+    "description": "User executes 'openspec validate' without arguments and is prompted to select what to validate (all, changes, specs, or specific item)",
+    "evidence_refs": [
+      "ev-709269f3501d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-030",
+    "object_type": "scenario",
+    "name": "Validate everything",
+    "description": "User executes 'openspec validate --all' to validate all changes and specs with summary showing passed/failed items",
+    "evidence_refs": [
+      "ev-ed9e946056c5"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-031",
+    "object_type": "scenario",
+    "name": "Direct item validation with automatic type detection",
+    "description": "User executes 'openspec validate <item-name>' and the system automatically detects if item is a change or spec",
+    "evidence_refs": [
+      "ev-96618b7bac6f",
+      "ev-9b1c63798a9d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-032",
+    "object_type": "scenario",
+    "name": "Ambiguity between change and spec names",
+    "description": "When item name exists both as a change and as a spec, system prints ambiguity error and suggests using --type flag or specific subcommands",
+    "evidence_refs": [
+      "ev-e6c26de48d1b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-033",
+    "object_type": "scenario",
+    "name": "Non-interactive environments do not prompt",
+    "description": "When stdin is not a TTY or --no-interactive is provided or OPEN_SPEC_INTERACTIVE=0, system does not prompt interactively and prints helpful hints",
+    "evidence_refs": [
+      "ev-76a73ebdc6e7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-034",
+    "object_type": "scenario",
+    "name": "Updating existing tool files",
+    "description": "User runs 'openspec update' and system updates each AI tool configuration file that exists without creating missing ones",
+    "evidence_refs": [
+      "ev-ba61331935b2"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/specs/cli-update/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-034",
+    "object_type": "constraint",
+    "name": "Backward compatibility requirement",
+    "description": "CLI must continue to support noun-prefixed commands for at least one release with deprecation warnings",
+    "evidence_refs": [
+      "ev-b1627cfb1ba3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-adopt-verb-noun-cli-structure/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-035",
+    "object_type": "constraint",
+    "name": "Archive directory exclusion",
+    "description": "When validating with --all or --changes, exclude the openspec/changes/archive/ directory",
+    "evidence_refs": [
+      "ev-73a044f413ca"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-036",
+    "object_type": "constraint",
+    "name": "Interactivity controls",
+    "description": "CLI must respect --no-interactive flag and OPEN_SPEC_INTERACTIVE=0 environment variable to disable prompts; interactive prompts only shown when stdin is a TTY and interactivity is not disabled",
+    "evidence_refs": [
+      "ev-b107eba8f47d",
+      "ev-b9fdddd4519b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-037",
+    "object_type": "constraint",
+    "name": "Concurrency limits for performance",
+    "description": "When validating multiple items, run validations with bounded concurrency (e.g., 4-8 in parallel) while ensuring progress indicators remain responsive",
+    "evidence_refs": [
+      "ev-fa2f294e1747"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-038",
+    "object_type": "constraint",
+    "name": "JSON output schema stability",
+    "description": "JSON output must follow defined schema with items array, summary object, and version identifier; exit with code 1 if any validation fails",
+    "evidence_refs": [
+      "ev-25a501aa83ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-bulk-validation-interactive-selection/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-039",
+    "object_type": "constraint",
+    "name": "Never create new AI tool files",
+    "description": "Update command must only modify existing AI tool configuration files and never create new ones",
+    "evidence_refs": [
+      "ev-07d65f3a5962",
+      "ev-42695d50bb2e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-040",
+    "object_type": "constraint",
+    "name": "Always update core files",
+    "description": "Update command must always update core OpenSpec files (README.md, etc.) regardless of AI tool selection",
+    "evidence_refs": [
+      "ev-eb3a6c5ae33f"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/specs/cli-update/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-041",
+    "object_type": "constraint",
+    "name": "Structured error location reporting",
+    "description": "All reported validation issues must include source file path and structured location (e.g., deltas[0].requirements[0])",
+    "evidence_refs": [
+      "ev-e3a5328d123c"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-improve-validate-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-024",
+    "object_type": "non_goal",
+    "name": "Shared configuration file for AI tool selection",
+    "description": "Do not rely on a shared configuration file for AI tool selection, as different team members may use different AI tools",
+    "evidence_refs": [
+      "ev-c404fb8efb11"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-08-19-fix-update-tool-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-026",
+    "object_type": "goal",
+    "name": "Improve validation error messages",
+    "description": "Provide actionable, structured error messages with file paths, locations, and remediation steps to help users fix validation issues quickly",
+    "evidence_refs": [
+      "ev-44585ff9e589",
+      "ev-84b65dbef3e3",
+      "ev-f66617ddf594"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-08-19-improve-validate-error-messages/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-027",
+    "object_type": "goal",
+    "name": "Establish structured specification format",
+    "description": "Create visual consistency and parseability across all specs through structured format with requirement and scenario headers",
+    "evidence_refs": [
+      "ev-174127f3471a",
+      "ev-4d17e98e858e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-08-19-structured-spec-format/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-028",
+    "object_type": "goal",
+    "name": "Provide unified project status overview",
+    "description": "Give users a quick, at-a-glance overview of their OpenSpec project status without running multiple commands",
+    "evidence_refs": [
+      "ev-1866c5b34b66"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-12-add-view-dashboard-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-029",
+    "object_type": "goal",
+    "name": "Support AGENTS.md standard",
+    "description": "Deliver first-class AGENTS support by managing root-level AGENTS.md file automatically so AGENTS-compatible tools receive current instructions",
+    "evidence_refs": [
+      "ev-80dce8218440",
+      "ev-8603b7e12e1b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-agents-md-config/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-030",
+    "object_type": "goal",
+    "name": "Enable multi-tool initialization",
+    "description": "Allow teams to add additional AI coding tools after initial setup without manual file management, keeping onboarding workflow consistent",
+    "evidence_refs": [
+      "ev-48d0c3c45328",
+      "ev-be642c08edbf"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-multi-agent-init/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-031",
+    "object_type": "goal",
+    "name": "Provide consistent slash commands across coding agents",
+    "description": "Reduce friction by providing standard slash commands for OpenSpec workflow across different coding agents and editors",
+    "evidence_refs": [
+      "ev-d37d002ca8e6",
+      "ev-e6c7c3efccb3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-018",
+    "object_type": "role",
+    "name": "Developer using OpenSpec",
+    "description": "Developer who needs to validate specs, view project status, and work with OpenSpec through various coding agents",
+    "evidence_refs": [
+      "ev-1866c5b34b66",
+      "ev-e6c7c3efccb3"
+    ],
+    "confidence": "inferred",
+    "metadata": {
+      "inferred_from": "user-focused language in proposals"
+    }
+  },
+  {
+    "object_id": "role-019",
+    "object_type": "role",
+    "name": "Team adopting OpenSpec",
+    "description": "Development team that starts with one assistant and later wants to add additional AI coding tools",
+    "evidence_refs": [
+      "ev-48d0c3c45328"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-multi-agent-init/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-035",
+    "object_type": "scenario",
+    "name": "Validation error with remediation",
+    "description": "When schema validation fails, user receives structured error with file path, location, and remediation hint",
+    "evidence_refs": [
+      "ev-3dd330bb9452",
+      "ev-5daac02831ea",
+      "ev-9c87b9fbed46"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-08-19-improve-validate-error-messages/specs/cli-validate/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-036",
+    "object_type": "scenario",
+    "name": "Quick project status check",
+    "description": "User runs single command to see unified dashboard with specs, changes, and progress instead of multiple separate commands",
+    "evidence_refs": [
+      "ev-1866c5b34b66"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-12-add-view-dashboard-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-037",
+    "object_type": "scenario",
+    "name": "Adding second AI tool",
+    "description": "Team that started with one assistant (e.g., Claude Code) later wants to add another (e.g., Cursor) without manual file creation",
+    "evidence_refs": [
+      "ev-48d0c3c45328"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-multi-agent-init/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-038",
+    "object_type": "scenario",
+    "name": "Using slash commands across tools",
+    "description": "Developer invokes OpenSpec workflow commands via slash commands in different coding agents (Claude Code, Cursor)",
+    "evidence_refs": [
+      "ev-68528668111a",
+      "ev-e6c7c3efccb3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-042",
+    "object_type": "constraint",
+    "name": "Non-breaking migration",
+    "description": "Changes must allow gradual migration without disrupting existing specs or requiring immediate adoption",
+    "evidence_refs": [
+      "ev-174127f3471a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-08-19-structured-spec-format/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-043",
+    "object_type": "constraint",
+    "name": "Preserve user content",
+    "description": "Updates must not overwrite user-edited content outside managed blocks; use marker-based updates",
+    "evidence_refs": [
+      "ev-344aa5e5564c",
+      "ev-be642c08edbf"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-agents-md-config/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-044",
+    "object_type": "constraint",
+    "name": "Tool-specific formatting",
+    "description": "Slash commands must respect each tool's configuration format, frontmatter support, and naming conventions",
+    "evidence_refs": [
+      "ev-68528668111a",
+      "ev-f4777d808779"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-025",
+    "object_type": "non_goal",
+    "name": "Require immediate spec migration",
+    "description": "Not forcing all existing specs to migrate to new format immediately; gradual adoption is acceptable",
+    "evidence_refs": [
+      "ev-174127f3471a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-08-19-structured-spec-format/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-026",
+    "object_type": "non_goal",
+    "name": "Change update command behavior",
+    "description": "Not changing how openspec update discovers or updates AI tool files as part of multi-agent init",
+    "evidence_refs": [
+      "ev-5486919d7987"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-multi-agent-init/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-027",
+    "object_type": "non_goal",
+    "name": "Additional AGENTS-specific workflows",
+    "description": "Not adding additional AGENTS-specific prompts or workflows beyond the shared instructions block",
+    "evidence_refs": [
+      "ev-d1bc68ba6df7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source": "references/OpenSpec/openspec/changes/archive/2025-09-29-add-agents-md-config/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-032",
+    "object_type": "goal",
+    "name": "Improve init onboarding experience",
+    "description": "Allow selecting multiple assistants during openspec init and provide richer onboarding copy that summarizes which tool files were created or refreshed",
+    "evidence_refs": [
+      "ev-aada76f4e967"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-improve-init-onboarding/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-033",
+    "object_type": "goal",
+    "name": "Reduce CLI complexity",
+    "description": "Remove unnecessary complexity by eliminating the redundant diff command and directing users to canonical show command",
+    "evidence_refs": [
+      "ev-c64a1ba46da2",
+      "ev-cc912f260e1f"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-remove-diff-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-034",
+    "object_type": "goal",
+    "name": "Improve dashboard progress visibility",
+    "description": "Enable users to quickly spot proposals that have not started or are nearly complete by sorting active changes by completion percentage",
+    "evidence_refs": [
+      "ev-97dee56ba229",
+      "ev-f34982cfc0a9"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-sort-active-changes-by-progress/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-035",
+    "object_type": "goal",
+    "name": "Clarify agent instruction file naming",
+    "description": "Rename agent instruction file to AGENTS.md to avoid confusion with conventional project README usage",
+    "evidence_refs": [
+      "ev-6590c21123cc",
+      "ev-bc18de0a50bb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-update-agent-file-name/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-036",
+    "object_type": "goal",
+    "name": "Improve agent instruction quality",
+    "description": "Update OpenSpec agent instructions to follow best practices for AI assistant instructions with brevity, clarity, and proper documentation of the three-stage workflow pattern",
+    "evidence_refs": [
+      "ev-c293611e3335"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-update-agent-instructions/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-037",
+    "object_type": "goal",
+    "name": "Support Codex slash commands",
+    "description": "Add Codex to the openspec init tool picker and automate slash-command configuration to maintain single source of truth across all assistants",
+    "evidence_refs": [
+      "ev-3c7ff6a0416a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-codex-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-020",
+    "object_type": "role",
+    "name": "Development team",
+    "description": "Teams that use OpenSpec to manage slash-command surface area across multiple AI assistants",
+    "evidence_refs": [
+      "ev-3c7ff6a0416a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-codex-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-021",
+    "object_type": "role",
+    "name": "CLI users",
+    "description": "Users who interact with OpenSpec through command-line interface to manage changes and specifications",
+    "evidence_refs": [
+      "ev-97dee56ba229",
+      "ev-cc912f260e1f"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-remove-diff-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-039",
+    "object_type": "scenario",
+    "name": "Multi-assistant configuration",
+    "description": "User selects multiple assistants during openspec init and receives consolidated onboarding summary",
+    "evidence_refs": [
+      "ev-aada76f4e967"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-improve-init-onboarding/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-040",
+    "object_type": "scenario",
+    "name": "Viewing change content",
+    "description": "User needs to view change content and uses openspec show command instead of diff",
+    "evidence_refs": [
+      "ev-fa83b332ae4a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-remove-diff-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-041",
+    "object_type": "scenario",
+    "name": "Tracking progress across multiple changes",
+    "description": "User views dashboard with many active changes and needs to quickly identify which proposals have not started",
+    "evidence_refs": [
+      "ev-97dee56ba229"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-sort-active-changes-by-progress/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-045",
+    "object_type": "constraint",
+    "name": "Maintain backward compatibility during diff removal",
+    "description": "Provide clear migration guide and deprecation period to avoid disrupting existing user workflows",
+    "evidence_refs": [
+      "ev-ab198b18a000"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-remove-diff-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-046",
+    "object_type": "constraint",
+    "name": "Codex global directory requirement",
+    "description": "Codex commands must live in global directory (~/.codex/prompts or $CODEX_HOME/prompts) outside the repository",
+    "evidence_refs": [
+      "ev-17e3e1a752fe",
+      "ev-3c7ff6a0416a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-codex-slash-command-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-047",
+    "object_type": "constraint",
+    "name": "Deterministic sorting with tie-breaking",
+    "description": "When changes have same completion percentage, break ties deterministically by change identifier alphabetically",
+    "evidence_refs": [
+      "ev-e6c611261fb2"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-sort-active-changes-by-progress/proposal.md"
+    }
+  },
+  {
+    "object_id": "non-goal-028",
+    "object_type": "non_goal",
+    "name": "Maintain diff command functionality",
+    "description": "Not preserving the openspec diff command as it is redundant with show command and standard tools",
+    "evidence_refs": [
+      "ev-cc912f260e1f",
+      "ev-fa83b332ae4a"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-09-29-remove-diff-command/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-038",
+    "object_type": "goal",
+    "name": "Automate slash-command configuration for GitHub Copilot",
+    "description": "Enable OpenSpec to generate and manage GitHub Copilot prompt files in .github/prompts/ through openspec init and openspec update, eliminating manual synchronization and maintaining consistency across AI assistants",
+    "evidence_refs": [
+      "ev-9c64bf74d0a6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-github-copilot-prompts/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-039",
+    "object_type": "goal",
+    "name": "Maintain single source of truth for OpenSpec prompts",
+    "description": "Prevent drift by automating OpenSpec prompt management across all AI assistants, avoiding manual maintenance that undermines the single source of truth promise",
+    "evidence_refs": [
+      "ev-9c64bf74d0a6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-github-copilot-prompts/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-040",
+    "object_type": "goal",
+    "name": "Keep Kilo Code workflows synchronized with OpenSpec",
+    "description": "Ensure Kilo Code stays in sync with one source of truth by extending OpenSpec's marker-wrapped file refresh mechanism to .kilocode/workflows/",
+    "evidence_refs": [
+      "ev-95d641f52191"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-kilocode-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-041",
+    "object_type": "goal",
+    "name": "Enable programmatic initialization for automated workflows",
+    "description": "Allow automation in CI/CD pipelines and scripted setups by adding non-interactive options to openspec init while maintaining the existing interactive experience as default",
+    "evidence_refs": [
+      "ev-bc592704f3a9"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-non-interactive-init-options/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-042",
+    "object_type": "goal",
+    "name": "Maintain consistent behavior across AI assistants",
+    "description": "Keep OpenSpec guidance consistent across Claude, Cursor, OpenCode, and Windsurf by extending shared command templates to Windsurf workflows without inventing new content flows",
+    "evidence_refs": [
+      "ev-bf3608ee73ab"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-windsurf-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-043",
+    "object_type": "goal",
+    "name": "Help assistants fix validation issues in a single pass",
+    "description": "Make validation error output specific about headers, required text, and next actions so agents can recover from errors without repeated failures",
+    "evidence_refs": [
+      "ev-a975f4a14d78"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-enhance-validation-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-044",
+    "object_type": "goal",
+    "name": "Help assistants follow OpenSpec process without guesswork",
+    "description": "Reorganize AGENTS.md with prominent quick-reference and embedded examples so agents can follow the proposal formatting process correctly",
+    "evidence_refs": [
+      "ev-f3a9eeca51b4"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-improve-agent-instruction-usability/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-022",
+    "object_type": "role",
+    "name": "Development teams using AI assistants",
+    "description": "Teams that rely on OpenSpec to manage slash-command configurations across multiple AI tools including Claude Code, Cursor, OpenCode, Codex, Kilo Code, Windsurf, and GitHub Copilot",
+    "evidence_refs": [
+      "ev-9c64bf74d0a6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-github-copilot-prompts/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-023",
+    "object_type": "role",
+    "name": "AI assistants executing OpenSpec workflows",
+    "description": "Agents that need to create proposals, apply changes, and follow OpenSpec formatting rules",
+    "evidence_refs": [
+      "ev-a975f4a14d78",
+      "ev-f3a9eeca51b4"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-enhance-validation-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-024",
+    "object_type": "role",
+    "name": "CI/CD pipeline operators",
+    "description": "Users who need to automate OpenSpec initialization in CI/CD pipelines and scripted setups",
+    "evidence_refs": [
+      "ev-bc592704f3a9"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-non-interactive-init-options/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-042",
+    "object_type": "scenario",
+    "name": "Team shares OpenSpec prompts via version control",
+    "description": "GitHub Copilot discovers prompts from the repository's .github/prompts/ directory, making it straightforward to version control and share across the team",
+    "evidence_refs": [
+      "ev-9c64bf74d0a6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-github-copilot-prompts/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-043",
+    "object_type": "scenario",
+    "name": "User invokes workflow via slash command",
+    "description": "Kilo Code executes slash commands by loading markdown workflows from .kilocode/workflows/ and running them when a user types /workflow-name.md",
+    "evidence_refs": [
+      "ev-95d641f52191"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-kilocode-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-044",
+    "object_type": "scenario",
+    "name": "Windsurf user executes workflow from command palette",
+    "description": "Windsurf discovers Markdown files under .windsurf/workflows/ (including subdirectories and up to git root) and executes them when a user types /workflow-name",
+    "evidence_refs": [
+      "ev-bf3608ee73ab"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-windsurf-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-045",
+    "object_type": "scenario",
+    "name": "Agent encounters validation error and needs to recover",
+    "description": "Validation errors like 'no deltas found' or 'missing requirement text' do not tell agents how to recover, leading to repeated failures",
+    "evidence_refs": [
+      "ev-a975f4a14d78"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-enhance-validation-error-messages/proposal.md"
+    }
+  },
+  {
+    "object_id": "scenario-046",
+    "object_type": "scenario",
+    "name": "Agent creates proposal and fumbles formatting",
+    "description": "Agents fumble proposal formatting because essential Markdown templates and formatting rules are buried mid-document in AGENTS.md",
+    "evidence_refs": [
+      "ev-f3a9eeca51b4"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-improve-agent-instruction-usability/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-048",
+    "object_type": "constraint",
+    "name": "GitHub Copilot prompt format requirements",
+    "description": "GitHub Copilot prompts must be markdown files in .github/prompts/<name>.prompt.md with YAML frontmatter containing a description label and using $ARGUMENTS to capture user input",
+    "evidence_refs": [
+      "ev-9c64bf74d0a6"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-github-copilot-prompts/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-049",
+    "object_type": "constraint",
+    "name": "Windsurf workflow size limit",
+    "description": "Windsurf workflows must stay under 12,000 characters",
+    "evidence_refs": [
+      "ev-bf3608ee73ab"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-windsurf-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "constraint-050",
+    "object_type": "constraint",
+    "name": "Kilo Code workflow format",
+    "description": "Kilo Code workflows are plain markdown with step-by-step instructions that can call built-in tools and MCP integrations",
+    "evidence_refs": [
+      "ev-95d641f52191"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-add-kilocode-workflows/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-045",
+    "object_type": "goal",
+    "name": "Reduce file duplication and drift in OpenSpec agent instructions",
+    "description": "Eliminate duplicate copies of agent instructions between project root and openspec/ directory to prevent conflicting guidance when files drift out of sync",
+    "evidence_refs": [
+      "ev-abf04cdb5d5d"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-slim-root-agents-file/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-046",
+    "object_type": "goal",
+    "name": "Align CLI behavior with user expectations",
+    "description": "Make the init wizard's Enter key behavior match common CLI patterns where Enter confirms the highlighted item, reducing friction during onboarding",
+    "evidence_refs": [
+      "ev-0b099e945b1c"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-update-cli-init-enter-selection/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-047",
+    "object_type": "goal",
+    "name": "Ensure all projects have AI assistant entry points",
+    "description": "Guarantee that every OpenSpec project has a root-level AGENTS.md stub so non-native assistants can discover instructions, regardless of tool selection during init",
+    "evidence_refs": [
+      "ev-1178c2b06fcc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-14-update-cli-init-root-agents/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-048",
+    "object_type": "goal",
+    "name": "Improve safety of archive command",
+    "description": "Enable explicit change ID specification in archive slash command to prevent accidental archiving of wrong proposals when context is ambiguous",
+    "evidence_refs": [
+      "ev-5c1e721d1e20"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-22-add-archive-command-arguments/proposal.md"
+    }
+  },
+  {
+    "object_id": "goal-049",
+    "object_type": "goal",
+    "name": "Expand AI tool support",
+    "description": "Enable developers to use Cline's AI-powered coding capabilities for spec-driven development workflows within OpenSpec",
+    "evidence_refs": [
+      "ev-0b5b7f3af4e7"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/changes/archive/2025-10-22-add-cline-support/proposal.md"
+    }
+  },
+  {
+    "object_id": "role-025",
+    "object_type": "role",
+    "name": "Developer using OpenSpec CLI",
+    "description": "Developer who initializes and configures OpenSpec in their project, interacts with the init wizard, and expects standard CLI behavior patterns",
+    "evidence_refs": [
+      "ev-0b099e945b1c",
+      "ev-1178c2b06fcc"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-026",
+    "object_type": "role",
+    "name": "AI assistant (non-native tools)",
+    "description": "AI coding assistants like Copilot, Codeium, or other tools that need to discover OpenSpec instructions through the root-level entry point",
+    "evidence_refs": [
+      "ev-1178c2b06fcc"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "role-027",
+    "object_type": "role",
+    "name": "Developer using Cline extension",
+    "description": "Developer who uses Cline VS Code extension for AI-powered coding and wants to leverage OpenSpec workflows",
+    "evidence_refs": [
+      "ev-0b5b7f3af4e7"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-047",
+    "object_type": "scenario",
+    "name": "User presses Enter on highlighted tool without toggling",
+    "description": "During init wizard, user scrolls to desired tool and presses Enter expecting it to be selected, but currently no configuration changes occur",
+    "evidence_refs": [
+      "ev-0b099e945b1c"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-048",
+    "object_type": "scenario",
+    "name": "Team edits one copy of agent instructions but not the other",
+    "description": "When duplicate agent instruction files exist in both root and openspec/ directory, teams edit one copy causing files to drift and assistants to see conflicting guidance",
+    "evidence_refs": [
+      "ev-abf04cdb5d5d"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-049",
+    "object_type": "scenario",
+    "name": "Project skips AGENTS.md tool selection during init",
+    "description": "When teams don't explicitly select the AGENTS.md standard tool during init, non-native assistants have no entry point and later update runs create files without context",
+    "evidence_refs": [
+      "ev-1178c2b06fcc"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "scenario-050",
+    "object_type": "scenario",
+    "name": "AI attempts to archive change with ambiguous context",
+    "description": "When multiple changes exist or context is unclear, AI must infer which change to archive, creating risk of archiving the wrong proposal",
+    "evidence_refs": [
+      "ev-5c1e721d1e20"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-051",
+    "object_type": "constraint",
+    "name": "Maintain backward compatibility for existing workflows",
+    "description": "Changes must not break existing user workflows or require migration of existing OpenSpec projects",
+    "evidence_refs": [
+      "ev-289529faf680"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "note": "Explicitly marked as non-breaking in Cline support proposal"
+    }
+  },
+  {
+    "object_id": "constraint-052",
+    "object_type": "constraint",
+    "name": "Preserve multi-select capability with spacebar",
+    "description": "While adding Enter key selection, spacebar multi-select support must remain unchanged for power users",
+    "evidence_refs": [
+      "ev-bfa82e52bd27"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "constraint-053",
+    "object_type": "constraint",
+    "name": "Minimal dependencies principle",
+    "description": "Keep external dependencies to a minimum to maintain simplicity and reduce maintenance burden",
+    "evidence_refs": [
+      "ev-7e2802f6b511"
+    ],
+    "confidence": "explicit",
+    "metadata": {}
+  },
+  {
+    "object_id": "goal-050",
+    "object_type": "goal",
+    "name": "Enable structured, parseable specification format",
+    "description": "Provide a consistent structured format with Requirement and Scenario headers that enables tooling to parse specifications programmatically while maintaining readability for humans and AI assistants.",
+    "evidence_refs": [
+      "ev-282d1aae7472",
+      "ev-8014f760c1eb",
+      "ev-867e093c25af",
+      "ev-89a71f2258e3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-051",
+    "object_type": "goal",
+    "name": "Support delta-based change tracking",
+    "description": "Store only the changes (additions, modifications, removals, renames) to specifications rather than complete future states, enabling clear change proposals and programmatic application of deltas.",
+    "evidence_refs": [
+      "ev-2b33430920fe",
+      "ev-4b68241cab47",
+      "ev-5e40e819c209",
+      "ev-7168a07ec5cc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-052",
+    "object_type": "goal",
+    "name": "Maintain clean, tool-agnostic specifications",
+    "description": "Keep specification files as clean markdown without diff syntax pollution, allowing any standard diff tool to show changes and ensuring AI compatibility.",
+    "evidence_refs": [
+      "ev-2eb9996aa226",
+      "ev-8014f760c1eb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "goal-053",
+    "object_type": "goal",
+    "name": "Enable specification-driven development workflow",
+    "description": "Transform specifications from documentation artifacts into executable sources of truth that directly generate working implementations, making specifications the primary development artifact.",
+    "evidence_refs": [
+      "ev-26f9de3c9c87",
+      "ev-580cdee9db12",
+      "ev-5c6a64b57db8",
+      "ev-d0f3105b0cd0"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/docs/index.md",
+      "context": "spec-driven development methodology"
+    }
+  },
+  {
+    "object_id": "goal-054",
+    "object_type": "goal",
+    "name": "Accelerate high-quality software delivery",
+    "description": "Enable organizations to focus on product scenarios rather than undifferentiated code by leveraging AI-assisted specification-driven development to build software faster with higher quality.",
+    "evidence_refs": [
+      "ev-03fdc9412d2e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/docs/index.md"
+    }
+  },
+  {
+    "object_id": "role-028",
+    "object_type": "role",
+    "name": "Specification author",
+    "description": "Developer or team member who writes and maintains OpenSpec specifications using the structured format with Requirement and Scenario sections.",
+    "evidence_refs": [
+      "ev-24822607986c",
+      "ev-5e2b634e5c87",
+      "ev-6e0c78b092bd",
+      "ev-79d171bf9d73"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "role-029",
+    "object_type": "role",
+    "name": "Change proposal reviewer",
+    "description": "Team member who reviews proposed changes to specifications by comparing current state with future state using diff tools or GitHub PR views.",
+    "evidence_refs": [
+      "ev-160ff54bf57a",
+      "ev-18cbd3438ab8",
+      "ev-2eb9996aa226"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "role-030",
+    "object_type": "role",
+    "name": "Product manager",
+    "description": "Team member who defines product requirements and acceptance criteria, working with AI to transform vague ideas into comprehensive specifications.",
+    "evidence_refs": [
+      "ev-580cdee9db12"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/spec-driven.md"
+    }
+  },
+  {
+    "object_id": "role-031",
+    "object_type": "role",
+    "name": "Developer using spec-kit",
+    "description": "Software developer who uses spec-kit commands and templates to create specifications, plans, and tasks for building applications through specification-driven development.",
+    "evidence_refs": [
+      "ev-0645ce27cb40",
+      "ev-0d1c83a195cb",
+      "ev-15571ffe1382",
+      "ev-49aca756f08b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/README.md"
+    }
+  },
+  {
+    "object_id": "scenario-051",
+    "object_type": "scenario",
+    "name": "Creating change proposals with structured deltas",
+    "description": "When proposing changes to specifications, authors create delta files with ADDED, MODIFIED, REMOVED, and RENAMED sections that use header-based matching to identify requirements programmatically.",
+    "evidence_refs": [
+      "ev-0b62b977e9fb",
+      "ev-1b03832081dd",
+      "ev-435731164319",
+      "ev-45877e28a3ea",
+      "ev-5c4552cc4ca6",
+      "ev-6e98d40762c5",
+      "ev-7bb03d974593"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-052",
+    "object_type": "scenario",
+    "name": "Archiving approved changes programmatically",
+    "description": "After change approval, the system applies delta changes to current specifications using header-based matching, handling conflicts and requiring manual resolution when needed.",
+    "evidence_refs": [
+      "ev-2b33430920fe",
+      "ev-696870736291",
+      "ev-6ba8d27aa9d5",
+      "ev-7187ae9141cd",
+      "ev-820e18022f82"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "scenario-053",
+    "object_type": "scenario",
+    "name": "Rapid feature specification to implementation",
+    "description": "Developer uses spec-kit commands to go from initial idea to complete implementation artifacts (spec, plan, tasks, contracts) in approximately 15 minutes through AI-assisted workflow.",
+    "evidence_refs": [
+      "ev-08f1b5d1a117",
+      "ev-15571ffe1382",
+      "ev-49aca756f08b"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/spec-driven.md"
+    }
+  },
+  {
+    "object_id": "scenario-054",
+    "object_type": "scenario",
+    "name": "Initializing new project with AI assistant support",
+    "description": "Developer initializes a new project using spec-kit CLI with chosen AI assistant (Claude, Gemini, etc.), setting up project structure, templates, and scripts for specification-driven development.",
+    "evidence_refs": [
+      "ev-055e1bceef9b",
+      "ev-0645ce27cb40",
+      "ev-0f193f6f2578",
+      "ev-14dfef43144c"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/README.md"
+    }
+  },
+  {
+    "object_id": "constraint-054",
+    "object_type": "constraint",
+    "name": "Structured format mandatory for behavioral specs",
+    "description": "Behavioral specifications must use level-3 headings for Requirements and level-4 headings for Scenarios with bold WHEN/THEN/AND keywords to ensure parseability and visual consistency.",
+    "evidence_refs": [
+      "ev-0cca5fac3441",
+      "ev-24822607986c",
+      "ev-282d1aae7472",
+      "ev-5e2b634e5c87",
+      "ev-6e0c78b092bd",
+      "ev-867e093c25af",
+      "ev-8898c45d21c5",
+      "ev-89a71f2258e3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-055",
+    "object_type": "constraint",
+    "name": "Delta-only change storage",
+    "description": "Change proposals must store only additions, modifications, removals, and renames—not complete future states—to maintain clarity and enable programmatic application.",
+    "evidence_refs": [
+      "ev-45877e28a3ea",
+      "ev-4b68241cab47",
+      "ev-5c4552cc4ca6",
+      "ev-7168a07ec5cc"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "constraint-056",
+    "object_type": "constraint",
+    "name": "Library-first architecture principle",
+    "description": "Every feature must begin as a standalone library with CLI interface before application integration, enforcing modularity and reusability from the start.",
+    "evidence_refs": [
+      "ev-155cc3d69397",
+      "ev-5b84edcdb316"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/spec-driven.md",
+      "context": "Constitutional Article I"
+    }
+  },
+  {
+    "object_id": "constraint-057",
+    "object_type": "constraint",
+    "name": "Simplicity gates for implementation",
+    "description": "Initial implementations must use maximum 3 projects with no future-proofing, requiring documented justification for additional complexity.",
+    "evidence_refs": [
+      "ev-02d916482366",
+      "ev-11b6af4f0e85",
+      "ev-41459c2fedb3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/spec-driven.md",
+      "context": "Constitutional Article VII"
+    }
+  },
+  {
+    "object_id": "non-goal-029",
+    "object_type": "non_goal",
+    "name": "Inline diff syntax in specifications",
+    "description": "OpenSpec does not store diff syntax within specification files; instead it relies on external diff tools to show changes between current and proposed states.",
+    "evidence_refs": [
+      "ev-160ff54bf57a",
+      "ev-18cbd3438ab8",
+      "ev-2eb9996aa226",
+      "ev-8014f760c1eb"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/OpenSpec/openspec/specs/openspec-conventions/spec.md"
+    }
+  },
+  {
+    "object_id": "non-goal-030",
+    "object_type": "non_goal",
+    "name": "One-shot code generation from prompts",
+    "description": "Spec-driven development explicitly avoids single-prompt code generation, instead emphasizing multi-step refinement through specifications, plans, and tasks.",
+    "evidence_refs": [
+      "ev-580cdee9db12",
+      "ev-d0f3105b0cd0"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "references/spec-kit/docs/index.md"
+    }
+  },
+  {
+    "object_id": "goal-055",
+    "object_type": "goal",
+    "name": "产品侧事实还原",
+    "description": "从给定证据中识别真实存在的产品对象（goal、role、scenario、constraint、non_goal），对不相关证据返回空结果，而不是勉强抽取",
+    "evidence_refs": [
+      "ev-239117d87a3e",
+      "ev-81e0024cf8ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "role-032",
+    "object_type": "role",
+    "name": "产品对象提取器",
+    "description": "负责从证据中提取产品侧对象，而不是写规则引擎或处理实现细节",
+    "evidence_refs": [
+      "ev-239117d87a3e",
+      "ev-23c7258c983e"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "constraint-058",
+    "object_type": "constraint",
+    "name": "证据绑定要求",
+    "description": "所有对象必须绑定 evidence_refs，确保可追溯性",
+    "evidence_refs": [
+      "ev-81e0024cf8ce"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "constraint-059",
+    "object_type": "constraint",
+    "name": "对象识别边界",
+    "description": "抽象意图、用户、场景、约束、非目标属于产品对象；代码 schema、JSON 字段、Mermaid、命令步骤、Git 操作、流程编号不属于产品对象",
+    "evidence_refs": [
+      "ev-441e10236b45"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "constraint-060",
+    "object_type": "constraint",
+    "name": "README 推断限制",
+    "description": "README 中可保守抽取 inferred 对象，但不能把营销措辞强行当成 explicit",
+    "evidence_refs": [
+      "ev-441e10236b45"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "constraint-061",
+    "object_type": "constraint",
+    "name": "去重合并要求",
+    "description": "同一批次内明显重复的对象要主动合并",
+    "evidence_refs": [
+      "ev-24bc12c839e3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  },
+  {
+    "object_id": "non-goal-031",
+    "object_type": "non_goal",
+    "name": "避免过度提取",
+    "description": "不为无关证据产出对象，不把实现细节、流程图语句、字段定义抽成产品目标",
+    "evidence_refs": [
+      "ev-24bc12c839e3"
+    ],
+    "confidence": "explicit",
+    "metadata": {
+      "source_path": "skills/pb-review-product-reconstructor/references/task-contract.md"
+    }
+  }
+]
