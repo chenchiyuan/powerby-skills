@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Price Acceptance Map</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --panel: #fffdf8;
+        --line: #d8cdbd;
+        --ink: #1c1915;
+        --muted: #6a645c;
+        --accent: #b8562a;
+        --heat-low: #efe4d3;
+        --heat-high: #b8562a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(184, 86, 42, 0.12), transparent 30%),
+          linear-gradient(180deg, #faf6ef 0%, var(--bg) 100%);
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        margin-bottom: 24px;
+      }
+
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1.05;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 16px 32px rgba(28, 25, 21, 0.06);
+      }
+
+      .controls {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .controls label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .controls textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        font: 14px/1.5 "SFMono-Regular", Consolas, monospace;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        color: white;
+        background: var(--accent);
+        cursor: pointer;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        gap: 20px;
+      }
+
+      .summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .heatmap {
+        display: grid;
+        gap: 8px;
+      }
+
+      .heatmap-row {
+        display: grid;
+        grid-template-columns: 140px 1fr 90px;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .heatmap-bar {
+        position: relative;
+        height: 18px;
+        border-radius: 999px;
+        background: #efe6d9;
+        overflow: hidden;
+      }
+
+      .heatmap-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--heat-low), var(--heat-high));
+      }
+
+      .regions {
+        display: grid;
+        gap: 10px;
+      }
+
+      .region-card {
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.75);
+        cursor: pointer;
+      }
+
+      .region-card.is-active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(184, 86, 42, 0.12);
+      }
+
+      .status {
+        margin-top: 16px;
+        min-height: 24px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .heatmap-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="acceptance-map-app" class="page">
+      <section class="hero">
+        <h1>Price Acceptance Map</h1>
+        <p>加载 CLI 输出的 JSON，查看历史价格接受度热力图和区域排序。</p>
+      </section>
+
+      <section class="panel controls">
+        <div>
+          <label for="result-file-input">导入结果文件</label>
+          <input id="result-file-input" type="file" accept=".json,application/json" />
+        </div>
+        <div>
+          <label for="result-json-input">或直接粘贴分析结果 JSON</label>
+          <textarea id="result-json-input" placeholder="粘贴 FT-006 / FT-007 产出的 JSON"></textarea>
+        </div>
+        <div class="button-row">
+          <button id="render-result-button" type="button">渲染结果</button>
+        </div>
+        <div id="status-message" class="status"></div>
+      </section>
+
+      <section class="grid">
+        <section class="panel">
+          <div id="input-summary" class="summary"></div>
+          <div id="heatmap-section" class="heatmap"></div>
+        </section>
+        <aside class="panel">
+          <div id="regions-section" class="regions"></div>
+        </aside>
+      </section>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
