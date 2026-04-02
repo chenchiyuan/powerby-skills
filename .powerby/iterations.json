@@ -32,9 +32,84 @@
         "function_points": "docs/iterations/007-asp-iteration-numbering/function-points.md",
         "product_map": "docs/iterations/007-asp-iteration-numbering/product-map.md"
       }
+    },
+    {
+      "id": "009",
+      "name": "review-framework",
+      "full_name": "009-review-framework",
+      "description": "还原式项目评审框架 - evidence-driven review skill suite",
+      "status": "in_progress",
+      "phase": "P6",
+      "created_at": "2026-03-27T00:00:00Z",
+      "branch": "009-review-framework",
+      "documents": {
+        "proposal": "docs/iterations/009-review-framework/proposal.md",
+        "spec": "docs/iterations/009-review-framework/spec.md",
+        "function_points": "docs/iterations/009-review-framework/function-points.md",
+        "product_map": "docs/iterations/009-review-framework/product-map.md",
+        "architecture": "docs/iterations/009-review-framework/architecture.md",
+        "tasks": "docs/iterations/009-review-framework/tasks.md",
+        "implementation_report": "docs/iterations/009-review-framework/implementation/implementation-report.md"
+      }
+    },
+    {
+      "id": "010",
+      "name": "review-testability-upgrade",
+      "full_name": "010-review-testability-upgrade",
+      "description": "pb-review 标准驱动评估升级 - 从还原式评审升级为标准先行的测试化就绪评估",
+      "status": "in_progress",
+      "phase": "P6",
+      "created_at": "2026-03-30T00:00:00Z",
+      "branch": "review",
+      "documents": {
+        "proposal": "docs/iterations/010-review-testability-upgrade/proposal.md",
+        "spec": "docs/iterations/010-review-testability-upgrade/spec.md",
+        "function_points": "docs/iterations/010-review-testability-upgrade/function-points.md",
+        "product_map": "docs/iterations/010-review-testability-upgrade/product-map.md",
+        "architecture": "docs/iterations/010-review-testability-upgrade/architecture.md",
+        "tasks": "docs/iterations/010-review-testability-upgrade/tasks.md",
+        "implementation_report": "docs/iterations/010-review-testability-upgrade/implementation/implementation-report.md"
+      }
+    },
+    {
+      "id": "011",
+      "name": "asp-document-upgrade",
+      "full_name": "011-asp-document-upgrade",
+      "description": "ASP 文档协议升级 - 用 feature-spec-index 与 feature-specs 替代旧规格文档体系，并重写 7 个 powerby-asp skill",
+      "status": "in_progress",
+      "phase": "P6",
+      "created_at": "2026-03-30T00:00:00Z",
+      "branch": "review",
+      "documents": {
+        "proposal": "docs/iterations/011-asp-document-upgrade/proposal.md",
+        "feature_spec_index": "docs/iterations/011-asp-document-upgrade/feature-spec-index.md",
+        "feature_specs": "docs/iterations/011-asp-document-upgrade/feature-specs/",
+        "product_map": "docs/iterations/011-asp-document-upgrade/product-map.md",
+        "traceability_matrix": "docs/iterations/011-asp-document-upgrade/traceability-matrix.md",
+        "testability_scorecard": "docs/iterations/011-asp-document-upgrade/testability-scorecard.md",
+        "architecture": "docs/iterations/011-asp-document-upgrade/architecture.md",
+        "tasks": "docs/iterations/011-asp-document-upgrade/tasks.md",
+        "implementation_report": "docs/iterations/011-asp-document-upgrade/implementation/implementation-report.md"
+      }
+    },
+    {
+      "id": "012",
+      "name": "asp-office-hours-integration",
+      "full_name": "012-asp-office-hours-integration",
+      "description": "ASP 前置产品设计与澄清集成 - 新增 office-hours 阶段与 design-brief.md，上游驱动 proposal.md",
+      "status": "in_progress",
+      "phase": "P6",
+      "created_at": "2026-03-30T00:00:00Z",
+      "branch": "review",
+      "documents": {
+        "proposal": "docs/iterations/012-asp-office-hours-integration/proposal.md",
+        "tasks": "docs/iterations/012-asp-office-hours-integration/tasks.md",
+        "implementation_report": "docs/iterations/012-asp-office-hours-integration/implementation/implementation-report.md",
+        "design_brief": "docs/iterations/012-asp-office-hours-integration/design-brief.md"
+      }
     }
   ],
-  "current_iteration": "007",
+  "current_iteration": "012",
   "completed_iterations": 0,
-  "total_iterations": 2
+  "total_iterations": 6
 }

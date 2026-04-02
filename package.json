@@ -34,7 +34,9 @@
     "node": ">=16.0.0"
   },
   "files": [
+    "powerby/",
     "skills/",
+    "web/",
     ".claude-plugin/",
     "docs/"
   ],

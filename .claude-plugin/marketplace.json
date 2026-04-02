@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期和ASP自治式规格精炼流程",
-    "version": "3.2.0"
+    "version": "3.3.0"
   },
   "plugins": [
     {
@@ -53,6 +53,25 @@
         "./skills/powerby-asp-architect",
         "./skills/powerby-asp-arch-reviewer",
         "./skills/powerby-asp-arch-codex-reviewer"
+      ]
+    },
+    {
+      "name": "pb-v1",
+      "description": "PowerBy v1 原子化 Skills - 基于 vnext 定义的 11 个原子 Skill。Think → Plan → Review → Build → Review → Test → Ship → Reflect 完整循环。支持对齐还原验证、Retro-Learn 持续改进。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/pb-v1-office-hours",
+        "./skills/pb-v1-discovery",
+        "./skills/pb-v1-drafting",
+        "./skills/pb-v1-designing",
+        "./skills/pb-v1-planning",
+        "./skills/pb-v1-reviewer",
+        "./skills/pb-v1-implementing",
+        "./skills/pb-v1-testing",
+        "./skills/pb-v1-shipping",
+        "./skills/pb-v1-retrospective",
+        "./skills/pb-v1-orchestrator"
       ]
     }
   ]
