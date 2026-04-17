@@ -5,12 +5,28 @@ description: |
   单一职责：约束还原——把计划锁定的边界压成可运行的代码。
 compatibility:
   - pb-v1-planning (上游)
+  - pb-v1-clarify (工具，实现维度澄清)
+  - pb-v1-brower (工具，前端实现验证)
   - pb-v1-reviewer (下游)
   - pb-v1-testing (下游)
 style:
   inherits: powerby-foundation
   local: implementing
 principles: $ref(powerby-foundation/code-principles)
+---
+
+# pb-v1-implementing
+
+**版本**: 3.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Build 阶段（实现与还原）
+
+---
+
+**红线声明**：实现是约束还原，不是创造。绝不修改上游产物（proposal.md、architecture.md、tasks.md），绝不新增 tasks.md 之外的功能，绝不跳过协议提取直接写代码。
+
 ---
 
 ## 核心哲学
@@ -174,19 +190,41 @@ principles: $ref(powerby-foundation/code-principles)
 
 ```mermaid
 graph TD
-    Start[接收输入] --> Verify[Step 1: 输入验证]
+    Start[接收输入] --> S0[Step 0: 前置门禁检查]
+    S0 -->|通过| Verify[Step 1: 输入验证]
+    S0 -->|未通过| Warn[警告: 建议先执行 reviewer]
+    Warn -->|用户选择跳过| Verify
     Verify --> Research[Step 2: 本地代码调研]
     Research --> Protocol[Step 2.5: 提取实现协议]
     Protocol --> Impl[Step 3: 按协议逐任务实现]
     Impl --> SelfCheck[Step 4: 还原自检]
-    SelfCheck --> Output[Step 5: 产出交付]
-    Output --> End[触发 pb-v1-reviewer]
+    SelfCheck --> Output[Step 5: 交付与引导]
 
     Impl -->|编译/运行错误| RCA[根因分析]
     RCA -->|定位根因| Fix[修复 + 回归测试]
     Fix --> Impl
-    RCA -->|3 次未定位| Escalate[上报 orchestrator]
+    RCA -->|3 次未定位| Escalate[上报用户决策]
 ```
+
+---
+
+### Step 0: 前置门禁检查
+
+**检查项**: plan_review 审查报告
+
+**执行逻辑**:
+1. 查找 `docs/iterations/{iteration_id}/review-logs/plan_review.md`
+2. 如果文件存在且 frontmatter 中 `result: PASS` → 继续执行 Step 1
+3. 如果文件存在且 `result: FAIL` → 警告 "上游工程审查未通过，存在未解决的 BLOCKER/MAJOR"
+4. 如果文件不存在 → 警告 "工程规划尚未经过工程审查"
+
+**未通过处理**:
+使用 AskUserQuestion 询问：
+- A. 先执行 `/pb-v1-reviewer` 进行工程审查（推荐）
+- B. 跳过审查，接受风险继续
+
+用户选择 B 时，在本 Skill 产出文件（implementation.md）头部追加：
+`⚠️ 前置门禁跳过: plan_review 未执行，工程规划未经对齐验证`
 
 ---
 
@@ -268,14 +306,34 @@ graph LR
 1. **阅读任务**: 理解目标、实现方案、验收标准
 2. **编写代码**: 按实现方案编写代码，遵循代码原则
 3. **编写测试**: 覆盖 protocol.md 测试矩阵中的对应场景
-4. **编译验证**: 确保代码可编译、测试通过
-5. **对齐协议**: 检查模块/接口/数据结构是否与 protocol.md 一致
-6. **提交代码**: git commit，信息格式见提交规范
+4. **编译验证**: 使用 tmux 执行编译和测试（后台运行，不阻塞）：
+   ```bash
+   # 编译验证
+   tmux new-session -d -s pb-impl-build 'cd {project_root} && {build_command}'
+   # 测试执行
+   tmux new-session -d -s pb-impl-test 'cd {project_root} && {test_command}'
+   ```
+   - 通过 `tmux capture-pane -t pb-impl-build -p` 检查编译输出
+   - 通过 `tmux capture-pane -t pb-impl-test -p` 检查测试输出
+5. **前端验证**（仅涉及前端代码时）：
+   - 使用 tmux 启动 dev server：`tmux new-session -d -s pb-impl-dev 'cd {project_root} && npm run dev'`
+   - 通过 `/pb-v1-brower`（mode: verify）验证页面效果
+   - 浏览器操作过程中的 CDP 命令直接执行，不逐条确认；链式操作统一使用 `browse chain '<JSON>'` 直接传参，不使用 heredoc / pipe；证据文件优先写入当前仓库或 /tmp
+   - 非前端任务不调用 brower
+6. **对齐协议**: 检查模块/接口/数据结构是否与 protocol.md 一致
+7. **提交代码**: git commit，信息格式见提交规范
 
 **遇到模糊点时**: 
-- 立即停止实现
-- 记录模糊点和影响范围
-- 返回 pb-v1-orchestrator，由其决策是否需要回退到上游 Skill
+- 先调用 pb-v1-clarify 尝试收敛：
+  ```
+  调用 pb-v1-clarify:
+    dimension: "requirement"  # 或 "data"，视模糊点类型而定
+    iteration_path: "docs/iterations/{iteration_id}"
+    scope: "实现过程中发现的规格模糊点"
+    context: ["protocol.md", "architecture.md"]
+  ```
+- 澄清返回 clear → 基于澄清结论继续实现
+- 澄清返回 blocked → 记录模糊点和影响范围，返回 pb-v1-orchestrator 决策
 
 ---
 
@@ -301,16 +359,20 @@ graph LR
 
 ---
 
-### Step 5: 产出交付
+### Step 5: 交付与引导
 
-**目的**: 整理产出物，触发下游 Review
+**目的**: 整理产出物，引导用户进入下一步
 
 **交付物**:
 1. `protocol.md` - 实现协议（供审查者和测试者使用）
 2. 代码实现（已提交到 git，含测试）
 3. `implementation.md` - 实现记录
 
-**交付后**: 由 pb-v1-orchestrator 触发 pb-v1-reviewer 进行 Build Review
+**向用户明确告知下一步**:
+
+> ✅ **Implementing 阶段完成。** 按标准流程，下一步请执行 `/pb-v1-reviewer` 进行 **实现审查（impl_review）**，确保代码实现与架构设计和工程规划对齐。
+>
+> 如需跳过审查直接进入测试，请明确告知，风险将被标注在后续产物中。
 
 ---
 
@@ -358,9 +420,16 @@ graph LR
 **触发条件**: 任务的目标、实现方案或验收标准不明确
 
 **处理方式**:
-1. 停止当前任务
-2. 记录模糊点和影响范围
-3. 返回 pb-v1-orchestrator，建议回退到 pb-v1-planning
+1. 先调用 pb-v1-clarify 尝试收敛模糊点：
+   ```
+   调用 pb-v1-clarify:
+     dimension: "requirement"
+     iteration_path: "docs/iterations/{iteration_id}"
+     scope: "任务描述模糊，无法确定实现方向"
+     context: ["tasks.md", "protocol.md"]
+   ```
+2. 澄清返回 clear → 基于澄清结论继续实现
+3. 澄清返回 blocked → 停止当前任务，记录模糊点和影响范围，返回 pb-v1-orchestrator 建议回退到 pb-v1-planning
 
 ---
 
@@ -502,12 +571,27 @@ graph LR
 |-------|------|------|---------|
 | pb-v1-planning | 输入 | 工程规划文档 (tasks.md) | 开始实现前 |
 | pb-v1-designing | 输入 | 架构设计文档 (architecture.md) | 开始实现前 |
+| pb-v1-clarify | 工具 | 实现维度澄清（规格模糊、任务描述不清） | 遇到模糊点时 |
+| pb-v1-brower | 工具 | 前端实现验证，CDP 命令免确认；链式操作统一用 `browse chain '<JSON>'` | 涉及前端代码时 |
 | pb-v1-reviewer | 输出 | protocol.md + 代码实现 + implementation.md | 所有任务完成后 |
 | pb-v1-reviewer | 输入 | Build Review 报告 | Review 不通过时 |
 | pb-v1-orchestrator | 双向 | 流程状态和异常上报 | 贯穿全过程 |
 
 ---
 
+## Safety
+
+- 绝不修改上游产物（proposal.md、architecture.md、tasks.md）
+- 绝不新增 tasks.md 之外的功能——scope creep 是最常见的实现缺陷
+- 绝不跳过协议提取直接写代码——protocol.md 是实现、审查、测试的共同基准
+- 绝不使用 --no-verify 绕过提交钩子
+- 绝不禁用测试来代替修复
+- 绝不提交无法编译的代码
+- 绝不做架构设计决策——发现架构问题反馈给上游
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 2.0.0  
-**创建日期**: 2026-04-01
+**版本**: 3.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

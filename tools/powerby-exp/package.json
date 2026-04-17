@@ -1,0 +1,21 @@
+{
+  "name": "powerby-exp",
+  "version": "1.0.0",
+  "description": "PowerBy 全局经验库管理工具",
+  "main": "index.js",
+  "bin": {
+    "powerby-exp": "./cli.js",
+    "powerby-meth": "./cli-meth.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["powerby", "experience", "methodology"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "yaml": "^2.3.0",
+    "chalk": "^4.1.2"
+  }
+}

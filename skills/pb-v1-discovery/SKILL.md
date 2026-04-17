@@ -6,11 +6,26 @@ description: |
   参照 ASP Discovery 模式，支持迭代澄清和现有能力分析。
 compatibility:
   - pb-v1-office-hours (上游，可选)
+  - pb-v1-clarify (工具，产品维度澄清)
   - pb-v1-drafting (下游)
 style:
   inherits: powerby-foundation
   local: discovery
 principles: $ref(powerby-foundation/mvp-principles)
+---
+
+# pb-v1-discovery
+
+**版本**: 4.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Think→Plan 过渡阶段（探讨收敛为规格）
+
+---
+
+**红线声明**：需求收敛的边界是 proposal.md。绝不产出 feature-specs、architecture.md 或代码，绝不脑补需求细节，绝不将未验证的期望写成硬约束。
+
 ---
 
 ## 核心哲学
@@ -341,9 +356,17 @@ graph TD
 **触发条件**: 多轮迭代后仍有未决策项
 
 **处理方式**:
-1. 记录为"待后续确认"
-2. 在 proposal.md 中标注风险
-3. 建议先确认核心功能，未决项后续补充
+1. 调用 pb-v1-clarify 进行产品维度澄清，尝试收敛未决项：
+   ```
+   调用 pb-v1-clarify:
+     dimension: "product"
+     iteration_path: "docs/iterations/{iteration_id}"
+     scope: "决策点无法收敛，需要澄清产品边界和优先级"
+     context: ["proposal.md"]
+   ```
+2. 澄清返回 clear → 基于澄清结论更新 Decision List
+3. 澄清返回 blocked → 记录为"待后续确认"，在 proposal.md 中标注风险
+4. 建议先确认核心功能，未决项后续补充
 
 ---
 
@@ -399,11 +422,24 @@ graph LR
 | pb-v1-office-hours | 输入 | design-brief.md（推荐） | 如果有前置探讨 |
 | 用户 | 输入 | 需求描述 | 流程开始 |
 | 用户 | 双向 | MVP 审阅、决策确认 | 迭代循环中 |
+| pb-v1-clarify | 工具 | 产品维度澄清（决策点无法收敛时） | 决策未收敛时 |
 | pb-v1-drafting | 输出 | proposal.md | discovery 完成后 |
 | pb-v1-orchestrator | 输出 | 完成通知 | discovery 完成后 |
 
 ---
 
+## Safety
+
+- 绝不产出 feature-specs、architecture.md 或代码——这些是下游 Skill 的职责
+- 绝不脑补需求细节——模糊点必须通过澄清解决，不猜测
+- 绝不将未验证的期望写成 proposal.md 中的硬约束
+- 绝不涉及实现细节（数据库、API、部署等）
+- 绝不跳过现有能力分析直接定义新功能
+- 绝不在决策点只提供单一方案——至少 2 个备选
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 3.0.0  
-**创建日期**: 2026-04-01
+**版本**: 4.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

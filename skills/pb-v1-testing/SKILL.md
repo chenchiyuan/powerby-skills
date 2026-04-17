@@ -8,11 +8,26 @@ description: |
 compatibility:
   - pb-v1-implementing (上游)
   - pb-v1-reviewer (上游, Build Review 通过后触发)
+  - pb-v1-brower (工具，UI 交互验证)
   - pb-v1-shipping (下游)
 style:
   inherits: powerby-foundation
   local: testing
 principles: $ref(powerby-foundation/testing-principles)
+---
+
+# pb-v1-testing
+
+**版本**: 2.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Test 阶段（测试与质量）
+
+---
+
+**红线声明**：测试是约束的镜像，不是自由编写。绝不编写无约束来源的测试，绝不修复实现缺陷，绝不跳过失败测试。测试报告是交付门禁的质量证据。
+
 ---
 
 ## 核心哲学
@@ -298,8 +313,16 @@ graph LR
 
 1. **定位约束**: 确认本组测试对应的上游约束
 2. **编写测试**: 按项目测试框架编写，测试名称即场景描述
-3. **执行测试**: 运行并记录结果
+3. **使用 tmux 执行测试**（后台运行，不阻塞）：
+   ```bash
+   tmux new-session -d -s pb-test-{suite} 'cd {project_root} && {test_command}'
+   ```
+   - 通过 `tmux capture-pane -t pb-test-{suite} -p` 获取测试输出
+   - 测试完成后 session 保留供查看输出
 4. **失败定性**: 如果失败，判断是实现缺陷/测试缺陷/上游缺陷
+5. **UI/交互类测试**: 通过 `/pb-v1-brower`（mode: verify）在浏览器中验证页面交互和视觉效果
+   - 仅适用于前端/UI 测试场景，纯后端测试不调用
+   - 浏览器操作过程中的 CDP 命令直接执行，不逐条确认；链式操作统一使用 `browse chain '<JSON>'` 直接传参，不使用 heredoc / pipe；证据文件优先写入当前仓库或 /tmp
 
 ---
 
@@ -492,12 +515,25 @@ graph LR
 |-------|------|------|---------|
 | pb-v1-implementing | 输入 | 代码实现 + protocol.md + implementation.md | Build Review 通过后 |
 | pb-v1-planning | 输入 | tasks.md（验收标准） | 测试开始时 |
+| pb-v1-brower | 工具 | UI 交互验证，CDP 命令免确认；链式操作统一用 `browse chain '<JSON>'` | Step 3 前端/UI 测试场景 |
 | pb-v1-shipping | 输出 | test-report.md + 测试代码 | 测试完成后 |
 | pb-v1-implementing | 输出 | 缺陷反馈（实现缺陷） | 发现实现缺陷时 |
 | pb-v1-orchestrator | 输出 | 异常上报 | 发现系统性问题或上游缺陷时 |
 
 ---
 
+## Safety
+
+- 绝不编写无约束来源的测试——每个测试必须溯源到上游约束
+- 绝不修复实现缺陷——记录并反馈给 pb-v1-implementing
+- 绝不做代码审查——交给 pb-v1-reviewer
+- 绝不引入新测试框架——使用项目已有工具
+- 绝不跳过失败测试——失败是信号，必须定性处理
+- 绝不在有 BLOCKER 缺陷时判定 READY——BLOCKER 必须修复
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 1.0.0  
-**创建日期**: 2026-04-01
+**版本**: 2.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

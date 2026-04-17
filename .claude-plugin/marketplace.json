@@ -71,7 +71,15 @@
         "./skills/pb-v1-testing",
         "./skills/pb-v1-shipping",
         "./skills/pb-v1-retrospective",
-        "./skills/pb-v1-orchestrator"
+        "./skills/pb-v1-orchestrator",
+        "./skills/pb-v1-frontend",
+        "./skills/pb-v1-preview",
+        "./skills/pb-v1-spec-verify",
+        "./skills/pb-v1-demo",
+        "./skills/pb-v1-ascii",
+        "./skills/pb-v1-brower",
+        "./skills/pb-v1-clarify",
+        "./skills/pb-v1-talk"
       ]
     }
   ]

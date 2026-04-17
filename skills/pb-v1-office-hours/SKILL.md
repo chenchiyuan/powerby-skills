@@ -8,11 +8,26 @@ description: |
   不产出 proposal.md、architecture.md 或代码。只产出 design-brief.md。
 compatibility:
   - pb-v1-discovery (下游)
+  - pb-v1-clarify (工具，探索性澄清持久化)
   - pb-v1-retrospective (上游, Retro-Learn 循环)
 style:
   inherits: powerby-foundation
   local: office-hours
 principles: $ref(powerby-foundation/exploration-principles)
+---
+
+# pb-v1-office-hours
+
+**版本**: 3.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Think 阶段（探讨与开创）
+
+---
+
+**红线声明**：探讨的边界是 design-brief.md。绝不产出 proposal.md、architecture.md 或代码，绝不批量提问，绝不将未确认信息写成确认事实。
+
 ---
 
 ## 核心哲学
@@ -325,6 +340,15 @@ graph TD
 
 通过 AskUserQuestion 确认。不同意的前提必须修订理解并回溯。
 
+**澄清持久化**: 已确认的前提通过 pb-v1-clarify 持久化记录，供下游 skill 引用：
+```
+调用 pb-v1-clarify:
+  dimension: "product"
+  iteration_path: "docs/iterations/{iteration_id}"
+  scope: "前置探讨前提验证结果"
+  context: ["design-brief.md"]
+```
+
 **关键约束**: 至少验证 3 个核心前提
 
 **产出**: 已验证的前提清单
@@ -400,7 +424,7 @@ graph TD
 - B) **修改** — 指定需变更的部分，回到相关 Phase 修订
 - C) **重来** — 返回 Phase 2
 
-**批准后**: 输出完成状态，建议调用 pb-v1-discovery
+**批准后**: 输出完成状态，建议调用 pb-v1-discovery。告知已有的澄清记录路径（`clarifications/`），供下游 skill 直接引用。
 
 ---
 
@@ -536,11 +560,24 @@ graph LR
 | 交互方 | 方向 | 内容 | 触发条件 |
 |-------|------|------|---------|
 | pb-v1-retrospective | 输入 | Retro-Learn 改进建议 | 上一迭代复盘完成后 |
+| pb-v1-clarify | 工具 | 探索性澄清持久化（前提验证结果） | Phase 3 前提确认后 |
 | pb-v1-discovery | 输出 | design-brief.md | 用户批准后 |
 | pb-v1-orchestrator | 输出 | 完成通知 | 探讨完成后 |
 
 ---
 
+## Safety
+
+- 绝不产出 proposal.md、architecture.md 或代码——这些是下游 Skill 的职责
+- 绝不批量提问——必须逐个提问并等待回答
+- 绝不将未确认信息写成确认事实——未验证的前提标注为"待验证"
+- 绝不跳过前提挑战直接给方案结论
+- 绝不使用谄媚性语言替代真实判断（"这个想法很有趣"不是验证）
+- 绝不延伸到下游职责（技术选型、架构决策、实现细节）
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 1.0.0  
-**创建日期**: 2026-04-01
+**版本**: 3.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

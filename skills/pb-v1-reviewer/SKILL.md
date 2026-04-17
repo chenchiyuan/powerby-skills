@@ -3,7 +3,7 @@ name: pb-v1-reviewer
 description: |
   对齐审查原子 Skill。验证本轮产物是否对齐还原上轮产物。
   单一职责：对齐验证——基于上轮产物作为基准，验证本轮产物是否忠实还原了上游约束。
-  支持 4 种审查类型：PRD 对齐需求、架构对齐 PRD、工程对齐架构、实现对齐架构。
+  支持 5 种审查类型：PRD 对齐需求、架构对齐 PRD、工程对齐架构、实现对齐架构、预览对齐产品定义。
   支持上轮产出 Review（验证上轮产出本身经过验证）。
   当上游 Skill 完成交付时自动触发，或由用户主动触发。不修改任何产物，不做设计决策。
 compatibility:
@@ -11,10 +11,25 @@ compatibility:
   - pb-v1-designing (上游, 架构审查)
   - pb-v1-planning (上游, 工程审查)
   - pb-v1-implementing (上游, 实现审查)
+  - pb-v1-preview (上游, 预览审查)
 style:
   inherits: powerby-foundation
   local: reviewer
 principles: $ref(powerby-foundation/review-principles)
+---
+
+# pb-v1-reviewer
+
+**版本**: 3.1.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-14
+**流程映射**: vNext Review 门禁（Plan Review + Build Review）
+
+---
+
+**红线声明**：审查是对齐还原验证，不是创造性挑错。绝不修改任何产物，绝不建议具体修复方案，绝不跳过对齐矩阵。每个 FAIL 必须有可定位的偏离证据。
+
 ---
 
 ## 核心哲学
@@ -107,6 +122,7 @@ reviewer 根据输入的产物类型自动识别审查类型和对齐基准：
 | 架构完成后 | architecture.md + arch_decisions.md | PRD (feature-specs) | 架构是否对齐还原 PRD | arch_review |
 | 工程规划完成后 | tasks.md | architecture.md | 工程是否对齐还原架构 | plan_review |
 | 代码实现完成后 | 代码 + protocol.md | architecture.md | 实现是否对齐还原架构 | impl_review |
+| 预览完成后 | preview-output/ + preview-report.md | proposal.md + feature-spec-index.md + feature-specs/*.md | 预览是否对齐还原产品定义 | preview_review |
 
 ### 必需输入
 
@@ -181,6 +197,35 @@ reviewer 根据输入的产物类型自动识别审查类型和对齐基准：
 ```
 
 **文件路径**: `docs/iterations/{iteration_id}/{审查代号}/round-{N}-review.md`
+
+**门禁状态文件**: 同时写入 `docs/iterations/{iteration_id}/review-logs/{review_type}.md`
+
+门禁状态文件格式（供下游 Skill Step 0 机器读取）：
+
+```markdown
+---
+review_type: prd_review    # prd_review | arch_review | plan_review | impl_review
+result: PASS               # PASS | FAIL | ESCALATED
+timestamp: 2026-04-13T15:00:00+08:00
+round: 1
+source: round-1-review.md
+---
+
+审查已通过。详情见 {审查代号}/round-{N}-review.md。
+```
+
+**review-logs 目录结构**:
+
+```
+docs/iterations/{iteration_id}/review-logs/
+├── prd_review.md          # drafting 后的 PRD 审查
+├── arch_review.md         # designing 后的架构审查
+├── plan_review.md         # planning 后的工程审查
+├── impl_review.md         # implementing 后的实现审查
+└── preview_review.md      # preview 后的预览审查
+```
+
+**关键约定**: 每次审查完成后，无论 PASS/FAIL/ESCALATED，都必须写入或更新对应的 review-logs 文件。下游 Skill 的 Step 0 只检查此文件。
 
 ---
 
@@ -266,6 +311,60 @@ reviewer 根据输入的产物类型自动识别审查类型和对齐基准：
 
 ---
 
+### 5. 预览对齐产品定义审查
+
+**本轮产物**: preview-output/ + preview-report.md  
+**对齐基准**: proposal.md + feature-spec-index.md + feature-specs/*.md
+
+**检查维度**:
+
+| 维度 | 检查内容 | BLOCKER 条件 | MAJOR 条件 |
+|------|---------|-------------|-----------|
+| 旅程还原度 | Demo 页面按用户旅程组织，非 Feature 列表 | Demo 以 Feature 为单元组织页面（如每个 Feature 一个独立页面/Tab/卡片） | 核心旅程可走通但步骤间跳转不自然 |
+| 页面真实性 | 页面像真实产品页，非规格摘要 | 页面主体是 Feature spec 的 UI 投影（D-02→表单, D-04→表格的机械映射）或规格说明卡片 | 页面有产品感但局部区块仍是维度罗列 |
+| 页面完整性 | 核心旅程页面无缺失，关键模块齐全 | 核心旅程中有步骤无对应页面（用户流断裂）或页面存在但缺少完成用户目标的关键模块 | 页面存在且主要模块齐全，但缺少边界状态（空/错误/加载状态） |
+| 语言纯度 | Demo 中零开发概念 | 出现 Feature ID / 维度标签（D-xx）/ 分类标签（UI Feature / Backend-only） | 文案使用技术术语而非产品语言 |
+| Mock一致性 | 跨页面实体数据一致 | 同一实体在不同页面数据矛盾（如用户名/积分/状态不一致） | 仅 happy path 数据，无空/错误/加载状态 |
+| 覆盖校验 | P0 UI Feature 核心能力在 Demo 中有体现 | P0 UI Feature 核心能力完全未体现 | P1 Feature 未覆盖或 P0 仅部分覆盖 |
+
+**对齐矩阵**:
+
+**矩阵 A - 用户旅程矩阵**:
+
+| 旅程名称 | 步骤 | 对应页面路径 | 页面可达 | 交互可走通 | 对齐状态 |
+|---------|------|------------|---------|----------|---------|
+| {proposal.md 核心旅程} | {步骤描述} | {/demo/xxx} | ✓/✗ | ✓/✗ | ✓ 对齐 / ✗ 偏离 |
+
+来源：proposal.md 核心用户旅程 vs preview-output/lib/product-blueprint.ts userJourneys + 实际路由
+
+**矩阵 B - 页面完整性矩阵**:
+
+| 页面路径 | 用户目标 | 关键模块 | 模块存在 | 边界状态覆盖 | 对齐状态 |
+|---------|---------|---------|---------|------------|---------|
+| {/demo/xxx} | {from blueprint} | {表单/列表/CTA/状态区/反馈区} | ✓/✗ | ✓/✗ | ✓ 对齐 / ✗ 偏离 |
+
+来源：product-blueprint.ts pages vs 实际页面实现
+
+**矩阵 C - Feature 挂载矩阵**:
+
+| Feature ID | 优先级 | 挂载页面 | 核心能力体现 | 开发概念泄漏 | 对齐状态 |
+|-----------|--------|---------|------------|------------|---------|
+| {F-xxx} | {P0/P1} | {from blueprint} | {描述} | ✓/✗ | ✓ 对齐 / ✗ 偏离 |
+
+来源：feature-spec-index.md + preview-report.md 覆盖表 vs 实际 Demo 页面
+
+**反模式清单（明确 BLOCKER）**:
+
+以下 5 种反模式直接判定为 BLOCKER：
+
+1. **Feature 组织模式**: Demo 页面以 Feature 为单元组织（如页面标题/导航项/卡片标题直接使用 Feature ID 或 Feature 名称，一个 Feature 对应一个独立页面/Tab/卡片）
+2. **规格摘要页面**: 页面主体内容是 Feature spec 的可视化（如"D-02 输入规格"章节对应一个表单区块，"D-04 输出规格"章节对应一个表格区块），而非用户完成任务的真实页面
+3. **开发概念泄漏**: Demo 中出现 Feature ID（F-xxx）、维度标签（D-xx）、分类标签（UI Feature / Backend-only / P0 / P1）
+4. **旅程断裂**: 核心用户旅程中有步骤无对应页面或页面 404
+5. **模块缺失**: 页面存在但缺少完成用户目标所需的关键模块（如只有上传区，没有结果反馈区；只有列表，没有操作按钮）
+
+---
+
 ## 执行流程
 
 ### 总流程
@@ -287,7 +386,7 @@ graph TD
     Pass --> Report[Step 6: 输出报告]
     Fail --> Report
     Escalate --> Report
-    Report --> Notify[Step 7: 通知 orchestrator]
+    Report --> Deliver[Step 7: 交付与引导]
 ```
 
 ---
@@ -301,6 +400,7 @@ graph TD
 - 输入包含 architecture.md + arch_decisions.md → 架构对齐 PRD 审查（基准：PRD feature-specs）
 - 输入包含 tasks.md → 工程对齐架构审查（基准：architecture.md）
 - 输入包含代码目录 → 实现对齐架构审查（基准：architecture.md）
+- 输入包含 preview-output/ + preview-report.md → 预览对齐产品定义审查（基准：proposal.md + feature-spec-index.md + feature-specs/*.md + 可选 prd_review.md）
 
 **产出**: 审查类型 + 审查代号 + 对齐基准文件
 
@@ -393,22 +493,37 @@ graph TD
 
 ### Step 6: 输出审查报告
 
-**目的**: 生成标准化审查报告
+**目的**: 生成标准化审查报告 + 写入门禁状态文件
 
 **输出**:
 1. 审查报告（按统一格式）
 2. 写入 `docs/iterations/{iteration_id}/{审查代号}/round-{N}-review.md`
+3. 写入或更新 `docs/iterations/{iteration_id}/review-logs/{review_type}.md`（门禁状态文件）
 
 ---
 
-### Step 7: 通知 orchestrator
+### Step 7: 交付与引导
 
-**目的**: 更新流程状态
+**目的**: 告知用户审查结果，引导下一步操作
 
 **执行内容**:
-1. 通知 pb-v1-orchestrator 审查结果（PASS/FAIL/ESCALATED）
-2. 如果 FAIL，通知对应上游 Skill 进入 Refinery 模式
-3. 传递审查报告路径
+
+**如果 PASS**:
+根据审查类型告知下一步：
+- prd_review PASS → "PRD 审查通过。下一步请执行 `/pb-v1-designing` 进行架构设计。"
+- arch_review PASS → "架构审查通过。下一步请执行 `/pb-v1-planning` 进行工程规划。"
+- plan_review PASS → "工程审查通过。下一步请执行 `/pb-v1-implementing` 进行代码实现。"
+- impl_review PASS → "实现审查通过。下一步请执行 `/pb-v1-testing` 进行测试验证。"
+- preview_review PASS → "预览审查通过。Demo 对齐还原了产品定义，页面符合用户视角 MVP 标准。如需进入架构设计，请执行 `/pb-v1-designing`。"
+
+**如果 FAIL**:
+告知用户需要修复：
+- "审查未通过，存在 {N} 个 BLOCKER 和 {M} 个 MAJOR。请对应上游 Skill 进入 Refinery 模式修复后重新审查。"
+- 列出需要修复的具体问题摘要
+
+**如果 ESCALATED**:
+告知用户需要决策：
+- "审查连续 3 轮未通过。请决定：A. 接受当前状态继续 B. 回退到更上游重新开始 C. 调整需求范围"
 
 ---
 
@@ -519,18 +634,21 @@ graph LR
     DES[pb-v1-designing] -->|architecture.md + arch_decisions.md| REV
     PLA[pb-v1-planning] -->|tasks.md| REV
     IMP[pb-v1-implementing] -->|代码 + 测试| REV
+    PRE[pb-v1-preview] -->|preview-output/ + preview-report.md| REV
     
     REV -->|PASS| ORC[pb-v1-orchestrator]
     REV -->|FAIL + *_logs/| DRA
     REV -->|FAIL + arch_logs/| DES
     REV -->|FAIL + plan_logs/| PLA
     REV -->|FAIL + impl_logs/| IMP
+    REV -->|FAIL + preview_logs/| PRE
     
     style REV fill:#ffe1f5
     style DRA fill:#fff4e1
     style DES fill:#fff4e1
     style PLA fill:#fff4e1
     style IMP fill:#fff4e1
+    style PRE fill:#fff4e1
     style ORC fill:#fff4e1
 ```
 
@@ -540,11 +658,25 @@ graph LR
 | pb-v1-designing | 输入 | architecture.md + arch_decisions.md | 架构审查 |
 | pb-v1-planning | 输入 | tasks.md | 工程审查 |
 | pb-v1-implementing | 输入 | 代码 + 测试 | 实现审查 |
+| pb-v1-preview | 输入 | preview-output/ + preview-report.md | 预览审查 |
 | pb-v1-orchestrator | 输出 | PASS/FAIL/ESCALATED | 审查完成后 |
 | 上游 Skill | 输出 | 审查报告（*_logs/） | FAIL 时 |
 
 ---
 
+## Safety
+
+- 绝不修改任何产物——只判定，不动手
+- 绝不建议具体修复方案——只说"什么不满足标准"
+- 绝不做设计决策——发现的设计问题反馈给上游
+- 绝不跨类型审查——PRD 审查不审架构可行性
+- 绝不主观判定——PASS/FAIL 是机械规则（无 BLOCKER 且无 MAJOR = PASS）
+- 绝不跳过对齐矩阵——没有矩阵的 PASS 是无效判定
+- 绝不超过 3 轮 Refinery——连续 3 轮 FAIL 必须 ESCALATED
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 2.0.0  
-**创建日期**: 2026-04-01
+**版本**: 3.1.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-14

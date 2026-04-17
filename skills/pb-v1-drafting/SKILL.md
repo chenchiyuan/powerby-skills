@@ -6,12 +6,27 @@ description: |
   只填充产品维度（D-01~D-08）和测试维度（D-17~D-20）。
 compatibility:
   - pb-v1-discovery (上游)
+  - pb-v1-clarify (工具，需求/边界维度澄清)
   - pb-v1-reviewer (下游)
   - pb-v1-designing (下游)
 style:
   inherits: powerby-foundation
   local: drafting
 principles: $ref(powerby-foundation/specification-principles)
+---
+
+# pb-v1-drafting
+
+**版本**: 3.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Plan 阶段（产品规格）
+
+---
+
+**红线声明**：规格拆解的边界是 feature-specs。绝不填充架构维度（D-09~D-16），绝不修改 proposal.md，绝不涉及技术实现细节。每个维度条目必须可转化为测试用例。
+
 ---
 
 ## 核心哲学
@@ -252,7 +267,7 @@ graph TD
     Confirm --> Index[Step 4: 生成索引]
     Index --> Cards[Step 5: 生成规格卡]
     Cards --> Check[Step 6: 自检与交付]
-    Check --> Notify[Step 7: 通知 orchestrator]
+    Check --> Deliver[Step 7: 交付与引导]
 ```
 
 ---
@@ -340,13 +355,19 @@ graph TD
 
 ---
 
-### Step 7: 通知 orchestrator
+### Step 7: 交付与引导
 
-**目的**: 更新流程状态
+**目的**: 确认交付物完整，引导用户进入下一步
 
 **执行内容**:
-1. 通知 pb-v1-orchestrator drafting 完成
-2. 传递 feature-spec-index.md 和 feature-specs/ 路径
+1. 输出交付物清单：
+   - `docs/iterations/{iteration_id}/feature-spec-index.md`
+   - `docs/iterations/{iteration_id}/feature-specs/F-*.md`
+2. 向用户明确告知下一步：
+
+> ✅ **Drafting 阶段完成。** 按标准流程，下一步请执行 `/pb-v1-reviewer` 进行 **PRD 审查（prd_review）**，确保功能规格与 proposal.md 对齐后再进入架构设计。
+>
+> 如需跳过审查直接进入架构设计，请明确告知，风险将被标注在后续产物中。
 
 ---
 ## 职责边界
@@ -389,9 +410,16 @@ graph TD
 **触发条件**: 功能点无法转化为明确的 D-01~D-08
 
 **处理方式**:
-1. 记录模糊点
-2. 提示用户回到 pb-v1-discovery 澄清
-3. 或标记为"待澄清"并继续
+1. 调用 pb-v1-clarify 进行需求/边界维度澄清：
+   ```
+   调用 pb-v1-clarify:
+     dimension: "requirement"
+     iteration_path: "docs/iterations/{iteration_id}"
+     scope: "功能点描述模糊，无法转化为 D-01~D-08"
+     context: ["proposal.md"]
+   ```
+2. 澄清返回 clear → 基于澄清结论继续拆解
+3. 澄清返回 blocked → 提示用户回到 pb-v1-discovery 补充
 
 ---
 
@@ -448,12 +476,25 @@ graph LR
 | 交互方 | 方向 | 内容 | 触发条件 |
 |-------|------|------|---------|
 | pb-v1-discovery | 输入 | proposal.md | drafting 开始 |
-| pb-v1-reviewer | 输出 | feature-spec-index.md + feature-specs/*.md | drafting 完成后 |
-| pb-v1-designing | 输出 | feature-specs/*.md（待填充 D-09~D-16） | drafting 完成后 |
-| pb-v1-orchestrator | 输出 | 完成通知 | drafting 完成后 |
+| pb-v1-clarify | 工具 | 需求/边界维度澄清 | 功能点描述模糊时 |
+| pb-v1-reviewer | 输出 | feature-spec-index.md + feature-specs/*.md | drafting 完成后，用户执行 reviewer |
+| pb-v1-designing | 输出 | feature-specs/*.md（待填充 D-09~D-16） | prd_review 通过后 |
+| pb-v1-orchestrator | 输出 | 完成通知（可选） | 用户不确定下一步时主动调用 |
+
+---
+
+## Safety
+
+- 绝不填充架构维度（D-09~D-16）——这是 pb-v1-designing 的职责
+- 绝不修改 proposal.md——已锁定的需求合同
+- 绝不涉及技术实现细节（数据库设计、API 路由、部署架构）
+- 绝不新增 proposal.md 中没有的功能点——Feature 必须可追溯
+- 绝不写无法转化为测试用例的维度条目——噪音维度浪费下游精力
+- 绝不变更已分配的 Feature ID——编号是跨 Skill 引用锚点
 
 ---
 
 **文档状态**: 设计完成  
-**版本**: 2.0.0  
-**创建日期**: 2026-04-01
+**版本**: 3.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

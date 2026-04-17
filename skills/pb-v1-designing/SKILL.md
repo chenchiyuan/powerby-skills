@@ -8,12 +8,27 @@ description: |
   当用户需要把 PRD/proposal 转化为技术架构设计时使用。不做工程规划、不做代码实现。
 compatibility:
   - pb-v1-drafting (上游)
+  - pb-v1-clarify (工具，架构维度澄清)
   - pb-v1-reviewer (下游)
   - pb-v1-planning (下游)
 style:
   inherits: powerby-foundation
   local: designing
 principles: $ref(powerby-foundation/architecture-principles)
+---
+
+# pb-v1-designing
+
+**版本**: 4.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Plan 阶段（架构设计）
+
+---
+
+**红线声明**：架构收敛的起点是现有代码，不是白纸。绝不修改 proposal.md 和产品维度（D-01~D-08），绝不做工程规划或代码实现，绝不新增需求中不存在的功能。
+
 ---
 
 ## 核心哲学
@@ -266,7 +281,10 @@ graph TD
 
 ```mermaid
 graph TD
-    Start[接收输入] --> S1[Step 1: 需求对齐 + 现有代码采集]
+    Start[接收输入] --> S0[Step 0: 前置门禁检查]
+    S0 -->|通过| S1[Step 1: 需求对齐 + 现有代码采集]
+    S0 -->|未通过| Warn[警告: 建议先执行 reviewer]
+    Warn -->|用户选择跳过| S1
     S1 --> S2[Step 2: Scope Challenge]
     S2 --> S3[Step 3: 架构疑问澄清]
     S3 --> S4[Step 4: 架构设计 + 决策收敛]
@@ -274,10 +292,30 @@ graph TD
     S5 -->|Gates 通过| S6[Step 6: 填充 D-09~D-16]
     S5 -->|Fidelity Gate 未通过| S4
     S6 --> S7[Step 7: 交付]
-    S7 --> S8[Step 8: 通知 orchestrator]
+    S7 --> S8[Step 8: 交付与引导]
 
     S4 -->|发现需求问题| Feedback[反馈闭环: 建议回退上游]
 ```
+
+---
+
+### Step 0: 前置门禁检查
+
+**检查项**: prd_review 审查报告
+
+**执行逻辑**:
+1. 查找 `docs/iterations/{iteration_id}/review-logs/prd_review.md`
+2. 如果文件存在且 frontmatter 中 `result: PASS` → 继续执行 Step 1
+3. 如果文件存在且 `result: FAIL` → 警告 "上游 PRD 审查未通过，存在未解决的 BLOCKER/MAJOR"
+4. 如果文件不存在 → 警告 "功能规格尚未经过 PRD 审查"
+
+**未通过处理**:
+使用 AskUserQuestion 询问：
+- A. 先执行 `/pb-v1-reviewer` 进行 PRD 审查（推荐）
+- B. 跳过审查，接受风险继续
+
+用户选择 B 时，在本 Skill 产出文件（architecture.md）头部追加：
+`⚠️ 前置门禁跳过: prd_review 未执行，功能规格未经对齐验证`
 
 ---
 
@@ -340,9 +378,18 @@ graph TD
    - 需求边界（非功能需求指标、兼容性要求）
    - 架构方向（演进偏好、新技术接受度）
 
-2. **无法推断的疑问提交用户**
-   - 使用 AskUserQuestion 一次性提交所有疑问（不逐个问）
-   - 以"无未解疑问"为结束条件
+2. **无法推断的疑问调用 pb-v1-clarify 进行架构维度澄清**
+   - 调用 pb-v1-clarify 批量澄清架构疑问：
+     ```
+     调用 pb-v1-clarify:
+       dimension: "architecture"
+       iteration_path: "docs/iterations/{iteration_id}"
+       scope: "架构设计前的技术约束和方向澄清"
+       context: ["proposal.md", "feature-specs/"]
+     ```
+   - 澄清返回 clear → 基于澄清结论进入设计
+   - 澄清返回 partial → 继续澄清直到 clear
+   - 澄清返回 blocked → 使用 AskUserQuestion 直接询问用户
 
 3. **用户确认**
    - 提交 Step 1 的需求复述 + Step 2 的 Scope 结论 + 架构方向摘要
@@ -523,13 +570,20 @@ graph TD
 
 ---
 
-### Step 8: 通知 orchestrator
+### Step 8: 交付与引导
 
-**目的**: 更新流程状态
+**目的**: 确认交付物完整，引导用户进入下一步
 
 **执行内容**:
-1. 通知 pb-v1-orchestrator designing 完成
-2. 传递 architecture.md 和 arch_decisions.md 路径
+1. 输出交付物清单：
+   - `docs/iterations/{iteration_id}/architecture.md`
+   - `docs/iterations/{iteration_id}/arch_decisions.md`
+   - `docs/iterations/{iteration_id}/feature-specs/F-*.md`（D-09~D-16 已填充）
+2. 向用户明确告知下一步：
+
+> ✅ **Designing 阶段完成。** 按标准流程，下一步请执行 `/pb-v1-reviewer` 进行 **架构审查（arch_review）**，确保架构设计与功能规格对齐后再进入工程规划。
+>
+> 如需跳过审查直接进入工程规划，请明确告知，风险将被标注在后续产物中。
 
 ---
 
@@ -620,11 +674,20 @@ graph TD
 **触发条件**: 多个战略级方案无法选择
 
 **处理方式**:
-1. 提供深度分析（多维评分 + 充分论证）
-2. 明确推荐方案和理由
-3. 列出"如果选择另一方案的条件"
-4. 通过 AskUserQuestion 请求用户决策
-5. 记录决策依据到 arch_decisions.md
+1. 调用 pb-v1-clarify 辅助收敛架构决策：
+   ```
+   调用 pb-v1-clarify:
+     dimension: "architecture"
+     iteration_path: "docs/iterations/{iteration_id}"
+     scope: "L1 战略级架构决策无法收敛"
+     context: ["proposal.md", "feature-specs/", "architecture.md"]
+   ```
+2. 澄清返回 clear → 基于澄清结论选择方案
+3. 澄清返回 partial/blocked → 提供深度分析（多维评分 + 充分论证）
+4. 明确推荐方案和理由
+5. 列出"如果选择另一方案的条件"
+6. 通过 AskUserQuestion 请求用户决策
+7. 记录决策依据到 arch_decisions.md
 
 ---
 
@@ -640,7 +703,7 @@ graph TD
 2. 标注影响的 Feature
 3. 在 arch_decisions.md 中记录
 4. 建议回退到 pb-v1-discovery 或 pb-v1-drafting
-5. 通知 orchestrator
+5. 向用户说明需要回退的原因和影响范围
 
 ---
 
@@ -740,6 +803,7 @@ graph LR
 | 交互方 | 方向 | 内容 | 触发条件 |
 |-------|------|------|---------|
 | pb-v1-drafting | 输入 | proposal.md + feature-specs (D-01~D-08, D-17~D-20) | designing 开始 |
+| pb-v1-clarify | 工具 | 架构维度澄清（技术约束、方向、L1 决策） | Step 3 疑问澄清、场景 3 决策未收敛 |
 | pb-v1-reviewer | 输出 | architecture.md + arch_decisions.md | designing 完成后 |
 | pb-v1-reviewer | 输入 | arch_logs/ (审查报告，FAIL 时) | Refinery 模式触发 |
 | pb-v1-planning | 输出 | feature-specs (D-09~D-16) | designing 完成后 |
@@ -748,6 +812,19 @@ graph LR
 
 ---
 
+## Safety
+
+- 绝不修改 proposal.md——已锁定的需求合同
+- 绝不修改产品维度（D-01~D-08）和测试维度（D-17~D-20）
+- 绝不做工程规划——交给 pb-v1-planning
+- 绝不做代码实现——交给 pb-v1-implementing
+- 绝不新增需求中不存在的功能——每个组件必须映射到 Feature
+- 绝不为假设的未来需求过度设计——YAGNI
+- 绝不在 Fidelity Gate 未通过时交付——组件-需求映射覆盖率是硬性门禁
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 3.0.0  
-**创建日期**: 2026-04-01
+**版本**: 4.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09

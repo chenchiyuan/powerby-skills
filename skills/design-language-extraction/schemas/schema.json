@@ -1,0 +1,1128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/design-language.schema.json",
+  "title": "Design Language Extraction Schema",
+  "type": "object",
+  "required": [
+    "meta",
+    "brand",
+    "principles",
+    "tokens",
+    "layout",
+    "typography",
+    "iconography",
+    "elevation",
+    "motion",
+    "content",
+    "navigation",
+    "components",
+    "patterns",
+    "responsive",
+    "accessibility",
+    "evidence",
+    "verification"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "site_name",
+        "domain",
+        "page_types",
+        "theme_modes",
+        "breakpoints"
+      ],
+      "properties": {
+        "site_name": { "type": "string" },
+        "domain": { "type": "string" },
+        "summary": { "type": "string" },
+        "page_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "theme_modes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["light", "dark", "both", "unknown"]
+          }
+        },
+        "breakpoints": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/breakpoint" }
+        },
+        "source_pages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourcePage" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "brand": {
+      "type": "object",
+      "required": [
+        "positioning",
+        "audience",
+        "adjectives",
+        "values",
+        "anti_values",
+        "visual_priority"
+      ],
+      "properties": {
+        "positioning": { "type": "string" },
+        "audience": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "adjectives": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "values": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/valueRule" }
+        },
+        "anti_values": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "visual_priority": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "principles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/principleRule" }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["seed", "map", "alias"],
+      "properties": {
+        "seed": { "$ref": "#/$defs/seedTokens" },
+        "map": { "$ref": "#/$defs/mapTokens" },
+        "alias": { "$ref": "#/$defs/aliasTokens" }
+      },
+      "additionalProperties": false
+    },
+    "layout": {
+      "$ref": "#/$defs/layoutSystem"
+    },
+    "typography": {
+      "$ref": "#/$defs/typographySystem"
+    },
+    "iconography": {
+      "$ref": "#/$defs/iconographySystem"
+    },
+    "elevation": {
+      "$ref": "#/$defs/elevationSystem"
+    },
+    "motion": {
+      "$ref": "#/$defs/motionSystem"
+    },
+    "content": {
+      "$ref": "#/$defs/contentSystem"
+    },
+    "navigation": {
+      "$ref": "#/$defs/navigationSystem"
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/componentRule" }
+    },
+    "patterns": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/patternRule" }
+    },
+    "responsive": {
+      "$ref": "#/$defs/responsiveSystem"
+    },
+    "accessibility": {
+      "$ref": "#/$defs/accessibilitySystem"
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidenceItem" }
+    },
+    "verification": {
+      "$ref": "#/$defs/verificationSpec"
+    }
+  },
+  "$defs": {
+    "sourcePage": {
+      "type": "object",
+      "required": ["id", "url", "page_type"],
+      "properties": {
+        "id": { "type": "string" },
+        "url": { "type": "string" },
+        "page_type": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "breakpoint": {
+      "type": "object",
+      "required": ["name", "min_width"],
+      "properties": {
+        "name": { "type": "string" },
+        "min_width": { "type": "number" },
+        "max_width": { "type": ["number", "null"] },
+        "container_width": { "type": ["number", "null"] },
+        "columns": { "type": ["integer", "null"] },
+        "gutter": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "valueRule": {
+      "type": "object",
+      "required": ["name", "description", "ui_implications"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "ui_implications": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_patterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "priority": { "type": ["integer", "null"] },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "principleRule": {
+      "type": "object",
+      "required": ["name", "goal", "applicable_to", "metrics"],
+      "properties": {
+        "name": { "type": "string" },
+        "goal": { "type": "string" },
+        "applicable_to": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metrics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metricRule" }
+        },
+        "dos": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "donts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "metricRule": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "formula": { "type": ["string", "null"] },
+        "threshold": { "type": ["string", "number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "seedTokens": {
+      "type": "object",
+      "required": [
+        "colorPrimary",
+        "fontFamilyBase",
+        "fontSizeBase",
+        "lineHeightBase",
+        "radiusBase",
+        "spacingBase"
+      ],
+      "properties": {
+        "colorPrimary": { "type": "string" },
+        "colorSuccess": { "type": ["string", "null"] },
+        "colorWarning": { "type": ["string", "null"] },
+        "colorError": { "type": ["string", "null"] },
+        "colorInfo": { "type": ["string", "null"] },
+        "fontFamilyBase": { "type": "string" },
+        "fontSizeBase": { "type": "number" },
+        "lineHeightBase": { "type": "number" },
+        "fontWeightBase": { "type": ["number", "null"] },
+        "radiusBase": { "type": "number" },
+        "borderWidthBase": { "type": ["number", "null"] },
+        "spacingBase": { "type": "number" },
+        "shadowBase": { "type": ["string", "null"] },
+        "motionBase": { "type": ["number", "null"] },
+        "opacityBase": { "type": ["number", "null"] },
+        "densityMode": {
+          "type": ["string", "null"],
+          "enum": ["compact", "default", "spacious", null]
+        },
+        "themeMode": {
+          "type": ["string", "null"],
+          "enum": ["light", "dark", "both", null]
+        }
+      },
+      "additionalProperties": false
+    },
+    "mapTokens": {
+      "type": "object",
+      "required": [
+        "palette",
+        "neutrals",
+        "typographyScale",
+        "spacingScale",
+        "radiusScale",
+        "shadowScale",
+        "motionScale",
+        "zIndexScale"
+      ],
+      "properties": {
+        "palette": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "neutrals": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "typographyScale": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/typeScaleItem" }
+        },
+        "spacingScale": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "radiusScale": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "shadowScale": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/shadowItem" }
+        },
+        "borderWidthScale": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "opacityScale": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "motionScale": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/motionScaleItem" }
+        },
+        "zIndexScale": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/zIndexItem" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "aliasTokens": {
+      "type": "object",
+      "required": ["text", "background", "border", "feedback", "control", "elevation", "motion"],
+      "properties": {
+        "text": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": ["string", "null"] },
+            "secondary": { "type": ["string", "null"] },
+            "tertiary": { "type": ["string", "null"] },
+            "disabled": { "type": ["string", "null"] },
+            "inverse": { "type": ["string", "null"] },
+            "link": { "type": ["string", "null"] },
+            "linkHover": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "background": {
+          "type": "object",
+          "properties": {
+            "page": { "type": ["string", "null"] },
+            "container": { "type": ["string", "null"] },
+            "elevated": { "type": ["string", "null"] },
+            "mask": { "type": ["string", "null"] },
+            "hover": { "type": ["string", "null"] },
+            "active": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "border": {
+          "type": "object",
+          "properties": {
+            "default": { "type": ["string", "null"] },
+            "secondary": { "type": ["string", "null"] },
+            "focus": { "type": ["string", "null"] },
+            "danger": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "feedback": {
+          "type": "object",
+          "properties": {
+            "successBg": { "type": ["string", "null"] },
+            "warningBg": { "type": ["string", "null"] },
+            "errorBg": { "type": ["string", "null"] },
+            "infoBg": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "control": {
+          "type": "object",
+          "properties": {
+            "heightSm": { "type": ["number", "null"] },
+            "heightMd": { "type": ["number", "null"] },
+            "heightLg": { "type": ["number", "null"] },
+            "paddingInline": { "type": ["number", "null"] },
+            "paddingBlock": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "elevation": {
+          "type": "object",
+          "properties": {
+            "card": { "type": ["string", "null"] },
+            "popover": { "type": ["string", "null"] },
+            "modal": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "motion": {
+          "type": "object",
+          "properties": {
+            "durationFast": { "type": ["number", "null"] },
+            "durationBase": { "type": ["number", "null"] },
+            "durationSlow": { "type": ["number", "null"] },
+            "easeEnter": { "type": ["string", "null"] },
+            "easeExit": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "layoutSystem": {
+      "type": "object",
+      "required": [
+        "artboard_width",
+        "grid",
+        "container",
+        "page_spacing",
+        "regions"
+      ],
+      "properties": {
+        "artboard_width": { "type": ["number", "null"] },
+        "grid": {
+          "type": "object",
+          "properties": {
+            "columns": { "type": ["integer", "null"] },
+            "gutter": { "type": ["number", "null"] },
+            "type": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "container": {
+          "type": "object",
+          "properties": {
+            "max_width": { "type": ["number", "null"] },
+            "min_margin_inline": { "type": ["number", "null"] },
+            "fluid": { "type": ["boolean", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "page_spacing": {
+          "type": "object",
+          "properties": {
+            "padding_inline": { "type": ["number", "null"] },
+            "padding_block": { "type": ["number", "null"] },
+            "section_gap": { "type": ["number", "null"] },
+            "block_gap": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "regions": {
+          "type": "object",
+          "properties": {
+            "header_height": { "type": ["number", "null"] },
+            "sidebar_width": { "type": ["number", "null"] },
+            "sidebar_collapsed_width": { "type": ["number", "null"] },
+            "content_top_offset": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "responsive_strategy": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "typographySystem": {
+      "type": "object",
+      "required": [
+        "font_stack",
+        "type_scale",
+        "weights",
+        "text_roles"
+      ],
+      "properties": {
+        "font_stack": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "fallback_strategy": { "type": ["string", "null"] },
+        "type_scale": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/typeScaleItem" }
+        },
+        "weights": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "letter_spacing_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "case_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "numeric_style": {
+          "type": ["string", "null"]
+        },
+        "text_roles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/textRoleItem" }
+        },
+        "max_type_levels_per_page": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "iconographySystem": {
+      "type": "object",
+      "required": ["style", "size_scale"],
+      "properties": {
+        "style": { "type": "string" },
+        "artboard": {
+          "type": "object",
+          "properties": {
+            "width": { "type": ["number", "null"] },
+            "height": { "type": ["number", "null"] },
+            "safe_area": { "type": ["number", "null"] },
+            "bleed": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "stroke_width": { "type": ["number", "null"] },
+        "corner_radius": { "type": ["number", "null"] },
+        "endcap": { "type": ["string", "null"] },
+        "size_scale": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "text_gap": { "type": ["number", "null"] },
+        "icon_button_rule": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "elevationSystem": {
+      "type": "object",
+      "required": ["levels", "z_index"],
+      "properties": {
+        "levels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "shadow"],
+            "properties": {
+              "name": { "type": "string" },
+              "shadow": { "$ref": "#/$defs/shadowItem" },
+              "usage": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "border_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "divider_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "z_index": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/zIndexItem" }
+        },
+        "mask": {
+          "type": "object",
+          "properties": {
+            "color": { "type": ["string", "null"] },
+            "opacity": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "motionSystem": {
+      "type": "object",
+      "required": ["durations", "easings", "component_motion_rules"],
+      "properties": {
+        "durations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/motionScaleItem" }
+        },
+        "easings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "component_motion_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["component", "state", "properties"],
+            "properties": {
+              "component": { "type": "string" },
+              "state": { "type": "string" },
+              "properties": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "duration": { "type": ["number", "null"] },
+              "easing": { "type": ["string", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "reduced_motion": {
+          "type": "object",
+          "properties": {
+            "supported": { "type": "boolean" },
+            "strategy": { "type": ["string", "null"] }
+          },
+          "required": ["supported"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "contentSystem": {
+      "type": "object",
+      "required": [
+        "tone",
+        "perspective",
+        "button_copy_rules",
+        "error_copy_rules",
+        "empty_state_rules",
+        "terminology"
+      ],
+      "properties": {
+        "tone": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "perspective": { "type": "string" },
+        "title_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "body_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "button_copy_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "form_help_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "error_copy_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "success_copy_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "empty_state_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confirmation_copy_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "terminology": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term", "preferred"],
+            "properties": {
+              "term": { "type": "string" },
+              "preferred": { "type": "string" },
+              "forbidden_synonyms": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "navigationSystem": {
+      "type": "object",
+      "required": ["modes", "rules"],
+      "properties": {
+        "modes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "top_nav_primary_count": { "type": ["integer", "null"] },
+            "breadcrumb_max_depth": { "type": ["integer", "null"] },
+            "tabs_max_count": { "type": ["integer", "null"] },
+            "steps_max_count": { "type": ["integer", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "selected_state_style": {
+          "type": "object",
+          "properties": {
+            "color": { "type": ["string", "null"] },
+            "background": { "type": ["string", "null"] },
+            "font_weight": { "type": ["number", "null"] },
+            "marker": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentRule": {
+      "type": "object",
+      "required": [
+        "name",
+        "category",
+        "purpose",
+        "anatomy",
+        "variants",
+        "sizes",
+        "states",
+        "tokens",
+        "interaction_rules",
+        "composition_rules"
+      ],
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "purpose": { "type": "string" },
+        "anatomy": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "variants": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentVariant" }
+        },
+        "sizes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentSize" }
+        },
+        "states": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentState" }
+        },
+        "tokens": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "spacing_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "content_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "interaction_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "composition_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dos": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "donts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "responsive_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "a11y_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentVariant": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "usage_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentSize": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "height": { "type": ["number", "null"] },
+        "padding_inline": { "type": ["number", "null"] },
+        "padding_block": { "type": ["number", "null"] },
+        "font_size": { "type": ["number", "null"] },
+        "radius": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "componentState": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "visual_changes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "interaction_notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "patternRule": {
+      "type": "object",
+      "required": [
+        "name",
+        "goal",
+        "information_architecture",
+        "regions",
+        "recommended_components"
+      ],
+      "properties": {
+        "name": { "type": "string" },
+        "goal": { "type": "string" },
+        "information_architecture": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "purpose"],
+            "properties": {
+              "name": { "type": "string" },
+              "purpose": { "type": "string" },
+              "placement": { "type": ["string", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "recommended_components": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "state_templates": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "responsive_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": ["string", "null"] },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "responsiveSystem": {
+      "type": "object",
+      "required": ["breakpoint_rules", "component_adaptations"],
+      "properties": {
+        "breakpoint_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["breakpoint", "rules"],
+            "properties": {
+              "breakpoint": { "type": "string" },
+              "rules": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "component_adaptations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["component", "breakpoint", "adaptation"],
+            "properties": {
+              "component": { "type": "string" },
+              "breakpoint": { "type": "string" },
+              "adaptation": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "accessibilitySystem": {
+      "type": "object",
+      "required": [
+        "contrast",
+        "focus",
+        "keyboard",
+        "target_size",
+        "internationalization"
+      ],
+      "properties": {
+        "contrast": {
+          "type": "object",
+          "properties": {
+            "text_min_ratio": { "type": ["number", "null"] },
+            "non_text_min_ratio": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "focus": {
+          "type": "object",
+          "properties": {
+            "visible": { "type": "boolean" },
+            "style": { "type": ["string", "null"] }
+          },
+          "required": ["visible"],
+          "additionalProperties": false
+        },
+        "keyboard": {
+          "type": "object",
+          "properties": {
+            "supported": { "type": "boolean" },
+            "notes": { "type": ["string", "null"] }
+          },
+          "required": ["supported"],
+          "additionalProperties": false
+        },
+        "target_size": {
+          "type": "object",
+          "properties": {
+            "min_width": { "type": ["number", "null"] },
+            "min_height": { "type": ["number", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "internationalization": {
+          "type": "object",
+          "properties": {
+            "supports_long_text": { "type": "boolean" },
+            "number_format_rules": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "date_format_rules": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "required": ["supports_long_text"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceItem": {
+      "type": "object",
+      "required": ["id", "source_type", "source_ref", "confidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "screenshot",
+            "dom",
+            "css",
+            "computed_style",
+            "token",
+            "docs",
+            "inferred"
+          ]
+        },
+        "source_ref": { "type": "string" },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "notes": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "verificationSpec": {
+      "type": "object",
+      "required": [
+        "token_coverage",
+        "component_coverage",
+        "state_coverage",
+        "pattern_coverage",
+        "responsive_coverage",
+        "evidence_coverage",
+        "reproduction_similarity"
+      ],
+      "properties": {
+        "token_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "component_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "state_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "pattern_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "responsive_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "evidence_coverage": { "$ref": "#/$defs/verificationMetric" },
+        "reproduction_similarity": { "$ref": "#/$defs/verificationMetric" },
+        "manual_review_checklist": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "verificationMetric": {
+      "type": "object",
+      "required": ["description", "target"],
+      "properties": {
+        "description": { "type": "string" },
+        "target": { "type": ["string", "number"] },
+        "method": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "typeScaleItem": {
+      "type": "object",
+      "required": ["name", "font_size", "line_height"],
+      "properties": {
+        "name": { "type": "string" },
+        "font_size": { "type": "number" },
+        "line_height": { "type": "number" },
+        "font_weight": { "type": ["number", "null"] },
+        "usage": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "textRoleItem": {
+      "type": "object",
+      "required": ["role", "style_ref"],
+      "properties": {
+        "role": { "type": "string" },
+        "style_ref": { "type": "string" },
+        "color_ref": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "shadowItem": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value": { "type": "string" },
+        "direction": { "type": ["string", "null"] },
+        "blur": { "type": ["number", "null"] },
+        "spread": { "type": ["number", "null"] },
+        "alpha": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "motionScaleItem": {
+      "type": "object",
+      "required": ["name", "duration"],
+      "properties": {
+        "name": { "type": "string" },
+        "duration": { "type": "number" },
+        "usage": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "zIndexItem": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "integer" },
+        "usage": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -15,6 +15,20 @@ style:
 principles: $ref(powerby-foundation/engineering-principles)
 ---
 
+# pb-v1-planning
+
+**版本**: 2.0.0
+**状态**: 设计完成
+**创建日期**: 2026-04-01
+**最后更新**: 2026-04-09
+**流程映射**: vNext Plan 阶段（工程规划）
+
+---
+
+**红线声明**：规划是约束传递，不是自由发挥。绝不修改架构设计，绝不凭空编写验收标准，绝不绕过循环依赖。tasks.md 是 implementing 的唯一输入契约。
+
+---
+
 ## 核心哲学
 
 > 规划是约束传递：把架构约束分解到任务粒度，让每个任务的验收标准都可以从上游约束推导出来。
@@ -237,7 +251,10 @@ graph TD
 
 ```mermaid
 graph TD
-    Start[接收输入] --> S1[Step 1: 上游产物对齐]
+    Start[接收输入] --> S0[Step 0: 前置门禁检查]
+    S0 -->|通过| S1[Step 1: 上游产物对齐]
+    S0 -->|未通过| Warn[警告: 建议先执行 reviewer]
+    Warn -->|用户选择跳过| S1
     S1 --> S2[Step 2: 任务分解]
     S2 --> S3[Step 3: 依赖分析与排序]
     S3 --> S4[Step 4: 验收标准推导]
@@ -245,11 +262,31 @@ graph TD
     S5 -->|通过| S6[Step 6: 交付]
     S5 -->|未通过| Fix[修复问题]
     Fix --> S5
-    S6 --> S7[Step 7: 通知 orchestrator]
+    S6 --> S7[Step 7: 交付与引导]
 
     S1 -->|架构缺陷| Feedback[反馈闭环: 建议回退 designing]
     S3 -->|循环依赖| Feedback
 ```
+
+---
+
+### Step 0: 前置门禁检查
+
+**检查项**: arch_review 审查报告
+
+**执行逻辑**:
+1. 查找 `docs/iterations/{iteration_id}/review-logs/arch_review.md`
+2. 如果文件存在且 frontmatter 中 `result: PASS` → 继续执行 Step 1
+3. 如果文件存在且 `result: FAIL` → 警告 "上游架构审查未通过，存在未解决的 BLOCKER/MAJOR"
+4. 如果文件不存在 → 警告 "架构设计尚未经过架构审查"
+
+**未通过处理**:
+使用 AskUserQuestion 询问：
+- A. 先执行 `/pb-v1-reviewer` 进行架构审查（推荐）
+- B. 跳过审查，接受风险继续
+
+用户选择 B 时，在本 Skill 产出文件（tasks.md）头部追加：
+`⚠️ 前置门禁跳过: arch_review 未执行，架构设计未经对齐验证`
 
 ---
 
@@ -386,13 +423,18 @@ graph TD
 
 ---
 
-### Step 7: 通知 orchestrator
+### Step 7: 交付与引导
 
-**目的**: 更新流程状态
+**目的**: 确认交付物完整，引导用户进入下一步
 
 **执行内容**:
-1. 通知 pb-v1-orchestrator planning 完成
-2. 传递 tasks.md 路径
+1. 输出交付物清单：
+   - `docs/iterations/{iteration_id}/tasks.md`
+2. 向用户明确告知下一步：
+
+> ✅ **Planning 阶段完成。** 按标准流程，下一步请执行 `/pb-v1-reviewer` 进行 **工程审查（plan_review）**，确保任务规划与架构设计对齐后再进入代码实现。
+>
+> 如需跳过审查直接进入实现，请明确告知，风险将被标注在后续产物中。
 
 ---
 
@@ -564,6 +606,18 @@ graph LR
 
 ---
 
+## Safety
+
+- 绝不修改架构设计——architecture.md 已锁定
+- 绝不修改需求——proposal.md 已锁定
+- 绝不凭空编写验收标准——必须从架构约束推导
+- 绝不绕过循环依赖——反馈给 designing 解耦
+- 绝不做代码实现——交给 pb-v1-implementing
+- 绝不新增架构中不存在的组件——任务必须映射到组件
+
+---
+
 **文档状态**: 设计完成  
-**版本**: 1.0.0  
-**创建日期**: 2026-04-01
+**版本**: 2.0.0  
+**创建日期**: 2026-04-01  
+**最后更新**: 2026-04-09
