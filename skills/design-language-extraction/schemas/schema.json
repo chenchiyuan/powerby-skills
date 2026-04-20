@@ -465,7 +465,12 @@
           },
           "additionalProperties": false
         },
-        "responsive_strategy": { "type": ["string", "null"] }
+        "responsive_strategy": { "type": ["string", "null"] },
+        "background_decoration": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/decorationLayer" }
+        },
+        "section_pattern": { "$ref": "#/$defs/sectionPattern" }
       },
       "additionalProperties": false
     },
@@ -626,7 +631,12 @@
           },
           "required": ["supported"],
           "additionalProperties": false
-        }
+        },
+        "keyframes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/keyframeDefinition" }
+        },
+        "entrance": { "$ref": "#/$defs/entranceAnimation" }
       },
       "additionalProperties": false
     },
@@ -847,6 +857,10 @@
         "interaction_notes": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "overlays": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stateOverlay" }
         }
       },
       "additionalProperties": false
@@ -1120,6 +1134,89 @@
           "type": "array",
           "items": { "type": "string" }
         }
+      },
+      "additionalProperties": false
+    },
+    "keyframeDefinition": {
+      "type": "object",
+      "required": ["name", "definition"],
+      "properties": {
+        "name": { "type": "string" },
+        "definition": { "type": "string" },
+        "usage": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "entranceAnimation": {
+      "type": "object",
+      "required": ["strategy", "default_keyframe"],
+      "properties": {
+        "strategy": { "type": "string" },
+        "default_keyframe": { "type": "string" },
+        "stagger_delay": { "type": ["number", "null"] },
+        "threshold": { "type": ["number", "null"] },
+        "once": { "type": ["boolean", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "decorationLayer": {
+      "type": "object",
+      "required": ["region", "layers"],
+      "properties": {
+        "region": { "type": "string" },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "type": "string" },
+              "color": { "type": ["string", "null"] },
+              "gradient": { "type": ["string", "null"] },
+              "size": { "type": ["string", "null"] },
+              "blur": { "type": ["string", "null"] },
+              "opacity": { "type": ["number", "null"] },
+              "animation": { "type": ["string", "null"] },
+              "position": { "type": ["string", "null"] },
+              "shape": { "type": ["string", "null"] }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sectionPattern": {
+      "type": "object",
+      "required": ["strategy", "variants"],
+      "properties": {
+        "strategy": { "type": "string" },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "background"],
+            "properties": {
+              "name": { "type": "string" },
+              "background": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "rule": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "stateOverlay": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "background": { "type": ["string", "null"] },
+        "gradient": { "type": ["string", "null"] },
+        "backdrop_blur": { "type": ["string", "null"] },
+        "transition": { "type": ["string", "null"] },
+        "content_hint": { "type": ["string", "null"] }
       },
       "additionalProperties": false
     }

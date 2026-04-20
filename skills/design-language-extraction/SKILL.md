@@ -1,24 +1,26 @@
 ---
 name: design-language-extraction
 description: |
-  网站设计语言提取与结构化还原。从目标网站的页面、截图、DOM、CSS、computed style、design token 和组件文档中，提取完整的六层设计语言规则体系（价值观→原则→Token→组件→页面模板→验证），输出符合 schema.json 的结构化规则文件。
-  当用户需要参考某个网站的设计风格来生成相似页面、建立设计系统、或提取设计规范时使用。即使用户只说"参考这个网站的风格"或"提取这个站点的设计规则"，也应触发此 Skill。
+  设计语言提取与结构化还原。支持两种路径：（1）有参考网站时，从目标网站的页面、截图、DOM、CSS、computed style、design token 和组件文档中提取；（2）无参考网站时，通过 pb-v1-talk 讨论收敛设计方向，再基于方向描述设计。两种路径都输出符合 schema.json 的结构化规则文件。
+  当用户需要参考某个网站的设计风格、或基于方向描述建立设计语言时使用。即使用户只说"参考这个网站的风格"、"提取这个站点的设计规则"、或"我想要一个极简风格的设计"，也应触发此 Skill。
   不适用于：最终网页工程代码生成、品牌战略咨询、自动化爬虫实现。
 compatibility:
   - web-access
   - local-filesystem
   - python3
+  - pb-v1-talk (工具, 可选, 无参考路径的设计方向讨论)
+  - pb-v1-design-system (下游, design-language.json)
 ---
 
 # Design Language Extraction
 
-Use this skill to extract a complete, structured design language from a target website.
-Apply it when the user wants to reference a website's design style, build a design system from an existing site, or extract design specifications for reproduction.
+Use this skill to extract or design a complete, structured design language.
+Apply it when the user wants to reference a website's design style, build a design system from an existing site, extract design specifications for reproduction, or create a design language from a direction description without a reference website.
 Do not rely on it for final web engineering code, brand strategy consulting, or crawler implementation.
 
 ## Purpose
 
-从目标网站提取完整的设计语言语法体系——不是零散的颜色和字体，而是一套可被程序消费、可验证复现的结构化规则集。成功使用的样子：输出一份符合 `schema.json` 的 JSON 文件，覆盖六层规则，每条规则携带证据链，整体可直接驱动页面生成器。
+从目标网站提取完整的设计语言语法体系，或基于方向描述从零设计——不是零散的颜色和字体，而是一套可被程序消费、可验证复现的结构化规则集。成功使用的样子：输出一份符合 `schema.json` 的 JSON 文件，覆盖六层规则，每条规则携带证据链，整体可直接驱动页面生成器。
 
 ## Success criteria
 
@@ -38,8 +40,8 @@ Do not rely on it for final web engineering code, brand strategy consulting, or 
 采用四段式认知框架：
 
 1. **定义成功标准** — 明确本次提取的目标范围（全站 vs 特定页面类型）、输出精度要求、证据完整度要求。不要一上来就开始抓取。
-2. **选择最高效的起点** — 优先寻找目标站点的设计系统文档、CSS Variables、Design Token 定义。如果有现成的设计系统文档（如 Ant Design、Material Design），从文档提取远比从页面逆向高效。没有文档时，从全局样式表和 computed style 入手。
-3. **每一步的结果都是证据** — 提取到的每个值都要标记来源类型（docs/css/computed_style/dom/screenshot/inferred）和可信度。不要把推断当事实。
+2. **判断路径：有参考 vs 无参考** — 有参考网站时走提取路径（下方 Step 2-8）；无参考网站时走设计路径（调用 pb-v1-talk 讨论收敛方向，再基于方向描述设计 Token 和规则）。两条路径的输出格式完全相同，都必须符合 schema.json。
+3. **每一步的结果都是证据** — 提取到的每个值都要标记来源类型（docs/css/computed_style/dom/screenshot/inferred/designed）和可信度。不要把推断当事实。无参考路径的设计决策标记 `source_type: "designed"` 和 `confidence: "high"`（因为是有意设计的，不是推断的）。
 4. **对照成功标准，满足即停止** — 用 verification 指标检查覆盖率，达标即停止，不追加无意义的细节。
 
 **对抗模型惯性**：
@@ -63,6 +65,7 @@ Do not rely on it for final web engineering code, brand strategy consulting, or 
 | 分析 DOM/CSS | Bash (脚本) | 批量提取 computed style、CSS variables、色值统计 | 需要语义理解的判断 |
 | 读写规则文件 | Read/Write | 管理输出的 JSON 规则文件、读取 schema | — |
 | 校验输出 | Bash (脚本) | 用 schema.json 校验输出文件的结构完整性 | 语义正确性判断 |
+| 设计方向讨论 | pb-v1-talk | 无参考路径：收敛用户的方向描述为结构化设计意图 | 有参考网站时不需要 |
 
 **边界声明**：
 - 本 Skill 只负责提取和结构化设计语言规则，不负责基于规则生成页面
@@ -97,12 +100,48 @@ Do not rely on it for final web engineering code, brand strategy consulting, or 
 
 ### Step 1: 建立提取范围与成功标准
 
-**目的**：明确本次提取的边界，避免无目标地抓取。
+**目的**：明确本次提取的边界，判断走哪条路径。
 
-- 确认目标网站 URL 和需要覆盖的页面类型
-- 确认输出精度要求（全量提取 vs 核心子集）
-- 确认是否有已知的设计系统文档可用
-- 输出：提取计划（目标页面列表 + 预期覆盖范围）
+- 确认用户是否提供了参考网站 URL
+- **有参考网站** → 走提取路径（Step 2-8）
+  - 确认目标网站 URL 和需要覆盖的页面类型
+  - 确认输出精度要求（全量提取 vs 核心子集）
+  - 确认是否有已知的设计系统文档可用
+  - 输出：提取计划（目标页面列表 + 预期覆盖范围）
+- **无参考网站** → 走设计路径（Step 1b）
+  - 确认用户的方向描述（风格关键词、目标受众、产品类型）
+  - 输出：进入 Step 1b
+
+### Step 1b: 无参考路径 — 设计方向讨论与设计（仅无参考时执行）
+
+**目的**：通过讨论收敛设计方向，基于方向从零设计完整的设计语言 JSON。
+
+**阶段 A: 方向收敛**
+- 调用 pb-v1-talk 进行设计方向讨论，讨论维度包括：
+  - 产品类型和目标受众
+  - 美学风格倾向（极简/丰富/复古/工业/柔和等）
+  - 配色倾向（冷色/暖色/中性/单色/多彩）
+  - 字体风格（衬线/无衬线/等宽/手写）
+  - 信息密度（稀疏/适中/密集）
+- 收敛为结构化方向描述：brand positioning + adjectives + visual priority
+- 用户确认方向后进入阶段 B
+
+**阶段 B: Token 设计**
+- 基于方向描述设计 Seed Token（品牌色、基础字号、基础圆角、基础间距）
+- 从 Seed 派生 Map Token（色阶、字阶、间距阶梯）
+- 从 Map 派生 Alias Token（语义色、语义字号、语义间距）
+- 所有设计决策标记 `source_type: "designed"`，`confidence: "high"`
+
+**阶段 C: 规则设计**
+- 基于 Token 设计七大系统规则（layout, typography, iconography, elevation, motion, content, navigation）
+- 设计核心组件规则（Button, Input, Card, Modal 等）
+- 设计页面模板规则
+- 填充 brand、principles、responsive、accessibility
+
+**阶段 D: 校验与输出**
+- 用 schema.json 校验输出完整性
+- 输出 design-language.json
+- 跳转到 Step 9（最终校验）
 
 ### Step 2: 搜索设计系统文档
 
@@ -136,6 +175,12 @@ Do not rely on it for final web engineering code, brand strategy consulting, or 
 
 - 按 schema 定义逐一提取：layout, typography, iconography, elevation, motion, content, navigation
 - 每个系统的 required 字段必须填充
+- **布局系统额外提取**：
+  - `background_decoration`：识别 Hero 区域及其他 section 的背景装饰层（glow orbs、gradient streaks、gradient overlays），按区域记录每层的类型、颜色、尺寸、模糊、动画和定位
+  - `section_pattern`：观察页面 section 背景是否存在交替规律（如奇数 section 用渐变、偶数 section 用纯色），提取交替策略和变体定义
+- **动效系统额外提取**：
+  - `keyframes`：从 CSS 中提取所有自定义 @keyframes 定义（float、pulse、scroll-right、enter 等），记录名称、定义和用途
+  - `entrance`：识别页面是否使用 IntersectionObserver 或 scroll-timeline 触发入场动画，提取触发策略、默认 keyframe、交错延迟和阈值
 - 输出：七大系统规则对象
 
 ### Step 5: 提取组件规则
@@ -144,6 +189,9 @@ Do not rely on it for final web engineering code, brand strategy consulting, or 
 
 - 从页面中识别核心组件（按 schema 的 componentRule 结构）
 - 每个组件提取：purpose, anatomy, variants, sizes, states, tokens, interaction_rules, composition_rules
+- **状态 overlay 提取**：对于有 hover/active 等交互状态的组件，检查是否存在浮现的 overlay 层（渐变遮罩、内容浮层、高亮层），在 states[].overlays 中结构化记录 overlay 的类型、背景、渐变、模糊、过渡动画
+  - 典型场景：卡片 hover 时的渐变 overlay + 内容浮层、按钮 hover 时的内部高亮层（如 foreground/5）
+- **无限滚动组件**：识别 marquee/infinite scroll 类组件，作为独立 componentRule 提取，其 tokens 引用 keyframes 中的 scroll 动画
 - 优先覆盖高频组件：Button, Input, Table, Card, Modal, Form, Navigation
 - 输出：components 数组
 
@@ -250,6 +298,12 @@ Output: 一份完整的 design-language.json，其中：
 Input: "我有几张竞品网站的截图，帮我提取它的设计风格规则"
 
 Output: 一份 design-language.json，推断规则标注 `source_type: "screenshot"` 和 `confidence: "medium"`，并在 verification 中标注截图来源的覆盖率限制。
+
+**Example 3: 无参考网站，从方向描述设计**
+
+Input: "我想做一个极简风格的 AI 工具产品，目标用户是开发者，不要花哨的装饰"
+
+Output: 调用 pb-v1-talk 讨论收敛方向（极简、开发者、工具型、中性色调、无衬线字体），然后基于方向设计完整的 design-language.json。所有规则标注 `source_type: "designed"` 和 `confidence: "high"`。Token 体系偏向中性色、等宽/无衬线字体、紧凑间距、小圆角。
 
 ## Safety
 

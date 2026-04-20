@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "PowerBy Skills - AI驱动的产品开发流程技能包，覆盖P0-P8完整生命周期和ASP自治式规格精炼流程",
-    "version": "3.3.0"
+    "version": "3.4.0"
   },
   "plugins": [
     {
@@ -79,7 +79,11 @@
         "./skills/pb-v1-ascii",
         "./skills/pb-v1-brower",
         "./skills/pb-v1-clarify",
-        "./skills/pb-v1-talk"
+        "./skills/pb-v1-talk",
+        "./skills/pb-v1-design-system",
+        "./skills/pb-v1-ui-review",
+        "./skills/pb-v1-verifier",
+        "./skills/pb-v1-debug"
       ]
     }
   ]
