@@ -1512,6 +1512,19 @@ principles: $ref(powerby-foundation/<principles-set>)
 
 ## 执行流程
 
+### 任务记录协议（执行可观测性）
+
+**协议依据**: docs/pb-v1-task-tracking-protocol.md
+
+本 Skill 遵循任务记录协议。执行时必须：
+
+1. **输入验证完成后** → 创建任务记录文件 `/tmp/pb-v1-{iteration_id}-{skill_name}.md`，将后续 Step 规划为子任务写入
+2. **每个 Step 开始时** → 更新对应子任务状态为 🔄 running
+3. **每个 Step 完成时** → 更新对应子任务状态为 ✅ done
+4. **交付完成后** → 删除任务记录文件
+
+---
+
 ### 总流程
 <Mermaid 流程图>
 
@@ -1795,3 +1808,4 @@ pb-v1 体系中已验证的约束变换模式：
 | **执行顺序** | Skill Sequence | `skills/pb-review/references/skill-sequence.md` | 执行顺序与依赖原因 |
 | **数据模型** | Data Model | `skills/pb-review/references/data-model.md` | 数据结构定义 |
 | **提交规范** | 提交信息规范 | `docs/commit-message-convention.md` | Git 提交格式约定 |
+| **任务记录** | 任务记录协议 | `docs/pb-v1-task-tracking-protocol.md` | 执行类 Skill 的可观测性与执行纪律 |

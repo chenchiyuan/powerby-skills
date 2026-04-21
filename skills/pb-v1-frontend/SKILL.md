@@ -107,6 +107,19 @@ principles: $ref(powerby-foundation/frontend-principles)
 
 ## 执行流程
 
+### 任务记录协议（执行可观测性）
+
+**协议依据**: docs/pb-v1-task-tracking-protocol.md
+
+本 Skill 遵循任务记录协议。执行时必须：
+
+1. **Phase 1 完成后** → 创建任务记录文件 `/tmp/pb-v1-{iteration_id}-frontend.md`，将后续 Phase 规划为子任务写入
+2. **每个 Phase 开始时** → 更新对应子任务状态为 🔄 running
+3. **每个 Phase 完成时** → 更新对应子任务状态为 ✅ done
+4. **交付完成后** → 删除任务记录文件
+
+---
+
 ### Phase 1: 前置检查
 
 **目标**: 确认设计系统就绪，声明 CSS 系统。

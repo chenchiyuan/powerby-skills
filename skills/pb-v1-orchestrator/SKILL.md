@@ -236,6 +236,37 @@ graph TD
 
 ---
 
+### Step 0: 读取活跃任务状态（执行可观测性）
+
+**触发条件**: 每次 orchestrator 被调用时，无条件执行
+
+**执行内容**:
+1. 扫描 `/tmp/pb-v1-{iteration_id}-*.md`
+2. 如果存在活跃任务文件 → 解析并展示当前执行状态
+3. 展示格式：
+
+```
+📋 当前执行状态:
+  Skill: {skill_name}
+  已启动: {started} ({elapsed} ago)
+  进度: {done_count}/{total_count}
+  当前任务: #{n} {task_description} (已执行 {duration})
+```
+
+4. 异常检测：
+
+| 异常 | 条件 | 处理 |
+|------|------|------|
+| 执行超时 | 单个任务 running 超过 10 分钟 | 展示 ⚠️ 警告，建议用户介入 |
+| 无进展 | 文件存在但最后更新超过 15 分钟 | 展示 ⚠️ 可能卡死 |
+| 失败未恢复 | 有 ❌ failed 状态的任务 | 展示失败信息，建议介入 |
+
+5. 如果无活跃任务文件 → 跳过，进入 Step 1
+
+**协议依据**: docs/pb-v1-task-tracking-protocol.md
+
+---
+
 ### Step 1: 加载 signal + 流程状态
 
 **执行内容**:

@@ -201,6 +201,19 @@ principles: $ref(powerby-foundation/code-principles)
 
 ## 执行流程
 
+### 任务记录协议（执行可观测性）
+
+**协议依据**: docs/pb-v1-task-tracking-protocol.md
+
+本 Skill 遵循任务记录协议。执行时必须：
+
+1. **Step 1 完成后** → 创建任务记录文件 `/tmp/pb-v1-{iteration_id}-implementing.md`，将 Step 2-5 规划为子任务写入
+2. **每个 Step 开始时** → 更新对应子任务状态为 🔄 running
+3. **每个 Step 完成时** → 更新对应子任务状态为 ✅ done
+4. **Step 5 Handoff 完成后** → 删除任务记录文件
+
+---
+
 ### 总流程
 
 ```mermaid
@@ -209,11 +222,13 @@ graph TD
     S0 -->|通过| Verify[Step 1: 输入验证]
     S0 -->|未通过| Warn[警告: 建议先执行 reviewer]
     Warn -->|用户选择跳过| Verify
-    Verify --> Research[Step 2: 本地代码调研]
+    Verify --> CreateTrack[创建任务记录文件]
+    CreateTrack --> Research[Step 2: 本地代码调研]
     Research --> Protocol[Step 2.5: 提取实现协议]
     Protocol --> Impl[Step 3: 按协议逐任务实现]
     Impl --> SelfCheck[Step 4: 还原自检]
     SelfCheck --> Output[Step 5: 交付与引导]
+    Output --> Cleanup[删除任务记录文件]
 
     Impl -->|编译/运行错误| RCA[根因分析]
     RCA -->|定位根因| Fix[修复 + 回归测试]
